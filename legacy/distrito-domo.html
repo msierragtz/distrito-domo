@@ -307,7 +307,8 @@ const DEFS={
   lotedomo:{name:'Terreno del Domo',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   fabrica:{name:'DeAcero',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   mejorar:{name:'Mejorar',cost:0,unlock:40,desc:'Sube de nivel lo que toques si su zona tiene plusvalía 46, 58 o 70. Negocios: +50% de ganancia. Servicios: cubren 30% más. Vivienda: le cabe un piso más y paga 25% más de renta. La obra tarda un rato.'},
-  demoler:{name:'Demoler',cost:0,unlock:0,desc:'Quita lo construido y recupera la mitad de lo que costó.'}
+  demoler:{name:'Demoler',cost:0,unlock:0,desc:'Quita lo construido y recupera la mitad de lo que costó.'},
+  ver:{name:'¿Qué es?',cost:0,unlock:0,desc:'La manita solo mira: pasa sobre cualquier cosa para ver qué es y tócala para saber más. No construye ni gasta. Tecla Esc para tomarla.'}
 };
 const EVENTS=[
   {id:'calor',name:'Ola de calor',dur:120,mod:{verde:1.6},msg:'¡Ola de calor! 40 grados en Santa Catarina. Los vecinos piden mucho más verde.'},
@@ -420,7 +421,7 @@ function reservePlots(g){
 }
 function newGame(){
   const g=embed(legacyGame());
-  return {pop:{fam:9,pro:3,est:4},g,v:16,$:600,maxV:16,unl:['calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0};
+  return {pop:{fam:9,pro:3,est:4},g,v:16,$:600,maxV:16,unl:['ver','calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0};
 }
 /* el precio depende de cuántos terrenos llevas y del tamaño del terreno (44 lotes = precio base) */
 const PSIZE={};const lotPrice=p=>{if(p==='DA')return DA_PRICE;const base=LOT_PRICE[Math.min(Math.max(0,(S.lots||0)-(S.da?1:0)),LOT_PRICE.length-1)];if(!p)return base;if(PSIZE[p]==null)PSIZE[p]=S.g.filter(t=>isParcel(t)&&t.p===p).length||44;return Math.round(base*Math.max(1,PSIZE[p]/44)/1000)*1000};
@@ -1975,7 +1976,7 @@ function render(){
   if(hover>=0&&!HEAT&&tool!=='mejorar'){const d=DEFS[tool];const R=d&&(d.R||(d.val&&d.val[1]));if(R&&canBuild(S.g[hover])){const hx=hover%N,hy=Math.floor(hover/N);ctx.globalAlpha=.16;ctx.fillStyle='#fff7c2';
     for(let y=Math.max(0,hy-R);y<=Math.min(N-1,hy+R);y++)for(let x=Math.max(0,hx-R);x<=Math.min(N-1,hx+R);x++)if(Math.abs(x-hx)+Math.abs(y-hy)<=R)tileFill([P(x,y),P(x+1,y),P(x+1,y+1),P(x,y+1)]);ctx.globalAlpha=1}}
   if(hover>=0){const hx=hover%N,hy=Math.floor(hover/N),t=S.g[hover];
-    const ti=t.k==='part'?S.g[t.a]:t,ok=tool==='mejorar'?!!LV[ti.k]&&lvOf(ti)<4&&stats.VAL&&stats.VAL[t.k==='part'?t.a:hover]>=LVTH[lvOf(ti)+1]&&S.$>=lvCost(ti):tool==='demoler'?!!DEFS[t.k]&&!DEFS[t.k].fixed&&!t.hw:canUp(t)?S.$>=upCost(t):tool==='torre'&&canConv(t)?S.$>=convCost(t):canBuild(t)&&S.$>=costOf(tool);
+    const ti=t.k==='part'?S.g[t.a]:t,ok=tool==='ver'?true:tool==='mejorar'?!!LV[ti.k]&&lvOf(ti)<4&&stats.VAL&&stats.VAL[t.k==='part'?t.a:hover]>=LVTH[lvOf(ti)+1]&&S.$>=lvCost(ti):tool==='demoler'?!!DEFS[t.k]&&!DEFS[t.k].fixed&&!t.hw:canUp(t)?S.$>=upCost(t):tool==='torre'&&canConv(t)?S.$>=convCost(t):canBuild(t)&&S.$>=costOf(tool);
     if(isParcel(t)&&PARCELS[t.p]){const can=S.maxV>=PARCELS[t.p].unlock&&S.$>=lotPrice(t.p);ctx.globalAlpha=.35;ctx.fillStyle=can?'#ffd84d':'#e66100';
       for(let j=0;j<S.g.length;j++)if(isParcel(S.g[j])&&S.g[j].p===t.p){const x=j%N,y=Math.floor(j/N);tileFill([P(x,y),P(x+1,y),P(x+1,y+1),P(x,y+1)])}ctx.globalAlpha=1}
     else if(SZ(tool)>1&&tool!=='demoler'){const sz=SZ(tool),f=footFree(hover,sz),okk=f&&S.$>=costOf(tool)&&!(stats.counts[tool]>=1);ctx.globalAlpha=.45;ctx.fillStyle=okk?'#ffffff':'#ff4d4d';
@@ -2000,7 +2001,7 @@ function render(){
         continue}
       const hsz=SZ(tool);
       if(hover>=0&&hsz>1&&tool!=='demoler'&&i===hover){const f=footFree(hover,hsz);if(f){const g={k:tool,s:1};drawSprN(g,x,y,i,hsz,.7,true);ctx.globalAlpha=1;continue}}
-      if(i===hover&&tool!=='demoler'&&tool!=='mejorar'&&hsz===1&&canBuild(t)){const dd=DEFS[tool],g={k:tool,s:t.s,f:dd.f0};drawSprN(g,x,y,i,1,.7,true);ctx.globalAlpha=1}
+      if(i===hover&&tool!=='demoler'&&tool!=='mejorar'&&tool!=='ver'&&hsz===1&&canBuild(t)){const dd=DEFS[tool],g={k:tool,s:t.s,f:dd.f0};drawSprN(g,x,y,i,1,.7,true);ctx.globalAlpha=1}
       else if(t.b>0)drawObj(t,x,y);
       else{if(hasObj(t,x,y)){const bo=bounceOf(i);if(bo)lifted(bo,()=>drawSprN(t,x,y,i,1,HEAT?.16:fade(t,x,y)));else drawSprN(t,x,y,i,1,HEAT?.16:fade(t,x,y))}ctx.globalAlpha=1;drawDyn(t,x,y);if(DEFS[t.k]&&!t.ok)drawNeed(x,y)}}
     for(const w of buckets[d])w.car?drawCar(w):drawWalker(w);
@@ -2044,7 +2045,9 @@ function drawCoins(){
   ctx.restore();COINS=COINS.filter(c=>c.t<2.2)}
 // etiqueta con el precio de la mejora del edificio bajo el cursor (piso, nivel o torre)
 function priceTag(){TAGW=null;
-  if(hover<0||TITLE||HEAT)return;let i=hover,t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}const d=DEFS[t.k];if(!d)return;
+  if(hover<0||TITLE||HEAT)return;let i=hover,t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}
+  if(tool==='ver'){const q=whatShort(i),sz=SZ(t.k),[x,y]=P(i%N+sz/2,Math.floor(i/N)+sz/2),so=DEFS[t.k]?shadowOf(t):null,h=(so?so[1]:4)+6;TAGW={x:x*zoom,y:Math.max(30,(y-h)*zoom),l1:q[0],l2:q[1],cls:'na'};return}
+  const d=DEFS[t.k];if(!d)return;
   let l1=null,c=0,note='';
   if(tool===t.k&&d.fmax&&!(t.b>0)&&!(t.ub>0)&&!(t.ct>0)){if(t.f>=fmaxT(t)){l1=`Máximo: ${t.f} pisos`}else{l1=`Subir a ${t.f+1} pisos`;c=upCost(t);note=`+${d.per} vecinos`}}
   else if(tool==='mejorar'&&LV[t.k]&&!(t.b>0)&&!(t.lu>0)){const L=lvOf(t);if(L>=4)l1='Nivel máximo';else{l1=lvName(t,L+1);c=lvCost(t);const v=stats.VAL?stats.VAL[i]:0;if(v<LVTH[L+1])note=`falta plusvalía ${Math.round(LVTH[L+1]*100)}`;else note=lvBenefit(t)}}
@@ -2054,6 +2057,33 @@ function priceTag(){TAGW=null;
   const can=c>0&&S.$>=c&&!note.startsWith('falta'),l2=c?`$${c.toLocaleString('es-MX')}${note?' · '+note:''}`:note;
   TAGW={x:x*zoom,y:Math.max(30,(y-h)*zoom),l1,l2,cls:c?(can?'ok':'no'):'na'}}
 let TAGW=null,TAGK='';
+/* la manita: qué es cada cosa, en corto (etiqueta) y en largo (mensaje al tocar) */
+function whatName(t){if(t.k==='calle')return t.hw?'Avenida':'Calle';if(t.k==='ajeno')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'Terreno vecino';if(t.k==='lote')return 'Terreno libre';if(t.k==='arbol')return 'Árbol';
+  if(t.k==='fabrica')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'DeAcero';return nameOf(t)}
+function whatShort(i){const t=S.g[i],d=DEFS[t.k],n=whatName(t);
+  if(t.b>0||t.ct>0||t.ub>0||t.lu>0)return [n,'en obra'];
+  if(isParcel(t)&&PARCELS[t.p])return [n,S.maxV<PARCELS[t.p].unlock?`a la venta con ${fmt(PARCELS[t.p].unlock)} vecinos`:`se vende: $${fmt(lotPrice(t.p))}`];
+  if(t.k==='lote')return [n,'aquí se puede construir'];if(t.k==='lotedomo')return [n,'aquí va El Domo'];if(t.k==='calle')return [n,t.hw?'no es del Distrito':'lleva gente y servicios'];
+  if(t.k==='fabrica')return [n,S.da?'ya no baja la plusvalía':'baja la plusvalía cerca'];if(t.k==='arbol')return [n,'en terreno libre'];if(t.k==='ajeno')return [n,''];
+  if(d&&d.per)return [n,`${t.f} pisos · caben ${(t.f*d.per).toLocaleString('es-MX')} vecinos`];
+  const e=EARN.get(i);if(e){const cu=Math.round(e.cust||0);return [n,`gana $${e.earn.toFixed(e.earn<10?1:0)}/s · ${cu} ${cu===1?'cliente':'clientes'} cerca`]}
+  if(t.k==='tanque'||t.k==='torreagua')return [n,`agua para ${fmt(stats.wcap||1000)} vecinos`];
+  const L=LV[t.k]?lvOf(t):0;if(L)return [n,`nivel ${L} de 4`];if(d&&d.trophy)return [n,'trofeo'];
+  const f=(infoOf(t.k)||'').split('.')[0];return [n,f.length&&f.length<46?f[0].toLowerCase()+f.slice(1):'']}
+function whatIs(i){let t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}const [n,l2]=whatShort(i),d=DEFS[t.k];
+  if(t.b>0)return `${n}: en obra, faltan ${Math.ceil(t.b)} segundos.`;
+  if(isParcel(t)&&PARCELS[t.p]){const P_=PARCELS[t.p];return `${P_.name}, ${P_.where}. ${S.maxV<P_.unlock?`Se pone a la venta con ${fmt(P_.unlock)} vecinos.`:`Cuesta $${fmt(lotPrice(t.p))}: elige otra herramienta y tócalo dos veces para comprarlo.`}`}
+  if(t.k==='ajeno')return 'Terreno vecino: no es del Distrito y no se puede construir.';
+  if(t.k==='lote'||t.k==='arbol'){const r=tileInfo(i).split(' · ').slice(1).join(' · ');return `${t.k==='arbol'?'Árbol en terreno libre':n}. ${connected(i%N,Math.floor(i/N))?'Tiene calle cerca: aquí se puede construir.':'Todavía no le llega una calle; pon una junto para poder construir.'} ${r[0].toUpperCase()+r.slice(1)}`}
+  if(t.k==='lotedomo')return `Terreno del Domo: aquí va El Domo, que se desbloquea con ${DEFS.domo.unlock} vecinos y cuesta $${fmt(costOf('domo'))}.`;
+  if(t.k==='calle')return t.hw?'Avenida: no es del Distrito. Hace ruido a 2 cuadras.':'Calle: conecta los edificios y por aquí caminan los vecinos.';
+  if(t.k==='fabrica')return S.da?'DeAcero: desde que compraste su terreno ya no baja la plusvalía.':'DeAcero: la planta de acero. Baja la plusvalía a 3 cuadras; si compras el Terreno DeAcero deja de hacerlo.';
+  let txt=tileInfo(i);if(l2&&!/^nivel/.test(l2))txt=txt.replace(nameOf(t),`${nameOf(t)} (${l2})`);if(d&&d.trophy)txt+=' Es un trofeo.';return txt}
+// el dibujo de la manita: sirve para el ícono y para el cursor
+const HAND=['     ##','    #WW#','    #WW#','    #WW#','    #WW###','    #WW#WW###','    #WW#WW#WW##',' ## #WW#WW#WW#W#','#WW##WWWWWWWW#W#','#WWW#WWWWWWWWWW#',' #WWWWWWWWWWWWW#','  #WWWWWWWWWWWW#','  #WWWWWWWWWWS#','   #WWWWWWWWWS#','    #WWWWWWWS#','    #SSSSSSSS#','    ##########'];
+function handPx(c,x0,y0,s){HAND.forEach((r,y)=>{for(let x=0;x<r.length;x++){const ch=r[x];if(ch===' ')continue;c.fillStyle=ch==='#'?'#1f2540':ch==='S'?'#d6dbea':'#ffffff';c.fillRect(x0+x*s,y0+y*s,s,s)}})}
+let HANDCUR=null;function handCursor(){if(HANDCUR)return HANDCUR;try{const c=document.createElement('canvas');c.width=32;c.height=34;handPx(c.getContext('2d'),0,0,2);HANDCUR=`url(${c.toDataURL()}) 11 1, pointer`}catch(e){HANDCUR='pointer'}return HANDCUR}
+function setCursor(){const cv2=document.getElementById('cv');if(cv2)cv2.style.cursor=tool==='ver'?handCursor():''}
 function placeTag(){const el=document.getElementById('ptag');if(!el)return;if(!TAGW){if(!el.hidden)el.hidden=true;TAGK='';return}
   const k=TAGW.l1+'|'+TAGW.l2+'|'+TAGW.cls;if(k!==TAGK){TAGK=k;el.className='box '+TAGW.cls;el.innerHTML=`<b></b><span></span>`;el.firstChild.textContent=TAGW.l1;el.lastChild.textContent=TAGW.l2||''}
   el.hidden=false;el.style.transform=`translate(${Math.round(TAGW.x)}px,${Math.round(TAGW.y)}px) translate(-50%,-100%)`}
@@ -2086,13 +2116,14 @@ function makeIcon(k){
   const t={k,s:k==='edificio'?0:k==='ladrillo'?0:3,f:DEFS[k].f0,b:0};
   if(k==='mejorar'){diamond(0,0,0,'#d3c08d');const cx=20,cy=30,pts=[];for(let k2=0;k2<10;k2++){const r=k2%2?5:12,an=-Math.PI/2+k2*Math.PI/5;pts.push([cx+Math.cos(an)*r,cy+Math.sin(an)*r])}poly(pts,'#ffd84d');poly(pts.map(([a,b])=>[cx+(a-cx)*.5,cy+(b-cy)*.5-1]),'#fff3b0')}
   else if(k==='demoler'){diamond(0,0,0,'#d3c08d');line(13,38,25,48,'#d64545',false,3);line(25,38,13,48,'#d64545',false,3)}
+  else if(k==='ver'){diamond(0,0,0,'#d3c08d');handPx(ctx,12,22,1.5)}
   else if(SZ(k)>1||k==='tim'||DEFS[k].trophy){GLOWS=null;const sp=makeSprite(t,0,0,0);ctx.imageSmoothingEnabled=false;const sw=sp.c.width/RES,sh2=sp.c.height/RES,sc=Math.min(38/sw,52/sh2);ctx.drawImage(sp.c,rr(20-sw*sc/2),rr(52-sh2*sc),rr(sw*sc),rr(sh2*sc));GLOWS=[]}
   else{drawGround(0,0,k==='calle'?{k:'calle',s:1}:['edificio','ladrillo','torre','oficinas','palma','caseta','mejorar'].includes(k)?{k:'lote',s:1}:t);drawObj(t,0,0,true)}
-  GLOWS=null;if(k!=='demoler'&&SZ(k)===1&&k!=='tim'&&!DEFS[k].trophy)outline(ctx);
+  GLOWS=null;if(k!=='demoler'&&k!=='ver'&&SZ(k)===1&&k!=='tim'&&!DEFS[k].trophy)outline(ctx);
   }catch(e){console.warn('ícono',k,e)}finally{ctx=prev;Object.assign(cam,pc);NIGHT=pn;ROT=pr;GLOWS=null}return c;
 }
 /* barra de abajo agrupada: herramientas fijas + pestañas */
-const FIXED=['calle','mejorar','demoler'];
+const FIXED=['ver','calle','mejorar','demoler'];
 const TABS=[['viv','Vivienda',['edificio','ladrillo','torre']],['neg','Negocios',['cafe','tomates','padel','resto','bar','oficinas']],['ser','Servicios',['parque','plaza','dogpark','estac','caseta','torreagua']],['esp','Especiales',['domo','kiosco','mirador','cultura','teleferico']]];
 const tabOf=k=>{for(const t of TABS)if(t[2].includes(k))return t[0];return FIXED.includes(k)?null:'ser'};
 let TAB=(()=>{try{const v=localStorage.getItem('distritoDomo.tab');if(TABS.some(t=>t[0]===v))return v}catch(e){}return 'viv'})();
@@ -2115,7 +2146,7 @@ function buildTools(){
 }
 /* ficha: qué hace cada cosa, generada de sus datos */
 const GN={fam:'familias',pro:'profesionistas',est:'estudiantes'},GL=a=>a.length===3?'todos':a.map(g=>GN[g]).join(' y ');
-const SPECIAL=['calle','mejorar','demoler','torreagua','domo','kiosco','mirador','cultura','teleferico'];
+const SPECIAL=['ver','calle','mejorar','demoler','torreagua','domo','kiosco','mirador','cultura','teleferico'];
 function infoOf(k){const d=DEFS[k];if(!d)return '';
   if(SPECIAL.includes(k))return d.desc;
   if(d.per){const hm=HMIX[k],top=Object.keys(hm).sort((a,b)=>hm[b]-hm[a])[0];return `Vivienda: ${d.per} vecinos por piso, empieza con ${d.f0} pisos (máx. ${fmaxOf(k)}, uno más por cada nivel). Viven sobre todo ${GN[top]}. Toca uno tuyo con esta herramienta para subirle un piso.`}
@@ -2128,9 +2159,9 @@ function infoOf(k){const d=DEFS[k];if(!d)return '';
 const lvBenefit=t=>DEFS[t.k].per?'+1 piso, +25% renta':isBiz(t.k)?'+50% ganancia':'cubre 30% más';
 function pick(k){
   if(!S.unl.includes(k)){say(`${DEFS[k].name} se desbloquea al llegar a ${DEFS[k].unlock} vecinos.`,true);return}
-  tool=k;btns[k].classList.remove('new');{const tb=tabOf(k);if(tb&&tb!==TAB)setTab(tb)}refreshTabs();
+  tool=k;setCursor();btns[k].classList.remove('new');{const tb=tabOf(k);if(tb&&tb!==TAB)setTab(tb)}refreshTabs();
   if(SZ(k)>1&&S.g.some(t=>t.k==='reserva'&&t.p===k)){say(`${DEFS[k].name}: ${DEFS[k].desc} Toca la esquina de su terreno reservado (cerca naranja) o de cualquier espacio libre de ${SZ(k)}×${SZ(k)}. Cuesta $${fmt(costOf(k))}.`,true);refreshUI(true);return}
-  const d=DEFS[k];say(`${d.name}: ${infoOf(k)}${k==='demoler'||k==='mejorar'||k==='calle'?'':' Cuesta $'+fmt(costOf(k))+' y $'+(d.upk*(d.per?d.f0:1)).toFixed(2)+'/s de mantenimiento.'}`,true);
+  const d=DEFS[k];say(`${d.name}: ${infoOf(k)}${k==='demoler'||k==='mejorar'||k==='calle'||k==='ver'?'':' Cuesta $'+fmt(costOf(k))+' y $'+(d.upk*(d.per?d.f0:1)).toFixed(2)+'/s de mantenimiento.'}`,true);
   refreshUI(true);
 }
 function markNew(k){btns[k]&&btns[k].classList.add('new');refreshTabs()}
@@ -2162,6 +2193,7 @@ function refreshUI(force){
     const c=b.querySelector('.c');
     if(lock)c.textContent=`${DEFS[k].unlock} vecinos`;
     else if(k==='demoler')c.textContent='+50%';
+    else if(k==='ver')c.textContent='solo mira';
     else if(k==='mejorar'){let mn=Infinity;if(stats.VAL)S.g.forEach((t,i)=>{if(LV[t.k]&&!(t.b>0)&&!(t.lu>0)&&lvOf(t)<4&&stats.VAL[i]>=LVTH[lvOf(t)+1]){const c2=lvCost(t);if(c2<mn)mn=c2}});c.textContent=mn<Infinity?'desde $'+fmt(mn):'★ nivel';b.classList.toggle('poor',mn<Infinity&&S.$<mn)}
     else if(DEFS[k].max&&(stats.counts[k]||0)>=DEFS[k].max)c.textContent='Construido';
     else if(DEFS[k].trophy){c.textContent='Gratis';b.classList.remove('poor')}
@@ -2213,6 +2245,7 @@ function sfx(n){try{JAZZ.sfx(n)}catch(e){}}
 function act(i){
   let t=S.g[i];
   if(HEAT){say(tileInfo(i),true);return}
+  if(tool==='ver'){say(whatIs(i),true);return}
   if(tool==='mejorar'){if(t.k==='part'){i=t.a;t=S.g[i]}
     if(!LV[t.k]){say('Eso no tiene niveles. Toca un servicio o un edificio.',true);return}
     if(t.b>0||t.ub>0||t.lu>0||t.ct>0){say('Espera a que termine la obra.',true);return}
@@ -2304,7 +2337,7 @@ let lastInfo=-1;setInterval(()=>{if(hover<0||hover===lastInfo)return;
     if(L>=4){say(`${nameOf(t)} ya está en su nivel máximo.`,true);return}
     const v=Math.round((stats.VAL?stats.VAL[i]:0)*100),need=Math.round(LVTH[L+1]*100),c=lvCost(t);
     say(`${nameOf(t)} → ${lvName(t,L+1)}: cuesta $${fmt(c)} y pide plusvalía ${need} (aquí hay ${v}).${v<need?' Todavía no se puede.':S.$<c?' Te falta dinero.':' Toca para mejorar.'}`,true)}},250);
-addEventListener('keydown',e=>{if(TITLE||e.target&&e.target.tagName==='INPUT')return;if(e.key==='v'||e.key==='V'){$('heat').click()}const n=parseInt(e.key);if(n>=1&&n<=TABS.length&&!e.metaKey&&!e.ctrlKey)setTab(TABS[n-1][0]);if((e.key===' '||e.key==='p'||e.key==='P')&&!(e.target&&e.target.tagName==='SELECT')&&!e.repeat){e.preventDefault();setPause(!PAUSED)}if(e.key==='q'||e.key==='Q')turn(-1);if(e.key==='e'||e.key==='E')turn(1);if(e.key==='Escape')hover=-1;
+addEventListener('keydown',e=>{if(TITLE||e.target&&e.target.tagName==='INPUT')return;if(e.key==='v'||e.key==='V'){$('heat').click()}const n=parseInt(e.key);if(n>=1&&n<=TABS.length&&!e.metaKey&&!e.ctrlKey)setTab(TABS[n-1][0]);if((e.key===' '||e.key==='p'||e.key==='P')&&!(e.target&&e.target.tagName==='SELECT')&&!e.repeat){e.preventDefault();setPause(!PAUSED)}if(e.key==='q'||e.key==='Q')turn(-1);if(e.key==='e'||e.key==='E')turn(1);if(e.key==='Escape'){hover=-1;if(!document.querySelector('#guide:not([hidden]),#opts:not([hidden])')&&tool!=='ver')pick('ver')}
   if((e.key==='c'||e.key==='C')&&!e.shiftKey&&!e.metaKey&&!e.ctrlKey)centerCam();
   // atajos del presentador (Shift + letra): para enseñar la tormenta y el atardecer sin esperar al azar
   if(e.shiftKey&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.repeat){
@@ -2594,7 +2627,7 @@ const JAZZ=(()=>{
 
 /* ---------- arranque ---------- */
 function prep(d){
-  S=d;fixPop();
+  S=d;fixPop();if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
   // hitos retirados: se devuelven como terreno y se reembolsa la mitad
   {let ref=0;const old={tim:15000,mercado:60000,grandomo:200000};for(let i=0;i<S.g.length;i++){const t=S.g[i];if(t.k==='reserva'||t.k==='part'||old[t.k]){if(old[t.k])ref+=old[t.k]/2;S.g[i]={k:'lote',s:t.s||1,b:0}}}if(ref)S.$+=ref}
   if(!S.g.some(t=>t.k==='lotedomo'||t.k==='domo')){let i=idx(OFF+8,OFF+8);if(!(S.g[i].k==='lote'||S.g[i].k==='arbol'))i=S.g.findIndex((t,j)=>(t.k==='lote'||t.k==='arbol')&&connected(j%N,Math.floor(j/N)));if(i>=0)S.g[i]={k:'lotedomo',s:1,b:0}}
@@ -2676,11 +2709,11 @@ function start(data){
     $('oErr').textContent=L.length?`Errores registrados en este navegador: ${L.length}. Último: ${L[L.length-1][1]} (línea ${L[L.length-1][2]}, ${new Date(L[L.length-1][0]).toLocaleString('es-MX')}).`:'Sin errores registrados en este navegador.'}};
   $('optb').onclick=e=>{e.stopPropagation();optShow($('opts').hidden)};$('oOk').onclick=()=>optShow(false);
   const renderGuide=()=>{const g=$('guide');const row=k=>{const d=DEFS[k];if(!d||d.hidden)return '';const lk=!S.unl.includes(k);
-      return `<div class="it${lk?' lk':''}"><b>${d.name}</b><span class="pr">${lk?'a los '+d.unlock.toLocaleString('es-MX')+' vecinos':k==='mejorar'||k==='demoler'?'':d.cost?'$'+fmt(costOf(k)):'gratis'}</span><p>${infoOf(k)}</p></div>`};
+      return `<div class="it${lk?' lk':''}"><b>${d.name}</b><span class="pr">${lk?'a los '+d.unlock.toLocaleString('es-MX')+' vecinos':k==='mejorar'||k==='demoler'||k==='ver'?'':d.cost?'$'+fmt(costOf(k)):'gratis'}</span><p>${infoOf(k)}</p></div>`};
     g.innerHTML=`<h2>Guía del Distrito<button class="x" type="button" aria-label="Cerrar">✕</button></h2>
       <p class="intro">Los vecinos pagan renta (profesionistas $0.10/s, familias $0.065, estudiantes $0.045), más si están contentos y si su zona tiene plusvalía. Llegan más si tienen cerca verde, comercio que les guste, estacionamiento y dog park.</p>`
       +[['Herramientas',FIXED],...TABS.map(t=>[t[1],t[2]])].map(([n,ks])=>`<h3>${n}</h3>`+ks.map(row).join('')).join('')
-      +`<h3>Teclado</h3><p class="intro">Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer, Shift+H adelanta la hora, Shift+F mide el rendimiento.</p>`;
+      +`<h3>Teclado</h3><p class="intro">Esc: la manita (¿Qué es?) · Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer, Shift+H adelanta la hora, Shift+F mide el rendimiento.</p>`;
     g.querySelector('.x').onclick=()=>{g.hidden=true;$('guideb').setAttribute('aria-expanded',false)}};
   $('guideb').onclick=e=>{e.stopPropagation();const g=$('guide');g.hidden=!g.hidden;$('guideb').setAttribute('aria-expanded',!g.hidden);if(!g.hidden)renderGuide()};
   $('pauseb').onclick=e=>{e.stopPropagation();setPause(!PAUSED)};
