@@ -297,7 +297,7 @@ const DEFS={
   bar:{R:4,val:[.06,3],name:'Bar',cost:320,grow:1.15,unlock:60,bt:8,com:7,inc:5,upk:.45,desc:'Para profesionistas y estudiantes. A las familias les molesta tenerlo cerca, y de noche hace ruido.'},
   oficinas:{R:6,val:[.08,4],name:'Oficinas',cost:5000,grow:1.15,unlock:120,bt:30,com:12,inc:25,upk:2,desc:'Empleo y coworking para profesionistas y estudiantes. A las familias no les gusta tenerlas cerca (tráfico).'},
   torre:{name:'Torre Caliza',cost:6000,grow:1.25,unlock:160,bt:60,f0:16,fmax:26,per:6,upc:900,upg:1.15,upk:.22,desc:'16 pisos: aquí viven sobre todo profesionistas, que pagan más renta. Tócala otra vez para crecerla, o tócala sobre un edificio para convertirlo en torre sin perder vecinos.'},
-  torreagua:{name:'Torre de agua',cost:50000,grow:1.2,unlock:900,bt:40,upk:.6,val:[.05,3],desc:'El tanque del Distrito alcanza para 1,000 vecinos. Cada Torre de agua surte a 1,000 más (puedes tener todas las que quieras): sin ella, arriba de 1,000 vecinos empiezan los problemas de agua.'},
+  torreagua:{name:'Torre de agua',cost:50000,grow:1.2,unlock:750,bt:40,upk:.6,val:[.05,3],desc:'El tanque del Distrito alcanza para 1,000 vecinos. Cada Torre de agua surte a 1,000 más (puedes tener todas las que quieras): sin ella, arriba de 1,000 vecinos empiezan los problemas de agua.'},
   kiosco:{name:'Kiosco de la música',cost:0,unlock:500,bt:10,upk:0,max:1,trophy:1,R:4,val:[.08,3],desc:'Trofeo de 500 vecinos, gratis. De noche toca un trío: las familias de alrededor están más contentas y el jazz suma una trompeta.'},
   mirador:{name:'Mirador del Distrito',cost:0,unlock:1000,bt:20,upk:0,max:1,trophy:1,val:[.2,5],desc:'Trofeo de 1,000 vecinos, gratis. Vista a la Sierra Madre: sube la plusvalía 5 cuadras a la redonda.'},
   cultura:{name:'Centro Cultural Domo',cost:0,unlock:2000,bt:30,upk:0,max:1,trophy:1,R:6,com:14,val:[.1,4],desc:'Trofeo de 2,000 vecinos, gratis. Comercio para familias, profesionistas y estudiantes; con sus eventos hay menos fiestas.'},
@@ -572,7 +572,11 @@ function satCalc(){
   const nuis=(stats.counts&&stats.counts.cultura?.7:1)*Math.min(.25,Math.max(0,loose/v-.06)*.5)*Math.min(1,loose/40)*(1+.5*night)+Math.min(.05,.012*((stats.counts||{}).bar||0))*night;
   const noise=stats.noise*((ev&&ev.noiseMul)||1);
   const wdef=Math.max(0,S.v-(stats.wcap||1000));stats.wpen=Math.min(.16,wdef/500*.16);
-  const common=stats.bonus-(S.$<0?.08+Math.min(.17,-S.$/1500):0)+((ev&&ev.flat)||0)-stats.wpen;
+  // el corte de agua y la falta de agua son el mismo problema: cuenta el mayor de los dos, no la suma
+  const evf=ev?(ev.id==='agua'?-Math.max(0,-(ev.flat||0)-stats.wpen):(ev.flat||0)):0;
+  // números rojos: el castigo crece con la deuda en proporción al tamaño del Distrito (antes $255 de deuda ya era el castigo máximo aun con 4,000 vecinos)
+  const debt=Math.max(0,-S.$),redP=debt?.08*Math.min(1,debt/(300+S.v*5))+Math.min(.17,debt/(1500+S.v*25)):0;
+  const common=stats.bonus-redP+evf-stats.wpen;
   const c=x=>Math.max(0,Math.min(1,x));
   const F=scg.fam,Pr=scg.pro,E=scg.est,pet=g=>PET[g]*.35*(scg[g].dog-1);
   const gs={
@@ -606,7 +610,7 @@ function tick(dt,quiet){
     if(tot>0)for(const g in pop)pop[g]+=Math.min(Math.max(0,(mix[g]||0)-pop[g]),add*w[g]/tot);
   }
   // salidas: cada grupo se va si él está molesto
-  for(const g in pop)if(gs[g]<.4&&pop[g]>0)pop[g]=Math.max(0,pop[g]-(.4-gs[g])*2.5*(.1+pop[g]*.03)*dt);
+  for(const g in pop)if(gs[g]<.4&&pop[g]>0)pop[g]=Math.max(0,pop[g]-(.4-gs[g])*2.5*(.1+pop[g]*.006)*dt);
   fixPop();
   for(const g in pop){const room=(mix[g]||0)*1.1;if(pop[g]>room&&room>=0)pop[g]=Math.max(room,pop[g]-Math.max(.2,.05*(pop[g]-room))*dt)}fixPop();
   if(S.v>cap){const tgt=Math.max(cap,S.v-Math.max(1,.2*(S.v-cap))*dt),f=S.v>0?tgt/S.v:0;for(const g in pop)pop[g]*=f;fixPop()}
@@ -621,7 +625,7 @@ function tick(dt,quiet){
   if(S.redT===0)S.reMsg=0;
   if(!quiet&&wasPos&&S.$<0)say('¡Números rojos! El mantenimiento cuesta más de lo que entra. Los vecinos ya lo notaron.',true);
   S.clock=(S.clock+dt)%DAY;
-  if(S.ev){S.ev.t-=dt;if(S.ev.t<=0){const e=EVENTS.find(e=>e.id===S.ev.id);S.ev=null;S.evNext=Math.max(60,150+Math.random()*90-12*(S.lots||0));if(!quiet)say(`Terminó: ${e.name}. Todo vuelve a la normalidad.`)}}
+  if(S.ev){S.ev.t-=dt;if(S.ev.t<=0){const e=EVENTS.find(e=>e.id===S.ev.id);S.ev=null;S.evNext=Math.max(90,150+Math.random()*90-6*(S.lots||0));if(!quiet)say(`Terminó: ${e.name}. Todo vuelve a la normalidad.`)}}
   else if(S.maxV>=20){S.evNext=(S.evNext??120)-dt;if(S.evNext<=0){const e=stats.wpen>0&&Math.random()<.6?EVENTS.find(q=>q.id==='agua'):EVENTS[Math.floor(Math.random()*EVENTS.length)];S.ev={id:e.id,t:e.dur};if(!quiet){sfx('event');say(e.msg,true)}}}
   if(S.v>S.maxV)S.maxV=S.v;
   {const bm=bootMul();if(bm!==S.bootM){const had=S.bootM!=null;S.bootM=bm;if(had){recompute();if(!quiet&&bm===1)say('Tu Distrito ya creció: se acabó el impulso de arranque y los negocios ganan su precio normal.')}}}
@@ -629,8 +633,12 @@ function tick(dt,quiet){
   while(S.phase<4&&S.maxV>=[0,0,500,1000,2000][S.phase+1]){S.phase++;if(!quiet){celebrate(7);sfx('phase');say({2:'¡FASE 2! El Distrito ya tiene 500 vecinos. Hasta la música creció.',3:'¡FASE 3! 1,000 vecinos. Las torres ya pueden crecer hasta 36 pisos.',4:'¡2,000 VECINOS! Hasta los metales se suman al jazz. La meta: 3,000 vecinos.'}[S.phase],true)}}
   if(!quiet&&!S.won3&&S.maxV>=3000){S.won3=1;S.winT=S.playT||0;celebrate(7);setTimeout(showCredits,4000)}
   if(!quiet)S.playT=(S.playT||0)+dt;
-  if(!quiet&&stats.wpen>0&&!S.wMsg){S.wMsg=1;say('El tanque ya no alcanza: con más de 1,000 vecinos baja la presión y hay más cortes de agua. Construye otra Torre de agua para surtir a 1,000 vecinos más.',true)}
-  else if(!quiet&&stats.wpen>0&&S.wMsg===2&&S.v>(stats.wcap||1000)+50){S.wMsg=1;say(`Ya son más vecinos que agua: tus torres surten a ${fmt(stats.wcap)}. Construye otra Torre de agua para 1,000 más.`,true)}
+  // aviso antes de que falte el agua: a 250 vecinos del límite y otra vez a 80; cada torre nueva sube el límite y rearma el aviso
+  if(!quiet&&S.unl.includes('torreagua')){const wc=stats.wcap||1000,left=wc-S.v;
+    if(left<=250&&left>80&&(S.wWarn||0)<wc){S.wWarn=wc;sfx('event');markNew('torreagua');say(`El agua del Distrito alcanza para ${wc.toLocaleString('es-MX')} vecinos y ya van ${Math.floor(S.v).toLocaleString('es-MX')}. Construye una Torre de agua (pestaña Servicios) antes de que sea demasiado tarde: sin agua la gente se enoja y empieza a irse.`,true)}
+    else if(left<=80&&left>0&&(S.wWarn2||0)<wc){S.wWarn2=wc;sfx('event');markNew('torreagua');say(`¡Ya casi no hay agua! Faltan ${Math.max(1,Math.ceil(left))} vecinos para llegar al límite de ${wc.toLocaleString('es-MX')}. Construye una Torre de agua ya.`,true)}}
+  if(!quiet&&stats.wpen>0&&!S.wMsg){S.wMsg=1;say(`Ya no alcanza el agua: con más de ${(stats.wcap||1000).toLocaleString('es-MX')} vecinos baja la presión y hay más cortes de agua. Construye otra Torre de agua para surtir a 1,000 vecinos más.`,true)}
+  else if(!quiet&&stats.wpen>0&&S.wMsg===2&&S.v>(stats.wcap||1000)+50){S.wMsg=1;say(`Ya son más vecinos que agua: tus torres surten a ${(stats.wcap||1000).toLocaleString('es-MX')}. Construye otra Torre de agua para 1,000 más.`,true)}
   if(stats.wpen===0&&S.wMsg===1&&(stats.wcap||1000)>1000){S.wMsg=2;if(!quiet)say('¡La nueva Torre de agua ya surte al Distrito! Regresó la presión.',true)}
   if(S.pvMsg&&!quiet){S.pvMsg=0;say('Cambió la plusvalía: ahora cada barrio se mide por cuatro cosas a la vez (verde, comercio, estacionamiento y dog park). Tus mejoras se quedan; para el nivel 4 hace falta un barrio completo.',true)}
   if(!S.lotMsg&&S.maxV>=LOT_UNLOCK){S.lotMsg=1;if(!quiet)say(`¡Ya puedes expandir el Distrito! Toca un terreno gris con letrero de SE VENDE. El primero cuesta $${fmt(lotPrice())}.`)}
