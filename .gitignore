@@ -1,0 +1,8 @@
+# lo que se genera al probar o empaquetar
+build/
+dist/itch/
+dist/*.zip
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store

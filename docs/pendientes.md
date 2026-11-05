@@ -1,0 +1,136 @@
+# Distrito Domo — estado y pendientes
+
+Actualizado el 26 oct 2026 (artifact v64; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+
+## Implementado
+- **Obras grandes, sus 6 encargos y fase 3 de la ruta gráfica «juice» (v64)**, paso 4 del plan:
+  - 6 obras de una pieza en la pestaña Especiales, una de cada una, que solo se abren con su encargo: Bosque urbano 3×3 ($60k, verde 30 a 7 cuadras, calma el ruido de la avenida a 6 cuadras, en ola de calor refresca más; no deja dinero), Museo del Domo 2×2 ($80k, necesita parque, plaza, golf o bosque pegado; plusvalía fuerte a 6 cuadras, comercio para familias y profesionistas, turistas $10/s), Rascacielos de oficinas 2×2 ($150k, $80/s fijos, comercio para profesionistas y estudiantes a 7 cuadras, gasta agua de 300 vecinos y su sombra baja la plusvalía hasta −6 a 3 cuadras), Estadio de Béisbol 3×3 ($120k; cada 8 min hay juego de 2 min con $90/s y +5% a familias y estudiantes, pero a 6 cuadras el estacionamiento se necesita ×2.5 y a 3 cuadras molesta a las familias), Plaza comercial 3×3 ($100k, $60/s, comercio para los tres grupos a 7 cuadras y estacionamiento; los negocios a 4 cuadras ganan 15% menos), Estación del Metro 2×2 ($200k, obra de 4 min con ruido; −30% de necesidad de estacionamiento en todo el Distrito y llegadas 30% más rápidas). Sus precios no suben con la inflación de negocios (`d.obra`), no cuentan como negocio (`isBiz`) y no se mejoran. Dibujos en `art/new5.js`; revisados en los 4 giros.
+  - Encargos que las abren (aparecen desde 3,000 vecinos y tienen prioridad sobre los encargos viejos pendientes): Pulmón del Distrito (Barrio, 3,000: 25 parques, plazas o golf —sin dog parks— y 3 calles con 5 o más) → Bosque; Noche de museos (Barrio, 3,200: 2 Cines en nivel 3; solo sale si el Cine ya está abierto) → Museo; Hora pico (Vecinos, 3,400: 400 profesionistas al 70% durante 2 min) → Rascacielos; Tarde de pelota (Reto, 3,700: los tres grupos ≥65% y estacionamiento ≥70% durante 8 min, con 15 min de límite; si falla vuelve en 15 min) → Estadio; Calle comercial (Barrio, 4,100: 8 tipos de negocio distintos en una calle, 3 de esos tipos con uno en nivel 4) → Plaza comercial; Hora de salida (Vecinos, 4,600: 4,500 vecinos, estacionamiento ≥80% y sin números rojos durante 10 min) → Metro. El panel muestra el avance de cada condición. Los primeros números (15 áreas verdes, 80% y 75%) se ajustaron tras medir.
+  - Medición con bots (12 partidas de 4 a 9 h): ningún bot cumple los encargos grandes. En sus ciudades de 3,000–4,400 vecinos el grupo más contento llega a ~55–58% y casi no construyen cines ni calles comerciales, así que estos números miden lo que pide el encargo y no a un jugador humano bueno. Falta ver con jugadores reales si Hora pico (70%) y Tarde de pelota (65%) se pueden cumplir; si no, bajarlos 5 puntos. Visto de paso: sin tope de vecinos, 3 de 6 bots expertos se hunden en deuda entre las 4 y 9 h por fiestas de estudiantes y profesionistas enojados (no tiene que ver con v64; ya pasaba en v63 con uno de cada tres).
+  - Juice: las obras suben piso por piso (cimientos con varillas, luego la imagen terminada recortada a la altura del piso actual, losa, columnas, andamio con tablones y malla verde; lo bajo y ancho como el estadio o el bosque sube sin losa), y los pisos nuevos y las remodelaciones llevan andamio. Destello sobre el edificio al terminar una obra o un piso, y destello con confeti al subir de nivel. El Domo y las obras grandes se estrenan con un «momento»: la cámara viaja a la obra, cortinilla de cine con título, fuegos y confeti; en El Domo, cámara lenta de 2.5 s. Zoom suave: los niveles siguen siendo enteros (pixel art nítido), pero el cambio se anima con escala y se acerca hacia el cursor; la rueda acumula (sirve en trackpad) y en celular se puede pellizcar. Arrastre con inercia. «Menos movimiento» apaga la cámara lenta, el viaje de cámara, la inercia y la animación del zoom.
+  - Monkey test de 5,287 acciones (con y sin las obras abiertas) en laptop y celular, 0 errores; partida de v63 carga bien; Calidad baja, Alto contraste y Día de Muertos revisados; eslint sin variables sin definir.
+- **Encargos del Distrito y 7 edificios nuevos (v63)**, pasos 1–3 del plan «Distrito Domo — Misiones y obras grandes» (doc en Docs):
+  - Botón «Encargos» en la barra de arriba (★ en celular) desde 150 vecinos, con punto naranja cuando hay algo nuevo y «n ✓» cuando hay premios por cobrar. Panel con 3 encargos activos (Barrio, Vecinos, Reto), barra de avance, premio, «Cobrar» y «Cambiar» (gratis cada 5 min de juego).
+  - 18 encargos (`MIS` en el código). Ajustes tras medir con bots: «La foto del Domo» acepta parque o plaza a 2 cuadras; «Swing de domingo» 120 profesionistas al 65%; «Barrio parejo» 65%; «Clásico sin claxon» estacionamiento ≥80%; «Ola de calor» ≥60%; «Calle arbolada» pide 5 áreas verdes (parque, plaza o dog park) sobre la misma calle, porque las palmeras no se pueden construir; «Listos para crecer» da bono de 5 min de ingreso (mín. $40k) mientras no existan las obras grandes.
+  - Bonos = minutos de ingreso actual, con mínimo y tope de 3× el mínimo (para que partidas viejas grandes no reciban millones por encargos fáciles).
+  - Retos con evento (tormenta, Clásico, ola de calor): hacen que el siguiente evento sea ese, sin adelantarlo. Si fallan vuelven en 15 min; los demás retos en 5 min. «Agua a tiempo» solo aparece antes de 900 vecinos (o con torre) y si falla no vuelve. Los encargos usan su propio reloj (`S.mis.clk`).
+  - Premios especiales: +5% de satisfacción por 3 min; el siguiente Clásico deja 50% más; +4 de plusvalía permanente a los lados de la calle arbolada (`S.mis.pv`).
+  - Edificios nuevos, todos con 4 niveles y dibujo propio, solo se abren con su encargo (en la barra dicen «Encargo»): Barbería (Barber Barrio → Estética para caballeros → Barber Hipster → Spa for Men), Salón de uñas (Salón de uñas → Nail Art → Ponte Chula → Spa for Women; junto a un café, los dos +15%), Gimnasio 24 horas (Aparatos en el parque → Start Fit → Domo Box → Wellness Elite; con Oficinas a 3 cuadras +25%), Paletería (Carrito de paletas → Paletería de barrio → Nevería artesanal → Heladería del Domo; en ola de calor gana ×3 y da verde), Boliche 2×1 (Boliche de barrio → Boliche familiar → Boliche cósmico → Bowling Lounge; junto a café o restaurante +20%), Cine 2×1 (Cine de barrio → Cine de 4 salas → Multicinema → Cine VIP; con lluvia gana más) y Campo de tiro de golf 2×1 en Servicios (Campo de práctica → Driving range iluminado → Club de golf → Club campestre; verde 10, plusvalía alta). Los nombres de Paletería, Boliche, Cine y Golf los propuso Claude; Mauricio no los ha confirmado.
+  - Edificios de varias casillas generalizados a rectángulos (`DIM`, `DIMT`, `MULTI`, `toolFoot`): un 2×1 se pone a lo largo si cabe y si no, girado (`t.o=1`), prefiriendo la orientación con calle. En cada diagonal se dibujan primero los de varias casillas para que lo de enfrente quede encima. El arte de 2×1 usa un marco local (`LF`) y pone la fachada en la cara visible más larga (`longSide`), así se ve bien en los 4 giros.
+  - Arreglado: al cargar una partida se borraban todas las casillas «part»; ahora solo las de hitos retirados.
+  - Bots (12 partidas, reclaman premios y cambian encargos atorados tras 15 min): cumplen de 4 a 10 encargos; novatos se quedan en ~1,250 como antes; intermedios 1 de 3 llegan a 3,000 en 4 h; expertos 2 de 3; un muy experto llegó a 5,000 en 436 min y otro se hundió en deuda. El ruido entre semillas es grande; no se ve un cambio de dificultad claro frente a v62.
+  - **Arreglo v63.1**: la primera publicación de v63 se trababa en cuanto terminaba cualquier obra (`landed()` usaba la variable `sz` que se renombró al generalizar la huella). Se encontró porque `test/monkey.py` y `test/opts.py` tenían fija la ruta de `h61.html` y no probaban la versión nueva: ahora usan el archivo que se les pasa, y se comprobó que el monkey test sí detecta el error en la versión mala. También se revisó todo el código con eslint (`no-undef`): no quedan variables sin definir.
+  - Monkey test (ya sobre v63) de 2,600 acciones en laptop y celular, 0 errores; ciudad de 2,600 vecinos con los 7 edificios nuevos construidos desde la barra, sin errores; partida de v62 carga bien; Calidad baja, Alto contraste y Día de Muertos revisados.
+- **Colapso más suave y aviso de agua (v62)**, tras la medición de balance con bots de v61 (ver `distrito-domo-balance-v61.md`):
+  - El corte de agua y la falta de agua ya no se suman: cuenta el mayor de los dos (antes un corte con el agua ya corta restaba hasta −0.23).
+  - El éxodo por enojo es más lento con poca gente y crece con la población: `(.4−sat)·2.5·(.1+pop·.006)` (antes `pop·.03`).
+  - Los eventos llegan menos seguido con muchos terrenos: espera mínima de 90 s y −6 s por terreno (antes 60 s y −12 s).
+  - Números rojos: el castigo ya no salta de golpe a −0.08; crece con la deuda en proporción al tamaño del Distrito (`.08·min(1, deuda/(300+vecinos·5)) + min(.17, deuda/(1500+vecinos·25))`). Una deuda chica casi no se siente; una deuda grande sigue hundiendo.
+  - La Torre de agua se abre a 750 vecinos (antes 900). Avisos nuevos: a 250 vecinos del límite «El agua del Distrito alcanza para 1,000 vecinos y ya van 750. Construye una Torre de agua (pestaña Servicios) antes de que sea demasiado tarde…» y a 80 del límite «¡Ya casi no hay agua!». Se repiten con cada torre (2,000, 3,000…) y marcan la torre como Nueva.
+  - Resultados con bots: intermedios 6/6 llegan a 3,000 (en v61, 4 de 12) y expertos 9/9 en la primera ronda; muy expertos 5/6 se sostienen en 4,100–4,300 vecinos tras 8 h (ninguno llegó a 5,000) y 1 se hundió en deuda; descuidados (dejan de cuidar a los 2,500): 5 de 6 bajan a 2,100–2,900 y 1 se arruina (971 vecinos, −$239k). Se puede seguir perdiendo, pero ya no por un solo evento.
+  - Monkey test de 3,226 acciones en laptop y celular, 0 errores; Calidad baja, Alto contraste y Día de Muertos revisados.
+- **Plan de encargos y obras grandes**: documento «Distrito Domo — Misiones y obras grandes» (artifact de Docs). 18 encargos entre 150 y 3,000 vecinos (8 de Barrio, 4 de Vecinos, 6 Retos con reloj sin castigo), 3 activos a la vez; premios en bono proporcional al ingreso, efectos temporales o 7 edificios nuevos (Barbería, Salón de uñas, Boliche 2×1, Campo de tiro de golf 2×1, Cine 2×1, Paletería, Gimnasio 24 horas). Obras grandes de una pieza desde 3,000: Estadio de Béisbol 3×3, Museo del Domo 2×2, Rascacielos de oficinas 2×2, Bosque urbano 3×3, Plaza comercial 3×3, Estación del Metro 2×2. Orden: tablero con bonos → edificios chicos → soporte de varias casillas → obras grandes → medición con bots. Los pasos 1–3 quedaron en v63; falta el 4 (obras grandes). Preguntas abiertas: si el «1500» del golf era vecinos o precio, y si los retos fallados deben costar algo.
+- **Fase 2 de la ruta gráfica, vida (v61)**:
+  - Ventanas que se apagan de a poco: de noche cada edificio apaga sus ventanas en 4 pasos y a su propio ritmo (2 pasos con «Calidad baja» o en aparatos lentos). Al pasar de paso se libera la imagen anterior para no acumular memoria.
+  - Agua viva: chorro con gotas y ondas en la fuente del «Jardín con fuente» y de la «Plaza con fuente»; ondas y destellos en el «Parque con lago».
+  - Árboles y palmas que se mecen con el viento, más fuerte cuando llueve.
+  - Gente afuera de los negocios según la hora y la clientela: cafés en la mañana, restaurantes a la comida y la cena, bares de noche, Tomates casi todo el día. Se paran en la banqueta si la calle queda del lado visible; si no, en el frente del local. Con lluvia sacan paraguas. Hasta 4 por negocio (2 en aparatos lentos).
+  - Neón de los bares con zumbido y parpadeos ocasionales, cada letrero a su tiempo.
+  - Todo se apaga con «Menos movimiento» y casi todo con «Calidad baja».
+- **Camión urbano y tráiler en las avenidas (v61)**:
+  - Camión verde con parte trasera naranja, aire acondicionado en el techo, ventanas que se encienden de noche y letrero de ruta ámbar; uno por sentido en cada avenida.
+  - Tráiler con cabina roja, caja blanca con óxido, franjas reflejantes y escape cromado con humo; tres en total, sobre todo en la avenida de DeAcero.
+  - Faros con cono de luz y calaveras de noche. En cada carril el camión y el tráiler van a la misma velocidad y separados media avenida, para que nunca se encimen. Sin logos de marcas.
+- **Costo de la fase 2 en rendimiento**: celular lento con 10,000 vecinos de noche de 21 a 19 fps y de día de 31 a 26 fps; computadora 48 fps de noche. Memoria de imágenes ~53 MB. Monkey test de 2,961 acciones, 0 errores; Calidad baja, Alto contraste y Día de Muertos revisados.
+- **Torres de agua ilimitadas (v60)**: se quitó el máximo de 3 (antes el agua topaba en 4,000 vecinos y arriba había castigo permanente de hasta −0.16 de satisfacción sin forma de arreglarlo). Cada torre sigue surtiendo a 1,000 vecinos más y el precio sube 20% por cada una ($50k, $60k, $72k, $86k, $104k, $124k, $149k, $179k, $215k…), así que el costo es el freno natural.
+  - El aviso de agua ahora vuelve a salir cada vez que los vecinos rebasan el agua disponible (antes avisaba una sola vez).
+  - Las torres alternan 6 colores de franja (antes 4).
+  - Probado: 8 torres construidas = agua para 9,000; ciudades de 5,000 y 10,000 con agua suficiente mantienen su población en 2 minutos de juego sin castigo; monkey test de 2,798 acciones, 0 errores.
+- **Rendimiento con mucha población (v59)**, tras una prueba de estrés con ciudades de 5,000 a 20,000 vecinos (mapa completo comprado, 28 a 110 torres):
+  - No hubo crasheos ni errores en ningún caso (escritorio y celular simulado 4–6 veces más lento). El guardado pesa 39 KB y tarda ~1 ms aun con 20,000.
+  - Problemas encontrados: al atardecer se redibujaban de golpe todas las imágenes de edificios y el suelo (440 ms por redibujo en celular lento, 28 veces por atardecer); al girar la cámara se congelaba 4–5.6 s; se dibujaban edificios fuera de pantalla; y el respaldo de imágenes (`LASTSPR`) crecía sin límite con cada giro o piso nuevo (llegó a 193 MB de lienzos, riesgo real en iPhone).
+  - Arreglos: el suelo se redibuja por partes cuando solo cambia la hora (`gStep`, lienzo de reserva `GB`); las imágenes se arman con límite de tiempo por cuadro (`SPRDL`, `SPRBT`, mínimo 2 por cuadro); el contorno de cada edificio se calcula una vez y se reusa en los 4 niveles de noche (`OUTC`, tiras horizontales); solo se dibuja lo que cae en pantalla; `LASTSPR` tiene tope de 900 y el caché de transeúntes de 1,200; al girar se sueltan las imágenes de la orientación anterior; `lowMo` ya no consulta al sistema en cada llamada; modo ahorro automático (`AUTOLOW`) que apaga el fundido de noche si los cuadros pasan de ~42 ms y lo regresa al recuperarse.
+  - Resultados en celular lento a 10,000: atardecer de 10 a 19 fps, peor cuadro de 1,083 a 150–200 ms, cero cuadros de más de 250 ms (antes 52); de día de 21 a 31 fps; girar ya no congela (peor cuadro 0.35–0.47 s, los edificios se completan en 3–5 s); memoria de imágenes de ~77 a ~57 MB y pico de 193 a ~107 MB en la prueba larga.
+  - Los contornos reutilizados son idénticos salvo unos pixeles de tono (en el pádel el contorno del vidrio ahora es igual de día y de noche).
+- **Plusvalía por capas (v58)**, para que haya barrios de los 4 niveles y el nivel 4 no sea trivial:
+  - Cada edificio con plusvalía alimenta una sola capa: verde (parques, plaza, escuela, clínica, cancha, Domo, trofeos), comercio (negocios con clientela, `isBiz`), estacionamiento (estacionamientos, con `PARKVAL=[.12,3]` porque no tenían `val`) o dog park.
+  - VAL = .15 + .28·verde + .32·comercio + .15·estacionamiento + .10·dog park; cada capa satura con su propia exponencial (velocidades 4 / 16 / 60 / 40) y luego se resta lo negativo (avenida, fábrica).
+  - Umbrales `LVTH=[0,0,.55,.68,.84]` (antes .46 / .58 / .70). El texto de «Mejorar» se arma desde `LVTH`.
+  - Mejorar cuesta ×1.1 en barrio de nivel 2, ×1.25 en nivel 3 y ×1.5 en nivel 4 (`barrioMul`). `lvCost(t,i)` recibe el índice en los 7 lugares que lo llaman, incluido `drawDyn`.
+  - Resultados medidos: 3 parques .44 (nivel 1); + Tomates + estac. .62 (2); 2 Tomates + café + parque + estac. + dog park .73 (3); manzana completa .85–.87 (4); con los servicios en nivel 3, .93. Ciudad densa de 64 edificios: antes 38 podían llegar a 4, ahora el reparto es 34 / 21 / 9 / 0.
+  - La renta por plusvalía baja ~13% al inicio y ~9% en ciudad grande (menos facilidad, a propósito).
+  - El encargo original (escala sin calibrar, umbral .88) dejaba a todos en nivel 1 y hacía imposible el 4; se corrigió con las velocidades de saturación y el umbral .84 que Mauricio aprobó.
+  - Partidas viejas: conservan los niveles ya mejorados; al cargar sale un aviso único explicando el cambio. Con «Mejorar» activo el cuadro tarda 3.5 ms. Monkey test de 2,367 acciones, 0 errores.
+- **Niveles de Escuela, Clínica y Cancha (v57)**: cada uno tiene 4 niveles con dibujo propio. Se suben con «Mejorar» igual que los demás servicios (obra de 20 / 40 / 60 s).
+  - Escuela: Guardería → Escuela primaria → Colegio privado → Campus Domo. El Campus Domo es concreto aparente con un gran pórtico (a la UDEM), franja y arco naranja, y un edificio bajo de ladrillo entre prados (a la ASF).
+  - Cancha: Cancha de barrio → Cancha de pasto sintético → Unidad deportiva → Estadio de barrio. Mauricio eligió para el estadio la opción A, «tribunas en L»: dos tribunas escalonadas al fondo con afición, marcador en la esquina, vallas naranjas y dos torres de reflectores; la cancha queda al frente rodeada de concreto.
+  - Clínica: Consultorio Altusalud → Clínica con urgencias → Clínica de especialidades → Hospital Distrito. Los nombres de los niveles 2–4 los propuso Claude; Mauricio no los ha confirmado.
+  - Efecto por nivel: Escuela y Cancha cubren 30% más, como los otros servicios. La Clínica sube su bonus de satisfacción 30% por nivel (de .04 a .076 en nivel 4).
+  - Costo de mejora (a ~25 vecinos, antes del multiplicador de barrio): Escuela $4.7k / $9.4k / $15.8k; Clínica $9.6k / $19.2k / $32.1k; Cancha $1.3k / $2.6k / $4.3k.
+  - Partidas de v56: lo ya construido entra como nivel 1 (la clínica pasa a «Consultorio Altusalud»). Monkey test de 2,121 acciones, 0 errores.
+- **Escuela, Clínica y Cancha de fútbol (v56)**, en la pestaña Servicios:
+  - Escuela: $1,500, se desbloquea con 150 vecinos, máximo 2. Da verde a 5 cuadras y comercio para familias. Niños en el recreo (solo de día).
+  - Clínica: $3,000, se desbloquea con 400 vecinos, solo una. Da +0.04 de satisfacción a todo el Distrito. Ambulancia con torreta.
+  - Cancha: $400, se desbloquea con 80 vecinos, máximo 2. Da verde, comercio para familias y estacionamiento a 5 cuadras. Partido en vivo.
+  - Para que su comercio cuente se añadieron `escuela:['fam']` y `cancha:['fam']` a `LIKE`; los valores existentes no cambiaron. En una escena de prueba, el comercio de familias pasa de 0.07 a 0.36.
+  - Las animaciones se apagan con «Calidad baja» o «Menos movimiento».
+  - Queja nueva: con más de 800 vecinos y sin clínica, «ya urge una clínica», pero solo cuando no hay otra causa más concreta.
+  - La lista de comercio para familias en las quejas ahora menciona escuela y cancha.
+  - Probado: una partida vieja de v55 carga y los desbloquea; demoler devuelve $750 / $1,500 / $200; persisten al recargar; monkey test de 1,138 acciones, 0 errores.
+  - Ojo de balance: hacen el juego un poco más fácil (sobre todo la Cancha). Revisarlo junto con las misiones intermedias.
+- **Manita «¿Qué es?» (v55)**:
+  - Es la primera herramienta de la barra; también se toma con la tecla Esc. El cursor es una manita pixel.
+  - Al pasar sobre algo sale una etiqueta con el nombre y un dato: pisos y vecinos, ganancia y clientes, nivel o precio del terreno.
+  - Al tocar sale un mensaje con la plusvalía, qué la sube o la baja y qué le falta cerca. No construye ni gasta.
+  - Las partidas viejas la reciben solas. Monkey test: 1,117 acciones, 0 errores.
+- **Versión para itch.io**: el mismo juego en un `index.html` dentro de un .zip. Fuera de Claude guarda en el navegador, sin nube. Probado dentro de un iframe de 1280×720.
+- **Luz y cielo (v54)**, fase 1 de la ruta gráfica:
+  - Cielo continuo con 13 tonos por hora: amanecer rosado, mediodía, atardecer naranja y coral, anochecer morado, noche azul.
+  - Sol que sale y se pone del lado de donde vienen las sombras, con halo; luna llena de noche; 120 estrellas que titilan.
+  - Sierra Madre con bruma según la hora (la capa lejana toma el color del horizonte), borde encendido del lado del sol cuando está bajo, siluetas de Las Mitras y del cañón de La Huasteca, lucecitas de colonias en las faldas de noche y resplandor naranja de la zona metropolitana detrás de la sierra.
+  - Noche con tinte por hora (violeta en la tarde, azul profundo de noche) y halos de luz aditivos con textura en caché.
+  - Letreros de neón por tipo: rosa en bares, azul en cultura, oficinas y casetas, verde en pádel.
+  - El arco del Domo se enciende en naranja de noche.
+  - Faros de autos con cono de luz en la calle y calaveras rojas.
+  - Chimeneas de DeAcero con humo animado (se pinta después de la ciudad para que nada lo tape), foco rojo y resplandor del horno de noche.
+  - Avión que cruza el cielo (de noche solo sus luces) y parvadas al amanecer y al atardecer.
+  - Atajos nuevos: Shift+H adelanta la hora, Shift+F muestra el medidor de rendimiento (ms por cuadro, fps, luces y si está en modo ahorro).
+  - Medido con una ciudad densa: escritorio +0.3 ms de noche; celular con CPU ×4 +1.7 ms (de 15.2 a 16.9 ms de noche con lluvia). Monkey test: 1,821 acciones, 0 errores. Calidad baja, alto contraste y Día de Muertos revisados.
+- **Lista para presentar (v53)**, tras la auditoría de presentación (ver `distrito-domo-auditoria-presentacion.md`):
+  - Pantallas bajas (≤760 px de alto): barra, pestañas y botones compactos. Mapa en laptop 1366×768: de 360 a 434 px de alto (54% → 65%); 1280×600: 303 → 377; panel lateral 800×620: 250 → 332. Ya caben "?" y Pausa. Se quitó el margen del navegador que cortaba 8 px de la barra.
+  - Cámara con límite: el centro de la pantalla nunca sale del Distrito. Tecla C o doble clic en el cielo para centrar.
+  - Arranque: los negocios rinden ×1.6 hasta 150 vecinos y ×1.3 hasta 300 (se ve en el panel del dinero). Jugador típico sin crédito: de 84–246 a ~390–460 vecinos a los 20 min, y el Domo llega en el min 16–17.
+  - Atajos de presentador: Shift+D modo presentador (oculta Reiniciar), Shift+L tormenta, Shift+N 5:30 pm. Están en la Guía, sección Teclado.
+  - El mensaje solo se puede tocar si recomienda una pestaña; si no, los toques pasan al mapa. En celular ya no tapa la columna de botones.
+  - Celular horizontal: aviso "Gira tu celular".
+  - Pantalla de inicio: cabe en laptop; los consejos se pliegan en "¿Cómo se juega?" (abiertos en pantallas altas); "Jugar" más grande.
+  - Partidas de demostración (bandera `demo`): se cargan sin confirmar y nunca pisan la copia «anterior», así que «Recuperar anterior» regresa a la partida real.
+  - Registro mínimo de errores: los últimos 20 se guardan en el navegador y se ven en ⚙ Opciones.
+- **Mejoras accesibles y Guía (v45)**:
+  - Se quitaron los recargos acumulados.
+  - Mejorar negocio = base × [2.5, 4, 6] × (1 + vecinos/250); servicios = base × [3, 6, 10] × (1 + vecinos/500); vivienda = siguiente piso × [1.2, 1.8, 2.5], +1 piso y +25% renta por nivel.
+  - Experto ~3,450 vecinos, 3,000 en ~4 h 20 min; típico ~2,450, 2,000 en 1.5–2 h (medido antes de v58).
+- **Transeúntes nuevos (v44)**, **cafés (v43)**, **bares (v42)** y **restaurantes con 4 líneas (v41)** con nombres propios:
+  - Restaurantes: A Puesto de barbacoa → Lonchería El Huerco → Smash Burgers → Chochomos · B Pollos al carbón → El Pollo Pillo → Bison Mad Wings → Panacea · C Tacos a vapor → Tacos de asada → Asador La Pampa → La Regional · D Elotes asados → Sushi Troll → Mariscos el Mikas → Señora Katana.
+  - Bares: Micheladas/Clamatos/Litros/Depósito → Cantina Huasteca/Rey Bar/Billar Sultana/La Loquera Bar → Mezcalería Coyote/El Cacique Azteca/Bar 1800/Cervecería Lúpulo → Azotea Tupaz/Cuarzo Lounge/Huasteca Sky/Cúpula Bar.
+  - Cafés: Café de carrito → Jim Borbons → Alpha Brew → Dough · Churros Poncho → Starblocks → Prensa Negra → Galería Acero · Pan dulce → Panadería La Espiga → La Pastelería 89 → Éclair · Tamales → Nevería Ordóñez → Té y Matcha → Brunch Domo.
+- **Barra en pestañas y pausa (v40)**, **economía por clientela (v39)**, precios visibles, panel del dinero, monedas, jazz con repertorio, clima y noche viva, temporadas, pulido visual, victoria a los 3,000, guardado seguro, trofeos, Convertir en Torre, Torres de agua, terrenos, grupos de vecinos, efectos de sonido.
+
+## Ruta gráfica (siguientes fases)
+- Fase 0 pendiente: fuente pixel incrustada. En esta sesión no hubo red hacia npm, GitHub ni CDN; hace falta subir los archivos de Press Start 2P y VT323 (woff2 o ttf) para incrustarlos.
+- Fase 3 (juice): hecha en v64.
+- Fase 4, temporadas: Día de Muertos con veladoras en la capa de luces (arranca sola el 25 oct), reflejos en charcos y relámpagos, Navidad, 15 de septiembre a fondo.
+- Fase 5: modo foto y time-lapse al llegar a 3,000.
+- Detalle visto en pruebas: al amanecer las sombras de las torres son muy largas y se ven como bandas grises; suavizarlas.
+- Detalle de la fase 2: los coches todavía pueden atravesar al camión o al tráiler si van en el mismo carril (los coches ya se atravesaban entre sí antes). Se podría hacer que frenen detrás.
+
+## Ideas para después
+- Las obras grandes no tienen animación propia en vivo (el estadio en día de juego podría tener luces encendidas y afición moviéndose; el metro, un tren que pasa).
+- Al poner una obra grande, el juego solo dice que necesita terrenos libres; el plan pedía avisar qué habría que demoler.
+- Los bots casi no construyen los edificios nuevos (se abren tarde); si se quiere medir su efecto, darles una prioridad propia.
+- Torres de agua: si con muchas torres el precio (+20% cada una) se vuelve imposible arriba de ~15, considerar bajar el crecimiento o darle niveles a la torre.
+- El mapa de plusvalía (tecla V) podría mostrar qué capa le falta a cada terreno (verde, comercio, estacionamiento o dog park), ahora que el nivel 4 pide las cuatro.
+- Algo en qué gastar al final: ya propuesto en el plan de obras grandes.
+- Dibujos propios por línea para cafés y bares; cámara suave, modo foto, Navidad.
+- Texto de la Guía de la Caseta: dice «Da controla las fiestas…»; corregir la frase.
+- Confirmar con Mauricio los nombres de los niveles 2–4 de la Clínica.
