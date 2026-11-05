@@ -792,7 +792,7 @@ function face(g,side,u,v,du,dv,col,lit){
 /* ventana que se enciende de noche según una semilla */
 function win(g,side,u,v,du,dv,col){
   WC++;const h=Math.abs(Math.sin(SEED*12.9898+WC*78.233)*43758.5453)%1;
-  const lit=NIGHT>.2&&h<(NIGHT>.9?[.5,.38,.24][WLATE]:.46);
+  const lit=NIGHT>.2&&h<(NIGHT>.9?WLTH[WLATE]:.46);
   face(g,side,u,v,du,dv,lit?(h<.2?'#ffe9a8':'#ffc96b'):col,lit);
 }
 function pyramid(x0,y0,x1,y1,lift,h,cl,cr){
@@ -1858,7 +1858,11 @@ function drawNeed(gx,gy){
   circ(x,y-30,4.5,'#fff',true);px(x-.5,y-33,1,4,'#d64545',true);px(x-.5,y-28,1,1,'#d64545',true);
 }
 const CARS=[];{const r=rng(5),cc=['#d64545','#f4f4f4','#3a6ea5','#2b2b2b','#9aa0a8','#e0b03b','#f26a21'];
-  for(const row of [OFF,OFF+12])for(let k=0;k<7;k++){const dir=k%2?1:-1;CARS.push({row,lane:dir>0?.32:.68,dir,sp:1.2+r()*1.2,off:r()*N,c:cc[Math.floor(r()*cc.length)]})}}
+  for(const row of [OFF,OFF+12])for(let k=0;k<7;k++){const dir=k%2?1:-1;CARS.push({row,lane:dir>0?.32:.68,dir,sp:1.2+r()*1.2,off:r()*N,c:cc[Math.floor(r()*cc.length)]})}
+  // camiones urbanos (verde y naranja) en las dos avenidas y tráileres rumbo a DeAcero por la de abajo; van más lento que los coches
+  // en cada carril, el camión y el tráiler van a la misma velocidad y a media avenida de distancia: así nunca se enciman
+  for(const row of [OFF,OFF+12])for(const dir of [1,-1]){const o=r()*N,sp=.82+r()*.1,tr=row===OFF+12||dir<0;
+    CARS.push({row,lane:dir>0?.32:.68,dir,sp,off:o,type:'bus'});if(tr)CARS.push({row,lane:dir>0?.32:.68,dir,sp,off:o+N/2,type:'trailer'})}}
 const CARC=new Map();
 function carSprite(col,nb){const key=`${col}|${ROT}|${nb}|${RES}`;let sp=CARC.get(key);if(sp)return sp;
   const w=36,h=26,c=mkCanvas(w,h),pc=ctx,po={ox:cam.ox,oy:cam.oy},pn=NIGHT,pnc=NCOL;ctx=hdctx(c,false);
@@ -1866,7 +1870,61 @@ function carSprite(col,nb){const key=`${col}|${ROT}|${nb}|${RES}`;let sp=CARC.ge
   try{const x0=.28,y0=.39;box(x0,y0,x0+.44,y0+.22,0,3,col,shade(col,-.15),shade(col,-.3));box(x0+.1,y0+.03,x0+.32,y0+.19,3,2,'#2b3a4d','#22303f','#1a2633')}
   finally{ctx=pc;cam.ox=po.ox;cam.oy=po.oy;NIGHT=pn;NCOL=pnc}
   sp={c,ax:w/2,ay:h-8};if(CARC.size>160)CARC.clear();CARC.set(key,sp);return sp}
+/* camión urbano y tráiler: se arman con cajas y caras laterales; los detalles solo se pintan en las caras que se ven */
+const VEH={bus:{L:1.15,W:.28},trailer:{L:1.56,W:.28}};
+function vq(ax,ay,bx,by,v0,v1,col,lit){poly([up(P(ax,ay),v0),up(P(bx,by),v0),up(P(bx,by),v1),up(P(ax,ay),v1)],col,lit)}
+function seen(nx,ny){const a=rot(.5+nx,.5+ny),b=rot(.5,.5);return (a[0]-b[0])+(a[1]-b[1])>.001}
+function wheel(fx,fy){const [x,y]=P(fx,fy);ellipse(x,y-1,1.5,1.3,'#1c1c1c');px(x-.5,y-1.5,1,.8,'#8a9099')}
+function vehBus(dir){const {L,W}=VEH.bus,H=8.4,x0=.5-L/2,x1=.5+L/2,y0=.5-W/2,y1=.5+W/2,fr=dir>0?x1:x0,bk=dir>0?x0:x1,on=NIGHT>.4;
+  for(const yy of [y0,y1])for(const f of [.2,.78]){const xx=bk+(fr-bk)*f;wheel(xx,yy)}
+  box(x0,y0,x1,y1,1,H-1,'#8fdc7a','#33b24c','#279a3e');
+  for(const [ys,n] of [[y1,1],[y0,-1]]){if(!seen(0,n))continue;
+    vq(x0,ys,x1,ys,1,2.4,'#1f7a34');const rx=bk+(fr-bk)*.16;vq(bk,ys,rx,ys,1,H,'#f08a24');vq(bk,ys,rx,ys,1,2.4,'#c96a14');
+    const w0=bk+(fr-bk)*.2,w1=bk+(fr-bk)*.9;vq(w0,ys,w1,ys,4.2,7.3,on?'#ffe2a0':'#1d2a33',on);
+    for(let k=1;k<6;k++){const q=w0+(w1-w0)*k/6;vq(q,ys,q+(fr-bk)*.012,ys,4.2,7.3,'#279a3e')}
+    const d0=bk+(fr-bk)*.55;vq(d0,ys,d0+(fr-bk)*.08,ys,1.2,7.3,'#1d2a33');const d1=bk+(fr-bk)*.9;vq(d1,ys,d1+(fr-bk)*.07,ys,1.2,7.3,'#1d2a33')}
+  const nf=dir>0?1:-1;
+  if(seen(nf,0)){vq(fr,y0,fr,y1,3.4,7.4,'#2a3f55');vq(fr,y0,fr,y1,7.4,8.3,'#ffb43a',on||true);vq(fr,y0+.03,fr,y0+.07,1.6,2.4,'#f4f4f4',true);vq(fr,y1-.07,fr,y1-.03,1.6,2.4,'#f4f4f4',true)}
+  if(seen(-nf,0)){vq(bk,y0,bk,y1,1,H,'#f08a24');vq(bk,y0+.04,bk,y1-.04,4.6,7,'#1d2a33');vq(bk,y0+.02,bk,y0+.06,1.8,3.2,'#d62828',true);vq(bk,y1-.06,bk,y1-.02,1.8,3.2,'#d62828',true)}
+  const c0=.5-.12,c1=.5+.12;box(c0,y0+.06,c1,y1-.06,H,1.1,'#f6b46a','#f08a24','#c96a14')}
+function vehTrailer(dir){const {L,W}=VEH.trailer,x0=.5-L/2,x1=.5+L/2,y0=.5-W/2,y1=.5+W/2,fr=dir>0?x1:x0,bk=dir>0?x0:x1,sg=dir>0?1:-1,on=NIGHT>.4;
+  const cabL=.34,cab0=fr-sg*cabL,tr1=cab0-sg*.04,H=10.5;
+  for(const yy of [y0,y1]){for(const f of [.06,.14,.62,.7])wheel(bk+(fr-bk)*f,yy);wheel(fr-sg*.07,yy)}
+  // caja del remolque: blanca con óxido
+  const tx0=Math.min(bk,tr1),tx1=Math.max(bk,tr1);box(tx0,y0,tx1,y1,1.8,H-1.8,'#ece7dc','#d9d2c4','#bdb4a3');
+  for(const [ys,n] of [[y1,1],[y0,-1]]){if(!seen(0,n))continue;
+    for(let k=1;k<9;k++){const q=tx0+(tx1-tx0)*k/9;vq(q,ys,q+.006,ys,2,H-.4,'#c4bcab')}
+    for(const [f,h0,h1] of [[.12,4,9],[.33,2.4,6],[.5,6,10],[.71,2.2,4.6],[.86,5,8.6]]){const q=tx0+(tx1-tx0)*f;vq(q,ys,q+.03,ys,h0,h1,'#a86a3a')}
+    vq(tx0,ys,tx1,ys,1.8,2.8,'#9a8f7c');for(let k=0;k<7;k++){const q=tx0+(tx1-tx0)*(k+.3)/7;vq(q,ys,q+.05,ys,2.1,2.5,k%2?'#d62828':'#f4f4f4',on)}}
+  if(seen(-sg,0)){vq(bk,y0,bk,y1,1.8,H,'#d9d2c4');vq(bk,(y0+y1)/2-.004,bk,(y0+y1)/2+.004,1.8,H,'#9a8f7c');vq(bk,y0+.02,bk,y0+.06,2,3,'#d62828',true);vq(bk,y1-.06,bk,y1-.02,2,3,'#d62828',true)}
+  // cabina roja: cofre bajo y cabina alta
+  const ca=Math.min(cab0,fr),cb2=Math.max(cab0,fr),hood=fr-sg*.13,ha=Math.min(hood,fr),hb=Math.max(hood,fr),ka=Math.min(cab0,hood),kb=Math.max(cab0,hood);
+  box(ka,y0,kb,y1,1.2,7.4,'#d0634a','#b8442e','#963622');box(ha,y0+.01,hb,y1-.01,1.2,4.4,'#d0634a','#b8442e','#963622');
+  box(ka+(sg>0?0:.04),y0+.02,kb-(sg>0?.04:0),y1-.02,8.6,1.6,'#a88a6a','#8a6a4a','#6a4e34');
+  for(const [ys,n] of [[y1,1],[y0,-1]]){if(!seen(0,n))continue;const a=cab0+sg*.04,b=hood-sg*.03;vq(a,ys,b,ys,5.2,7.6,on?'#ffe2a0':'#22404f',on);vq(ka,ys,kb,ys,1.2,1.8,'#c9cdd2');vq(cab0+sg*.06,ys,cab0+sg*.1,ys,3,4,'#f4f4f4')}
+  if(seen(sg,0)){vq(fr,y0+.03,fr,y1-.03,1.8,4.2,'#c9cdd2');for(let k=0;k<5;k++){const yy=y0+.06+k*.035;vq(fr,yy,fr,yy+.012,2,4,'#6b7078')}vq(fr,y0+.01,fr,y1-.01,1.2,1.8,'#9aa0a8');
+    vq(fr,y0+.02,fr,y0+.05,2.6,3.2,'#ffe9b0',true);vq(fr,y1-.05,fr,y1-.02,2.6,3.2,'#ffe9b0',true);vq(hood,y0,hood,y1,5.2,7.6,on?'#ffe2a0':'#22404f',on)}
+  // escape cromado detrás de la cabina
+  {const [x,y]=P(cab0-sg*.02,y1+.01);px(x-.5,y-12.6,1,11.4,'#c9cdd2');px(x-.5,y-12.6,1,1,'#8a9099')}}
+const VEHC=new Map();
+function vehSprite(type,dir,nb){const key=`${type}|${dir}|${ROT}|${nb}|${RES}`;let sp=VEHC.get(key);if(sp)return sp;
+  const w=84,h=52,c=mkCanvas(w,h),pc=ctx,po={ox:cam.ox,oy:cam.oy},pn=NIGHT,pnc=NCOL;ctx=hdctx(c);
+  const [rx,ry]=rot(.5,.5);cam.ox=w/2-(rx-ry)*TW/2;cam.oy=h-12-(rx+ry)*TH/2;NIGHT=nb;NCOL=ncol(nb);
+  try{type==='bus'?vehBus(dir):vehTrailer(dir);outline(ctx,1)}catch(e){console.warn('vehículo',type,e)}finally{ctx=pc;cam.ox=po.ox;cam.oy=po.oy;NIGHT=pn;NCOL=pnc}
+  sp={c,ax:w/2,ay:h-12};if(VEHC.size>96)VEHC.clear();VEHC.set(key,sp);return sp}
+function drawBig(c){const [cx,cy]=P(c.fx,c.fy),V=VEH[c.type];
+  ellipse(cx,cy+1,V.L*13,V.L*5,'rgba(0,0,0,.18)',true);
+  const s1=vehSprite(c.type,c.dir,NLO);ctx.drawImage(s1.c,rr(cx-s1.ax),rr(cy-s1.ay),s1.c.width/RES,s1.c.height/RES);
+  if(NFR){const s2=vehSprite(c.type,c.dir,NHI);ctx.globalAlpha=NFR;ctx.drawImage(s2.c,rr(cx-s2.ax),rr(cy-s2.ay),s2.c.width/RES,s2.c.height/RES);ctx.globalAlpha=1}
+  const half=V.L/2,fxF=c.fx+c.dir*half,fxB=c.fx-c.dir*half;
+  if(NIGHT>.3){const [x,y]=P(fxF,c.fy),[ax,ay]=P(fxF+c.dir*.7,c.fy),[bx,by]=P(fxB,c.fy);glow(x,y-3,6,.8,'#fff1c8');
+    if(!OPT.low){const ga=ctx.globalAlpha;ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=Math.min(1,.55*NIGHT)*ga;ctx.translate((x+ax)/2,(y+ay)/2);ctx.rotate(Math.atan2(ay-y,ax-x));ctx.drawImage(gtex('#ffe3a6'),-14,-4.5,28,9);ctx.restore()}
+    glow(bx,by-3,3,.7,'#ff3b2f');if(c.type==='bus'){const [sx,sy]=P(fxF,c.fy);glow(sx,sy-8,4,.6,'#ffb43a')}}
+  // humo del tráiler
+  if(c.type==='trailer'&&!lowMo()&&!OPT.low){const sg=c.dir,[x,y]=P(c.fx+sg*(half-.34)-sg*.02,c.fy+.15),col=mx('#8a8a8a','#4a4e66',NIGHT*.8);
+    for(let k=0;k<4;k++){const p=((T*.9+k/4+c.sp*7)%1),a=(1-p)*.42;ctx.globalAlpha=a;ctx.fillStyle=col;ctx.beginPath();ctx.arc(x-sg*p*9,y-13-p*7,1+p*2.6,0,7);ctx.fill()}ctx.globalAlpha=1}}
 function drawCar(c){
+  if(c.type){drawBig(c);return}
   const x0=c.fx-.22,y0=c.fy-.11,[cx,cy]=P(c.fx,c.fy);
   const s1=carSprite(c.c,NLO);ctx.drawImage(s1.c,rr(cx-s1.ax),rr(cy-s1.ay),s1.c.width/RES,s1.c.height/RES);
   if(NFR){const s2=carSprite(c.c,NHI);ctx.globalAlpha=NFR;ctx.drawImage(s2.c,rr(cx-s2.ax),rr(cy-s2.ay),s2.c.width/RES,s2.c.height/RES);ctx.globalAlpha=1}
@@ -2047,9 +2105,41 @@ function liveSvc(t,gx,gy){const still=lowMo()||OPT.low,L=lvOf(t);
     const M=L===4?(u=>.25+u*.72):(u=>u);for(let k=0;k<n;k++){const team=k%2,tx=gx+M((team?.62:.38)+Math.sin(ph*1.1+k)*.22+(bx-.5)*.4),ty=gy+M(.2+(k>>1)*(.6/Math.ceil(n/2))+Math.cos(ph*.9+k)*.06),[x,y]=P(tx,ty);kid(x,y,L===1?(team?'#f4f4f4':'#59cd90'):team?'#d62828':'#2f6db5',Math.floor(T*6+k)%2)}
     const [x,y]=P(gx+M(bx),gy+M(by));px(x-.6,y-1.2-hop,1.4,1.4,'#ffffff',true);px(x-.2,y-.8-hop,.6,.6,'#2b2b2b',true);return}
   if(t.k==='clinica'&&L>1){const [x,y]=P(gx+.8,gy+.75),b=still?0:Math.floor(T*3)%2;px(x-1.4,y-5.4,1.2,.8,b?'#ff3b2f':'#7a1a14',true);px(x+.2,y-5.4,1.2,.8,b?'#2f6dff':'#ff3b2f',true);if(NIGHT>.2)glow(x,y-5,6,.6,b?'#4a7bff':'#ff4a3a')}}
+/* agua viva: chorros de las fuentes y ondas en el lago */
+function liveWater(t,gx,gy){if(lowMo()||OPT.low||t.b>0||t.lu>0)return;const L=lvOf(t);
+  let src=null;if(t.k==='parque'&&L===3)src=[.5,.5,-6,6,2.6];else if(t.k==='plaza'&&L===2)src=[.5,.5,-8.5,8,2];
+  if(src){const [x,y]=P(gx+src[0],gy+src[1]),top=y+src[2];
+    for(let k=0;k<10;k++){const p=(T*1.1+k/10)%1,an=k*2.4+Math.floor((T*1.1+k/10))*1.3,r=p*src[4]*1.4,dx=Math.cos(an)*r,dy=Math.sin(an)*r*.5,h=Math.sin(p*Math.PI)*2.2-p*p*(-src[2]-2.5);
+      px(x+dx-.3,top-h+dy+2,.7,.7,p<.5?'#e8f7ff':'#bfe6ff')}
+    const pr=(T*.7)%1,rx=2+pr*(src[3]-2);for(let k=0;k<10;k++){const an=k/10*Math.PI*2;px(x+Math.cos(an)*rx-.3,y-.5+Math.sin(an)*rx*.5,.7,.5,`rgba(220,245,255,${(.7*(1-pr)).toFixed(2)})`)}}
+  if(t.k==='parque'&&L===4){const [x,y]=P(gx+.54,gy+.56);
+    for(let q=0;q<2;q++){const pr=(T*.45+q*.5)%1,ox=Math.sin(q*7.3+Math.floor(T*.45+q*.5)*2.1)*4,oy=Math.cos(q*3.1+Math.floor(T*.45+q*.5)*1.7)*1.5,rx=.8+pr*4;
+      for(let k=0;k<12;k++){const an=k/12*Math.PI*2;px(x+ox+Math.cos(an)*rx-.3,y+oy+Math.sin(an)*rx*.5,.6,.4,`rgba(210,240,255,${(.65*(1-pr)).toFixed(2)})`)}}
+    if(NIGHT<.5)for(let k=0;k<4;k++){const ph=(T*.6+k*.37)%1;if(ph<.5){const a=Math.sin(ph*2*Math.PI);px(x-6+k*3.6+Math.sin(T+k)*1.2,y-1+((k*5)%3)-1,1,.5,`rgba(255,255,255,${a.toFixed(2)})`)}}}}
+/* gente afuera de cafés, restaurantes, bares y Tomates: depende de la hora y de cuántos clientes tiene el negocio */
+const VIS=new Map();
+function visitorsOf(t,i){const ph=S.clock/DAY,k=t.k;let w=0;
+  if(k==='cafe')w=ph<.22?1:ph<.45?.45:ph>.88?.4:0;else if(k==='resto')w=(ph>.24&&ph<.37)||(ph>.5&&ph<.68)?1:.15;else if(k==='bar')w=ph>.52&&ph<.92?1:0;else if(k==='tomates')w=ph<.92&&ph>.0?.45:0;
+  if(!w||t.b>0||t.lu>0)return 0;const e=EARN.get(i),cu=e?e.cust||0:0;return Math.min(OPT.low||AUTOLOW?2:4,Math.round(w*(1.6+Math.min(2.4,cu/30))))}
+function visitor(i,k,kind){const key=i*8+k;let v=VIS.get(key);if(v)return v;const h=n=>((Math.sin((key+1)*(n+3)*12.9898)*43758.5453)%1+1)%1;
+  v={wid:'v'+key,ph:h(1)*9,c:SHIRTS[Math.floor(h(2)*SHIRTS.length)],skin:SKIN[Math.floor(h(3)*4)],kind,noisy:kind==='est'&&h(4)<.3,dog:h(5)<.15&&kind!=='est'?(h(6)<.5?'#8a5a2b':'#e8c07a'):null};
+  if(VIS.size>800)VIS.clear();VIS.set(key,v);return v}
+// dónde se paran: en la banqueta si la calle queda del lado que se ve; si no, en el frente del local
+const VSIDE={a:[[.64,-.24,-1,true],[.64,-.06,1,false],[.64,.14,-1,true],[.64,.3,1,false]],b:[[-.24,.64,1,true],[-.06,.64,-1,false],[.14,.64,1,true],[.3,.64,-1,false]],
+  c:[[.36,.42,-1,true],[.44,.33,1,false],[.42,.46,1,true],[.33,.44,-1,false]]};
+function vslots(gx,gy){const [a,b]=rot(gx+.5,gy+.5),bk=(4-ROT)%4,st=(u,v)=>{const w=rot(a+u,b+v,bk),x=Math.floor(w[0]),y=Math.floor(w[1]);if(!inb(x,y))return false;const q=S.g[idx(x,y)];return q.k==='calle'&&!q.hw};
+  return st(1,0)?VSIDE.a:st(0,1)?VSIDE.b:VSIDE.c}
+function drawVisitors(t,gx,gy){const i=idx(gx,gy),n=visitorsOf(t,i);if(!n)return;const G=LIKE[t.k]||['pro'],rain=WXA>.3,[a,b]=rot(gx+.5,gy+.5),nbv=NIGHT>.5?1:0;
+  const SL=vslots(gx,gy);for(let k=0;k<n;k++){const sl=SL[k],v=visitor(i,k,G[k%G.length]),wp=rot(a+sl[0],b+sl[1],(4-ROT)%4),[X,Y]=P(wp[0],wp[1]),bob=lowMo()?0:(Math.floor(T*1.3+v.ph)%5===0?.5:0);
+    ellipse(X+.5,Y+.2,2.4,.8,'rgba(0,0,0,.2)',true);
+    const keyS=v.wid+'|s|'+sl[2]+'|'+sl[3]+'|'+nbv+'|'+(rain?1:0)+'|'+RES;let sp=WSPR.get(keyS);
+    if(!sp){if(WBUD<=0)continue;WBUD--;if(WSPR.size>1200)WSPR.clear();const CW=30,CH=30,c=mkCanvas(CW,CH),pc=ctx,pn=NIGHT,pnc=NCOL,pg=GLOWS;ctx=hdctx(c);NIGHT=nbv;NCOL=ncol(nbv);GLOWS=[];
+      try{drawPerson(v,15,CH-3,sl[2],sl[3],0,rain);outline(ctx,1)}catch(e){}finally{GLOWS=pg;ctx=pc;NIGHT=pn;NCOL=pnc}sp={c,ax:15,ay:CH-3};WSPR.set(keyS,sp)}
+    ctx.drawImage(sp.c,Math.round((X-sp.ax)*RES)/RES,Math.round((Y-bob-sp.ay)*RES)/RES,sp.c.width/RES,sp.c.height/RES)}}
 /* partes animadas: se dibujan en vivo encima de la imagen guardada */
 function drawDyn(t,gx,gy){
   const s=t.s;if(SEASON_C)seasonDeco(t,gx,gy);
+  if(t.k==='parque'||t.k==='plaza')liveWater(t,gx,gy);else if(t.k==='cafe'||t.k==='resto'||t.k==='bar'||t.k==='tomates')drawVisitors(t,gx,gy);
   if((t.k==='escuela'||t.k==='cancha'||t.k==='clinica')&&!(t.b>0))liveSvc(t,gx,gy);
   if(t.k==='dogpark'){const L=lvOf(t),cx=[0,.5,.6,.68,.72][L],cy=[0,.5,.58,.68,.4][L],rr2=[0,.26,.2,.16,.13][L];for(let k=0;k<2;k++){const an=T*(1.2+k*.5)+k*3+s,fx=gx+cx+Math.cos(an)*rr2,fy=gy+cy+Math.sin(an)*rr2,[x,y]=P(fx,fy),dir=Math.cos(an+Math.PI/2)>0?1:-1,c=k?'#e8c07a':'#4a3526';
     px(x-2,y-3,4,2,c);px(x+(dir>0?2:-3),y-4,2,2,c);px(x-2,y-1,1,1,'#333');px(x+1,y-1,1,1,'#333');px(x+(dir>0?-3:2),y-4,1,1,c)}}
@@ -2073,7 +2163,11 @@ function drawDyn(t,gx,gy){
 const CHIM_H=58,chimney=(gx,gy)=>gy===OFF+15&&gx%7===3;
 const SPH={escuela:84,clinica:92,cancha:72,mirador:104,teleferico:110,torre:200,edificio:116,ladrillo:116,oficinas:112,tanque:120,torreagua:120,domo:70,fabrica:40,calle:40,arbol:40,ajeno:44,lotedomo:44};
 // caché por nivel de noche: solo 4 niveles (día, tarde, anochecer, noche) y se funden dos a la vez
-let WLATE=0;
+let WLATE=0,WLPH=-1;
+// de noche las ventanas se apagan por pasos y cada edificio va a su ritmo: así se ven apagarse de a poco y no todas a la vez.
+// 4 pasos normalmente; 2 en «Calidad baja» o si el aparato va lento (cada paso obliga a redibujar el edificio)
+const WLTH=[.5,.4,.31,.22];
+function wlOf(i){if(WLPH<0)return 0;const st=OPT.low||AUTOLOW?2:4,o=((Math.sin(i*12.9898)*43758.5453)%1+1)%1,k=Math.max(0,Math.min(st-1,Math.floor(WLPH*(st+.6)-o*1.4)));return st===4?k:k*3}
 const SPRL=new Map(),SPR={clear(){SPRL.clear();OUTC.clear()}},LASTSPR=new Map();let sprBudget=0,SPRDL=0,SPRFORCE=0,SPRBT=0;
 // contorno de cada edificio: depende solo de su forma, así que se calcula una vez y se reusa en los cuatro niveles de noche
 const OUTC=new Map(),LASTMAX=900;
@@ -2103,7 +2197,7 @@ function makeSprite(t,gx,gy,nb,okey){
   return {c,ax,ay,glows};
 }
 function getSprite(t,gx,gy,i,nb,ghost){
-  const base=`${i}|${t.k}|${t.s}|${t.f||0}|${t.lv||1}|${ROT}|${ghost?'g':''}|${nb===1?WLATE:0}`;
+  const wl=nb===1?wlOf(i):0,base=`${i}|${t.k}|${t.s}|${t.f||0}|${t.lv||1}|${ROT}|${ghost?'g':''}|${wl}`;
   let M=SPRL.get(nb);if(!M){M=new Map();SPRL.set(nb,M)}
   let sp=M.get(base);if(sp)return sp;
   const last=LASTSPR.get(base);
@@ -2111,15 +2205,23 @@ function getSprite(t,gx,gy,i,nb,ghost){
   // lo que ya tiene imagen anterior espera turno; lo que no tiene (recién girado) se arma con hasta ~35 ms de trabajo por cuadro y al menos dos por cuadro
   if(last){if(sprBudget<=0||performance.now()>SPRDL)return last}else if(SPRBT>35){if(SPRFORCE<=0)return null;SPRFORCE--}
   sprBudget--;if(M.size>1600)M.clear();
-  {const t0=performance.now();sp=makeSprite(t,gx,gy,nb,base.slice(0,base.lastIndexOf('|')));SPRBT+=performance.now()-t0}M.set(base,sp);
+  {const t0=performance.now(),pw=WLATE,pre=base.slice(0,base.lastIndexOf('|'));WLATE=wl;try{sp=makeSprite(t,gx,gy,nb,pre)}finally{WLATE=pw}SPRBT+=performance.now()-t0;if(wl)for(let q=0;q<wl;q++){const ok=pre+'|'+q;M.delete(ok);LASTSPR.delete(ok)}}M.set(base,sp);
   // respaldo con tope: se queda la imagen más reciente de cada cosa; las de giros o pisos viejos se van saliendo (antes crecía sin límite)
   LASTSPR.delete(base);LASTSPR.set(base,sp);if(LASTSPR.size>LASTMAX){const it=LASTSPR.keys();for(let k=LASTSPR.size-LASTMAX;k>0;k--)LASTSPR.delete(it.next().value)}return sp;
 }
-function drawSprite(sp,gx,gy,sz=1,ng){const [cx,cy]=P(gx+sz/2,gy+sz/2);ctx.drawImage(sp.c,rr(cx-sp.ax),rr(cy-sp.ay),sp.c.width/RES,sp.c.height/RES);if(!ng)for(const g of sp.glows)glow(cx+g[0],cy+g[1],g[2],g[3],g[4])}
-function drawSprN(t,gx,gy,i,sz,a,ghost){const s1=getSprite(t,gx,gy,i,NLO,ghost);if(!s1)return;ctx.globalAlpha=a;
-  if(!NFR){drawSprite(s1,gx,gy,sz);return}
-  drawSprite(s1,gx,gy,sz,true);const s2=getSprite(t,gx,gy,i,NHI,ghost);if(s2&&s2!==s1){ctx.globalAlpha=a*NFR;drawSprite(s2,gx,gy,sz,true);ctx.globalAlpha=a}
-  const [cx,cy]=P(gx+sz/2,gy+sz/2);for(const g of s1.glows)glow(cx+g[0],cy+g[1],g[2],g[3],g[4])}
+// neón de los bares: zumbido leve y de vez en cuando un parpadeo; cada letrero a su tiempo
+function neonF(c,x,y){if(c!=='#ff6fae'||lowMo())return 1;const h=((Math.sin(x*12.9898+y*78.233)*43758.5)%1+1)%1,t=(T*.5+h*13)%9;if(t<.12)return .08;if(t<.2)return 1;if(t<.3)return .25;return .9+.1*Math.sin(T*40+h*9)}
+// viento: árboles y palmas se mecen; con lluvia, más fuerte
+function swayOf(t,gx,gy){if(lowMo()||OPT.low||AUTOLOW)return 0;const k=t.k;if(!(k==='arbol'||k==='palma'||(k==='ajeno'&&t.s%9===0&&!Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy))))return 0;
+  const w=WXA>0?.05+.04*WXA:.018;return w*Math.sin(T*1.7+gx*.9+gy*1.7)+w*.45*Math.sin(T*3.3+gx*2.3+gy*.7)}
+function drawSprite(sp,gx,gy,sz=1,ng,sh){const [cx,cy]=P(gx+sz/2,gy+sz/2);
+  if(sh){ctx.save();ctx.translate(rr(cx),rr(cy));ctx.transform(1,0,sh,1,0,0);ctx.drawImage(sp.c,-sp.ax,-sp.ay,sp.c.width/RES,sp.c.height/RES);ctx.restore()}
+  else ctx.drawImage(sp.c,rr(cx-sp.ax),rr(cy-sp.ay),sp.c.width/RES,sp.c.height/RES);
+  if(!ng)for(const g of sp.glows)glow(cx+g[0],cy+g[1],g[2],g[3]*neonF(g[4],cx,cy),g[4])}
+function drawSprN(t,gx,gy,i,sz,a,ghost){const s1=getSprite(t,gx,gy,i,NLO,ghost);if(!s1)return;ctx.globalAlpha=a;const sh=ghost?0:swayOf(t,gx,gy);
+  if(!NFR){drawSprite(s1,gx,gy,sz,false,sh);return}
+  drawSprite(s1,gx,gy,sz,true,sh);const s2=getSprite(t,gx,gy,i,NHI,ghost);if(s2&&s2!==s1){ctx.globalAlpha=a*NFR;drawSprite(s2,gx,gy,sz,true,sh);ctx.globalAlpha=a}
+  const [cx,cy]=P(gx+sz/2,gy+sz/2);for(const g of s1.glows)glow(cx+g[0],cy+g[1],g[2],g[3]*neonF(g[4],cx,cy),g[4])}
 /* sombras: altura y huella de cada cosa */
 function shadowOf(t){const k=t.k;
   if(k==='edificio'||k==='ladrillo')return [.1,(t.f||3)*7+3];if(k==='torre')return [.16,(t.f||16)*6+3];
@@ -2171,7 +2273,7 @@ function groundLayer(nb,ph){
 function tileFill(pts){rasterPoly(pts)}
 function render(){
   const ph=S.clock/DAY;NIGHT=keyf(NF,ph);NCOL=ncol(NIGHT);LIGHTN=0;
-  SEASON_C=SEASON();const nb=Math.round(NIGHT*16)/16;sprBudget=14;SPRFORCE=2;SPRBT=0;SPRDL=performance.now()+(OPT.low?4:6);WBUD=OPT.low?2:5;nightPair(NIGHT);WLATE=ph>.62&&ph<.88?Math.min(2,Math.floor((ph-.62)/.26*3)):0;
+  SEASON_C=SEASON();const nb=Math.round(NIGHT*16)/16;sprBudget=14;SPRFORCE=2;SPRBT=0;SPRDL=performance.now()+(OPT.low?4:6);WBUD=OPT.low?2:5;nightPair(NIGHT);WLPH=ph>.62&&ph<.88?(ph-.62)/.26:-1;
   cam.ox=Math.round(bw/2+panX/zoom);cam.oy=Math.round(bh/2-N*TH/2+panY/zoom+30);
   drawBack(keyf(SKY,ph,true));
   const G=groundLayer(nb,ph);ctx.drawImage(G,cam.ox-G.width/RES/2,cam.oy-4,G.width/RES,G.height/RES);
@@ -2189,7 +2291,7 @@ function render(){
   const buckets=Array.from({length:2*N},()=>[]);
   const vb=(x,y)=>{const [a,b]=rot(x,y);return Math.max(0,Math.min(2*N-1,Math.floor(a)+Math.floor(b)))};
   for(const w of walkers)buckets[vb(w.x,w.y)].push(w);
-  const cars=[];for(const c of CARS){const fx=((c.off+T*c.sp*c.dir)%N+N)%N;cars.push({car:1,fx,fy:c.row+c.lane,c:c.c,dir:c.dir})}
+  const cars=[];for(const c of CARS){const fx=((c.off+T*c.sp*c.dir)%N+N)%N;cars.push({car:1,fx,fy:c.row+c.lane,c:c.c,dir:c.dir,type:c.type,sp:c.sp})}
   for(const c of cars)buckets[vb(c.fx,c.fy)].push(c);
   // transparencia: lo que está entre el jugador y el terreno bajo el cursor se vuelve vidrio
   let HV=null;if(hover>=0&&!TITLE){const hx=hover%N,hy=Math.floor(hover/N),hs=Math.max(1,SZ(tool)),r=rot(hx+hs/2,hy+hs/2),p=P(hx+hs/2,hy+hs/2);HV={d:r[0]+r[1],x:p[0],y:p[1],w:TW*(.55+.5*(hs-1))}}
@@ -2210,7 +2312,7 @@ function render(){
       if(i===hover&&tool!=='demoler'&&tool!=='mejorar'&&tool!=='ver'&&hsz===1&&canBuild(t)){const dd=DEFS[tool],g={k:tool,s:t.s,f:dd.f0};drawSprN(g,x,y,i,1,.7,true);ctx.globalAlpha=1}
       else if(t.b>0)drawObj(t,x,y);
       else{if(hasObj(t,x,y)){const bo=bounceOf(i);if(bo)lifted(bo,()=>drawSprN(t,x,y,i,1,HEAT?.16:fade(t,x,y)));else drawSprN(t,x,y,i,1,HEAT?.16:fade(t,x,y))}ctx.globalAlpha=1;drawDyn(t,x,y);if(DEFS[t.k]&&!t.ok)drawNeed(x,y)}}
-    for(const w of buckets[d]){const q=w.car?P(w.fx,w.fy):P(w.x,w.y);if(q[0]<-20||q[0]>bw+20||q[1]<-6||q[1]-40>bh)continue;w.car?drawCar(w):drawWalker(w)}
+    for(const w of buckets[d]){const q=w.car?P(w.fx,w.fy):P(w.x,w.y);if(q[0]<-40||q[0]>bw+40||q[1]<-6||q[1]-40>bh)continue;w.car?drawCar(w):drawWalker(w)}
   }
   if(hover>=0&&!HEAT&&!TITLE){const hx=hover%N,hy=Math.floor(hover/N),hs=tool==='demoler'?1:Math.max(1,SZ(tool)),pts=[P(hx,hy),P(hx+hs,hy),P(hx+hs,hy+hs),P(hx,hy+hs)];
     ctx.save();ctx.beginPath();pts.forEach((q,k)=>k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.closePath();
