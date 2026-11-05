@@ -24,10 +24,10 @@
   <div id="stage">
     <canvas id="cv" aria-label="Mapa del Distrito. Toca un terreno para construir; arrastra para moverte."></canvas>
     <div id="needs" class="box" role="button" tabindex="0" aria-label="Panel de vecinos y necesidades"></div>
-    <div class="zoom"><button class="box" id="zin" type="button" aria-label="Acercar">+</button><button class="box" id="zout" type="button" aria-label="Alejar">−</button><button class="box" id="rl" type="button" aria-label="Girar a la izquierda">⟲</button><button class="box" id="rr" type="button" aria-label="Girar a la derecha">⟳</button><button class="box" id="mus" type="button" aria-label="Música" aria-pressed="true">♪</button><button class="box" id="fxb" type="button" aria-label="Efectos de sonido" aria-pressed="true">FX</button><button class="box" id="heat" type="button" aria-label="Mapa de plusvalía" aria-pressed="false">$</button><button class="box" id="optb" type="button" aria-label="Opciones de imagen" aria-expanded="false">⚙</button><button class="box" id="guideb" type="button" aria-label="Guía: qué hace cada edificio" aria-expanded="false">?</button><button class="box" id="pauseb" type="button" aria-label="Pausa (barra espaciadora o P)" aria-pressed="false">❚❚</button></div>
+    <div class="zoom"><button class="box" id="zin" type="button" aria-label="Acercar">+</button><button class="box" id="zout" type="button" aria-label="Alejar">−</button><button class="box" id="rl" type="button" aria-label="Girar a la izquierda">⟲</button><button class="box" id="rr" type="button" aria-label="Girar a la derecha">⟳</button><button class="box" id="mus" type="button" aria-label="Música" aria-pressed="true">♪</button><button class="box" id="fxb" type="button" aria-label="Efectos de sonido" aria-pressed="true">FX</button><button class="box" id="heat" type="button" aria-label="Mapa de plusvalía" aria-pressed="false">$</button><button class="box" id="optb" type="button" aria-label="Opciones de imagen" aria-expanded="false">⚙</button><button class="box" id="fotob" type="button" aria-label="Modo foto (tecla F)" title="Modo foto (F)"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M5 3h6v2h3v9H2V5h3z"/><path fill="#fff" d="M6 7h4v4H6z"/><path fill="currentColor" d="M7 8h2v2H7z"/><path fill="#f26a21" d="M12 6h1v1h-1z"/></svg></button><button class="box" id="guideb" type="button" aria-label="Guía: qué hace cada edificio" aria-expanded="false">?</button><button class="box" id="pauseb" type="button" aria-label="Pausa (barra espaciadora o P)" aria-pressed="false">❚❚</button></div>
     <div id="guide" class="box" hidden role="dialog" aria-label="Guía del Distrito"></div>
     <div id="pausebar" class="box" hidden role="status">EN PAUSA · toca ▶ o la barra espaciadora para seguir</div>
-    <div id="opts" class="box" hidden role="dialog" aria-label="Opciones de imagen"><h2>Opciones de imagen</h2><label><input type="checkbox" id="oLow"> Calidad baja <small>para celulares lentos: menos gente en la calle y sin fundidos</small></label><label><input type="checkbox" id="oRm"> Menos movimiento <small>fuegos cortos, sin parpadeos ni rebotes</small></label><label><input type="checkbox" id="oHc"> Alto contraste <small>noche más clara, textos y cursor más marcados</small></label><label class="sel">Temporada <select id="oSe"><option value="auto">Según la fecha</option><option value="patrias">Fiestas Patrias</option><option value="muertos">Día de Muertos</option><option value="none">Ninguna</option></select></label><small id="oErr" class="oerr"></small><button id="oOk" type="button">Listo</button></div>
+    <div id="opts" class="box" hidden role="dialog" aria-label="Opciones de imagen"><h2>Opciones de imagen</h2><label><input type="checkbox" id="oLow"> Calidad baja <small>para celulares lentos: menos gente en la calle y sin fundidos</small></label><label><input type="checkbox" id="oRm"> Menos movimiento <small>fuegos cortos, sin parpadeos ni rebotes</small></label><label><input type="checkbox" id="oHc"> Alto contraste <small>noche más clara, textos y cursor más marcados</small></label><label class="sel">Temporada <select id="oSe"><option value="auto">Según la fecha</option><option value="patrias">Fiestas Patrias</option><option value="muertos">Día de Muertos</option><option value="navidad">Navidad</option><option value="none">Ninguna</option></select></label><small id="oErr" class="oerr"></small><button id="oOk" type="button">Listo</button></div>
     <div id="dialog" class="box" role="status" aria-live="polite" title="Toca para leer el mensaje completo"></div>
     <div id="loanbox" class="box" hidden role="dialog" aria-label="Crédito Banregio"></div>
     <div id="misbox" class="box" hidden role="dialog" aria-label="Encargos del Distrito"></div>
@@ -35,6 +35,26 @@
     <div id="ptag" class="box" hidden aria-hidden="true"></div>
     <div id="cine" hidden aria-live="polite"><i class="lb t"></i><i class="lb b"></i><div class="ct"><b></b><small></small></div></div>
     <div id="credits" class="box" hidden role="dialog" aria-label="Distrito completo"></div>
+    <div id="fvig" aria-hidden="true"></div><div id="fflash" aria-hidden="true"></div>
+    <div id="fotobar" class="box" hidden role="toolbar" aria-label="Modo foto">
+      <div class="fb-row">
+        <label class="fb-h"><span>Hora</span><input type="range" id="fHora" min="0" max="95" step="1" aria-label="Hora del día"><b id="fHoraT">7:00 am</b></label>
+        <span class="fb-grp" role="group" aria-label="Clima"><button type="button" id="fSol" aria-pressed="true">Despejado</button><button type="button" id="fLluvia" aria-pressed="false">Lluvia</button></span>
+        <label class="fb-s"><span>Temporada</span><select id="fTemp"><option value="auto">Según la fecha</option><option value="none">Ninguna</option><option value="muertos">Día de Muertos</option><option value="navidad">Navidad</option><option value="patrias">Fiestas Patrias</option></select></label>
+        <label class="fb-s"><span>Filtro</span><select id="fFiltro"><option value="">Natural</option><option value="postal">Postal</option><option value="retro">Retro</option><option value="cine">Noche de cine</option><option value="bn">Blanco y negro</option></select></label>
+      </div>
+      <div class="fb-row">
+        <span class="fb-grp" role="group" aria-label="Cámara"><button type="button" id="fMenos" aria-label="Alejar">−</button><button type="button" id="fMas" aria-label="Acercar">+</button><button type="button" id="fGirar" aria-label="Girar">⟳</button></span>
+        <button type="button" id="fPaseo" aria-pressed="false" title="La cámara recorre sola los lugares importantes">Paseo</button>
+        <button type="button" id="fTL" title="La ciudad se vuelve a construir en unos segundos">▶ Time-lapse</button>
+        <button type="button" id="fRec" aria-pressed="false" title="Graba en video lo que se ve, también el paseo o el time-lapse (máximo 90 s)">● Grabar</button>
+        <button type="button" id="fPie" aria-pressed="true" title="Agrega el nombre del Distrito en la esquina de la foto">Pie</button>
+        <button type="button" id="fFoto" class="go">Tomar foto</button>
+        <button type="button" id="fSalir" aria-label="Salir del modo foto">✕ Salir</button>
+      </div>
+    </div>
+    <div id="tlbar" hidden><span id="tlRec" hidden>● Grabando</span><button type="button" id="tlStop" class="box">■ Detener</button></div>
+    <div id="fMsg" class="box" hidden role="status" aria-live="polite"></div>
   </div>
   <nav><div class="tabs" id="tabs" role="tablist" aria-label="Categorías de construcción"></div><div class="tools" id="tools"></div></nav>
 </div>

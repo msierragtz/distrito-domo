@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 const root=join(dirname(fileURLToPath(import.meta.url)),'..');
 const req=createRequire(join(root,'package.json'));
 let Linter;try{({Linter}=req(process.env.ESLINT||'eslint'))}catch(e){console.error('No encontré eslint. Corre «npm install» o define ESLINT=/ruta/a/node_modules/eslint.');process.exit(2)}
-const BROWSER='window document localStorage sessionStorage addEventListener removeEventListener matchMedia setTimeout clearTimeout setInterval clearInterval requestAnimationFrame cancelAnimationFrame console performance screen innerWidth innerHeight devicePixelRatio navigator URL Blob AudioContext webkitAudioContext OfflineAudioContext Image ImageData Path2D OffscreenCanvas HTMLCanvasElement location history alert getComputedStyle claude'.split(' ');
+const BROWSER='window document localStorage sessionStorage addEventListener removeEventListener matchMedia setTimeout clearTimeout setInterval clearInterval requestAnimationFrame cancelAnimationFrame console performance screen innerWidth innerHeight devicePixelRatio navigator URL Blob AudioContext webkitAudioContext OfflineAudioContext Image ImageData Path2D OffscreenCanvas HTMLCanvasElement MediaRecorder location history alert getComputedStyle claude'.split(' ');
 const orden=JSON.parse(readFileSync(join(root,'src/js/orden.json'),'utf8'));
 // se revisa el código pegado (así se ve igual que en el navegador) y cada error se ubica en su archivo
 let js='',map=[];for(const f of orden){const t=readFileSync(join(root,'src/js',f),'utf8');map.push([js.split('\n').length,f]);js+=t}

@@ -1,8 +1,20 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 26 oct 2026 (artifact v64; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 4 nov 2026 (artifact v65; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Fases 4 y 5 de la ruta gráfica (v65)**: temporadas a fondo, clima, modo foto y time-lapse.
+  - Día de Muertos (25 oct – 3 nov): ofrenda en cada plaza (tres escalones, arco de cempasúchil, fotos, calaveritas, pan y veladoras), veladoras en la entrada de casi la mitad de los edificios y en los parques, guirnalda de cempasúchil y veladoras en El Domo, pétalos en las calles y catrinas entre los transeúntes. Las veladoras titilan y alumbran de noche.
+  - Navidad (1 dic – 6 ene, nueva): pino con esferas, foquitos y estrella en cada plaza; piñatas de estrella en los parques; nochebuenas; foquitos de colores en las calles, en las azoteas y en el arco de El Domo; gorros de Santa. El 31 de diciembre y el 1 de enero hay cohetes de todos colores de noche.
+  - Fiestas Patrias (septiembre): banderas en los postes, puestos de antojitos con toldo tricolor en las plazas, El Domo iluminado en verde, blanco y rojo de noche, la verde y sombreros entre la gente. La noche del 15 y 16 (de 10 pm a 1 am del juego) hay Grito: gente frente a El Domo con banderitas, letrero «¡VIVA MÉXICO!», cohetes tricolor sobre el arco y un mensaje.
+  - Lluvia: de noche, cada poste y cada negocio con letrero deja un reflejo que tiembla en el piso mojado. Relámpagos detrás de la ciudad cada 5 a 14 s con destello y trueno (sonido nuevo). Con «Menos movimiento» no hay destellos, solo trueno.
+  - Sombras del amanecer y el atardecer con tope de largo (antes cruzaban medio mapa como bandas).
+  - Tráfico: cada coche lleva su velocidad, frena si alcanza al de enfrente y, si se queda atrás de un camión o tráiler, lo rebasa por el lado de adentro y regresa a su carril cuando hay espacio.
+  - Modo foto (botón de cámara o tecla F): esconde la interfaz y pausa la partida (las animaciones siguen). Hora del día, clima, temporada y filtro (Natural, Postal, Retro, Noche de cine, Blanco y negro). «Tomar foto» guarda un PNG de ~2,500 px con pie de foto opcional (nombre del Distrito y vecinos). «Paseo» recorre sola los lugares importantes. «Grabar» guarda en video (MP4 o WebM según el navegador, máximo 90 s) lo que se vea, también el paseo o el time-lapse. En claude.ai las descargas piden confirmación; fuera, se descargan directo. Al salir, la hora, el clima y la temporada vuelven a ser los de la partida; el guardado siempre usa la partida real.
+  - Time-lapse: desde el modo foto o desde la pantalla de los 3,000 vecinos («▶ Ver cómo creció»). La ciudad se vuelve a construir en 10–22 s, de la mañana a la noche, con rebote en cada edificio nuevo, contador de vecinos y fuegos al final; los letreros van dentro del dibujo para que salgan en el video. El juego guarda una foto del mapa cada 30 s de juego (solo lo que cambió, en este navegador, clave `.historia`, unos 40 KB con 180 fotos; se adelgaza sola). Si la partida es de antes de v65 o tiene poca historia, el principio se reconstruye: calles primero y edificios del centro hacia afuera, con los pisos creciendo.
+  - Rendimiento: las partes quietas de ofrendas, pinos y puestos se guardan como imagen (con contorno), los cables son un trazo y solo uno de cada dos foquitos o veladoras brilla. Celular simulado 4× más lento, ciudad de 2,600 de noche: sin temporada ~10 ms por cuadro, Navidad ~14 ms, Muertos ~14 ms, lluvia ~11 ms.
+  - Pruebas: monkey test de 8,350 acciones (con y sin todo abierto, y con el modo foto), 0 errores; opciones de imagen, obras, escena en 4 giros, juice, time-lapse y modo foto (foto PNG y video MP4 descargados) sin errores; la partida queda igual tras el modo foto y el time-lapse.
+  - Limpieza: se quitaron `swings` y `slide` repetidas en `arte/escuela.js` (ya ganaban las de `arte/areas-verdes.js`).
 - **Obras grandes, sus 6 encargos y fase 3 de la ruta gráfica «juice» (v64)**, paso 4 del plan:
   - 6 obras de una pieza en la pestaña Especiales, una de cada una, que solo se abren con su encargo: Bosque urbano 3×3 ($60k, verde 30 a 7 cuadras, calma el ruido de la avenida a 6 cuadras, en ola de calor refresca más; no deja dinero), Museo del Domo 2×2 ($80k, necesita parque, plaza, golf o bosque pegado; plusvalía fuerte a 6 cuadras, comercio para familias y profesionistas, turistas $10/s), Rascacielos de oficinas 2×2 ($150k, $80/s fijos, comercio para profesionistas y estudiantes a 7 cuadras, gasta agua de 300 vecinos y su sombra baja la plusvalía hasta −6 a 3 cuadras), Estadio de Béisbol 3×3 ($120k; cada 8 min hay juego de 2 min con $90/s y +5% a familias y estudiantes, pero a 6 cuadras el estacionamiento se necesita ×2.5 y a 3 cuadras molesta a las familias), Plaza comercial 3×3 ($100k, $60/s, comercio para los tres grupos a 7 cuadras y estacionamiento; los negocios a 4 cuadras ganan 15% menos), Estación del Metro 2×2 ($200k, obra de 4 min con ruido; −30% de necesidad de estacionamiento en todo el Distrito y llegadas 30% más rápidas). Sus precios no suben con la inflación de negocios (`d.obra`), no cuentan como negocio (`isBiz`) y no se mejoran. Dibujos en `art/new5.js`; revisados en los 4 giros.
   - Encargos que las abren (aparecen desde 3,000 vecinos y tienen prioridad sobre los encargos viejos pendientes): Pulmón del Distrito (Barrio, 3,000: 25 parques, plazas o golf —sin dog parks— y 3 calles con 5 o más) → Bosque; Noche de museos (Barrio, 3,200: 2 Cines en nivel 3; solo sale si el Cine ya está abierto) → Museo; Hora pico (Vecinos, 3,400: 400 profesionistas al 70% durante 2 min) → Rascacielos; Tarde de pelota (Reto, 3,700: los tres grupos ≥65% y estacionamiento ≥70% durante 8 min, con 15 min de límite; si falla vuelve en 15 min) → Estadio; Calle comercial (Barrio, 4,100: 8 tipos de negocio distintos en una calle, 3 de esos tipos con uno en nivel 4) → Plaza comercial; Hora de salida (Vecinos, 4,600: 4,500 vecinos, estacionamiento ≥80% y sin números rojos durante 10 min) → Metro. El panel muestra el avance de cada condición. Los primeros números (15 áreas verdes, 80% y 75%) se ajustaron tras medir.
@@ -119,10 +131,7 @@ Actualizado el 26 oct 2026 (artifact v64; también hay un .zip para itch.io con 
 ## Ruta gráfica (siguientes fases)
 - Fase 0 pendiente: fuente pixel incrustada. En esta sesión no hubo red hacia npm, GitHub ni CDN; hace falta subir los archivos de Press Start 2P y VT323 (woff2 o ttf) para incrustarlos.
 - Fase 3 (juice): hecha en v64.
-- Fase 4, temporadas: Día de Muertos con veladoras en la capa de luces (arranca sola el 25 oct), reflejos en charcos y relámpagos, Navidad, 15 de septiembre a fondo.
-- Fase 5: modo foto y time-lapse al llegar a 3,000.
-- Detalle visto en pruebas: al amanecer las sombras de las torres son muy largas y se ven como bandas grises; suavizarlas.
-- Detalle de la fase 2: los coches todavía pueden atravesar al camión o al tráiler si van en el mismo carril (los coches ya se atravesaban entre sí antes). Se podría hacer que frenen detrás.
+- Fases 4 y 5: hechas en v65.
 
 ## Ideas para después
 - Las obras grandes no tienen animación propia en vivo (el estadio en día de juego podría tener luces encendidas y afición moviéndose; el metro, un tren que pasa).
@@ -131,6 +140,8 @@ Actualizado el 26 oct 2026 (artifact v64; también hay un .zip para itch.io con 
 - Torres de agua: si con muchas torres el precio (+20% cada una) se vuelve imposible arriba de ~15, considerar bajar el crecimiento o darle niveles a la torre.
 - El mapa de plusvalía (tecla V) podría mostrar qué capa le falta a cada terreno (verde, comercio, estacionamiento o dog park), ahora que el nivel 4 pide las cuatro.
 - Algo en qué gastar al final: ya propuesto en el plan de obras grandes.
-- Dibujos propios por línea para cafés y bares; cámara suave, modo foto, Navidad.
+- Dibujos propios por línea para cafés y bares.
+- La historia del time-lapse vive en el navegador, no en la cuenta: en otro aparato el time-lapse se reconstruye.
+- Al saltar de golpe la hora (modo foto), algunos edificios tardan un segundo en tomar el color de la noche (se rehacen pocos por cuadro).
 - Texto de la Guía de la Caseta: dice «Da controla las fiestas…»; corregir la frase.
 - Confirmar con Mauricio los nombres de los niveles 2–4 de la Clínica.

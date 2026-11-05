@@ -12,7 +12,7 @@ async def run(html,W,H,secs,build):
     await pg.evaluate("__dd.setPause(false);__dd.S.$=1e7")
     if os.environ.get('TODO'): await pg.evaluate("for(const k of Object.keys(__dd.DEFS))if(!__dd.S.unl.includes(k))__dd.S.unl.push(k);__dd.S.maxV=Math.max(__dd.S.maxV,4800)")
     R=random.Random(7);n=0;import time;t0=time.time()
-    keys=['Escape','Escape','q','e','1','2','3','4',' ','c','v','Shift+L','Shift+N','Shift+H','Shift+H','Shift+F','m']
+    keys=['Escape','Escape','q','e','1','2','3','4',' ','c','v','Shift+L','Shift+N','Shift+H','Shift+H','Shift+F','m','f','f']
     while time.time()-t0<secs:
       r=R.random();x=R.randint(5,W-5);y=R.randint(70,H-230)
       try:
@@ -22,7 +22,7 @@ async def run(html,W,H,secs,build):
           await pg.mouse.move(x,y);await pg.mouse.down();await pg.mouse.move(x+R.randint(-300,300),y+R.randint(-200,200),steps=4);await pg.mouse.up()
         elif r<.8: await pg.mouse.wheel(0,R.choice([-200,200]))
         elif r<.92:
-          btns=await pg.query_selector_all('.tool');
+          btns=await pg.query_selector_all('#fotobar:not([hidden]) button:not([disabled]),#tlbar:not([hidden]) button') or await pg.query_selector_all('.tool')
           if btns: await R.choice(btns).click(force=True)
         else: await pg.mouse.move(x,y)
         n+=1
@@ -33,5 +33,5 @@ async def run(html,W,H,secs,build):
 async def main():
   for (W,H,build) in [(1366,768,True),(390,844,False)]:
     n,e,st=await run(sys.argv[1] if len(sys.argv)>1 else BUILD+'/arnes.html',W,H,int(os.environ.get('SEG','75')),build)
-    print(f'{W}x{H} acciones {n} errores {len([x for x in e if not x.startswith("drv")])}',e[:5],st)
+    print(f"{W}x{H} acciones {n} errores {len([x for x in e if not x.startswith('drv')])}",[x for x in e if not x.startswith("drv")][:5],st)
 asyncio.run(main())

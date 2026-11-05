@@ -6,7 +6,7 @@ function tileAt(e){
   return inb(x,y)?idx(x,y):-1;
 }
 const PTRS=new Map();let PINCH=null,wAcc=0,wLast=0;
-cv.addEventListener('pointerdown',e=>{CAMG=null;INER=null;PTRS.set(e.pointerId,{x:e.clientX,y:e.clientY});try{cv.setPointerCapture(e.pointerId)}catch(er){}
+cv.addEventListener('pointerdown',e=>{CAMG=null;INER=null;if(PASEO){PASEO=null;fotoSync()}PTRS.set(e.pointerId,{x:e.clientX,y:e.clientY});try{cv.setPointerCapture(e.pointerId)}catch(er){}
   if(PTRS.size>=2){const [p,q]=[...PTRS.values()];PINCH={d:Math.hypot(p.x-q.x,p.y-q.y)||1};down=null;hover=-1;return}
   down={x:e.clientX,y:e.clientY,px:panX,py:panY,drag:false,lt:performance.now(),lx:panX,ly:panY,vx:0,vy:0};hover=tileAt(e)});
 cv.addEventListener('pointermove',e=>{if(PTRS.has(e.pointerId))PTRS.set(e.pointerId,{x:e.clientX,y:e.clientY});
@@ -16,7 +16,7 @@ cv.addEventListener('pointermove',e=>{if(PTRS.has(e.pointerId))PTRS.set(e.pointe
     if(down.drag){panX=down.px+dx;panY=down.py+dy;clampPan();hover=-1;const now=performance.now();if(now-down.lt>12){const s=(now-down.lt)/1000,vx=(panX-down.lx)/s,vy=(panY-down.ly)/s;down.vx=down.vx*.35+vx*.65;down.vy=down.vy*.35+vy*.65;down.lt=now;down.lx=panX;down.ly=panY}return}}
   hover=tileAt(e)});
 cv.addEventListener('pointerup',e=>{PTRS.delete(e.pointerId);if(PINCH){if(PTRS.size<2)PINCH=null;down=null;if(e.pointerType!=='mouse')hover=-1;return}
-  if(down&&!down.drag){const i=tileAt(e);if(i>=0)act(i)}
+  if(down&&!down.drag){const i=tileAt(e);if(i>=0&&!REAL)act(i)}
   else if(down&&down.drag&&!lowMo()&&performance.now()-down.lt<100){const sp=Math.hypot(down.vx,down.vy);if(sp>90){const k=Math.min(1,1600/sp);INER={vx:down.vx*k,vy:down.vy*k}}}
   down=null;if(e.pointerType!=='mouse')hover=-1});
 cv.addEventListener('pointercancel',e=>{PTRS.delete(e.pointerId);if(PTRS.size<2)PINCH=null;down=null});

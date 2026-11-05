@@ -35,21 +35,10 @@ function arcTop(cx,cy,R,th,c,lit){const out=[],Ri=R-th;for(let yd=Math.round((cy
 function line(x0,y0,x1,y1,c,lit,w=1){const u=1/RES;w=w===1?1:w*RES;x0=Math.round(x0*RES);y0=Math.round(y0*RES);x1=Math.round(x1*RES);y1=Math.round(y1*RES);const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;const pts=[];
   for(let k=0;k<500;k++){pts.push([x0,y0,w]);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx}if(e2<=dx){e+=dx;y0+=sy}}
   ctx.fillStyle=pcol(c);for(const p of pts)ctx.fillRect(p[0]*u,p[1]*u,w*u,w*u);if(!lit&&NIGHT>0){ctx.fillStyle=NCOL;for(const p of pts)ctx.fillRect(p[0]*u,p[1]*u,w*u,w*u)}}
-/* temporadas: mes patrio (septiembre) y Día de Muertos (25 oct – 3 nov), según la fecha real o la opción del jugador */
+/* temporadas: mes patrio (septiembre), Día de Muertos (25 oct – 3 nov) y Navidad (1 dic – 6 ene), según la fecha real o la opción del jugador; los adornos están en temporadas.js */
 function SEASON(){if(OPT.season&&OPT.season!=='auto')return OPT.season==='none'?null:OPT.season;const d=new Date(),m=d.getMonth()+1,dd=d.getDate();
-  if(m===9)return 'patrias';if((m===10&&dd>=25)||(m===11&&dd<=3))return 'muertos';return null}
+  if(m===9)return 'patrias';if((m===10&&dd>=25)||(m===11&&dd<=3))return 'muertos';if(m===12||(m===1&&dd<=6))return 'navidad';return null}
 const GRITO=()=>{const d=new Date();return SEASON()==='patrias'&&(OPT.season==='patrias'||(d.getMonth()===8&&(d.getDate()===15||d.getDate()===16)))};
-function seasonDeco(t,gx,gy){const se=SEASON_C;if(!se)return;const k=t.k;
-  if(k==='calle'&&!t.hw&&(gx+gy)%2===0){const a=P(gx+.08,gy+.5),b=P(gx+.92,gy+.5),lift=17,
-      cols=se==='patrias'?['#1f8a4c','#ffffff','#d62828']:['#ff5d8f','#f26a21','#9b5de5','#3fa7d6','#59cd90','#ffd84d'];
-    line(a[0],a[1]-lift,(a[0]+b[0])/2,(a[1]+b[1])/2-lift+3,'#555',true);line((a[0]+b[0])/2,(a[1]+b[1])/2-lift+3,b[0],b[1]-lift,'#555',true);
-    for(let q=0;q<5;q++){const f=(q+.5)/5,xx=a[0]+(b[0]-a[0])*f,yy=a[1]+(b[1]-a[1])*f-lift+3*Math.sin(f*Math.PI)+(lowMo()?0:Math.sin(T*3+q+gx)*.4);
-      px(xx-2,yy,4,4,cols[(q+gx+gy)%cols.length],NIGHT>.3);px(xx-1,yy+1,1,1,'rgba(255,255,255,.55)',true);px(xx,yy+2,1,1,'rgba(255,255,255,.4)',true);if(NIGHT>.5&&se==='patrias'&&q===2)glow(xx,yy+1,5,.5)}}
-  if(se==='patrias'&&(k==='torre'||k==='edificio'||k==='ladrillo')&&!(t.b>0)&&(gx+2*gy)%3===0){const so=shadowOf(t),[x,y]=P(gx+.5,gy+.5),top=y-(so?so[1]:60)-2;
-    px(x,top-16,.6,16,'#8a8f99');const w=10,h=6,wv=lowMo()?0:Math.sin(T*4+gx)*.5;px(x+.5,top-12+wv,w/3,h,'#1f8a4c',true);px(x+.5+w/3,top-12+wv,w/3,h,'#ffffff',true);px(x+.5+2*w/3,top-12+wv,w/3,h,'#d62828',true);px(x+.5+w/2-1,top-10+wv,2,2,'#8a5a2b',true)}
-  if((k==='parque'||k==='plaza')&&!(t.b>0)){const r=rng(gx*131+gy*977+7),cols=se==='patrias'?['#1f8a4c','#ffffff','#d62828']:['#f2a20c','#ff7b00','#f2a20c'];
-    for(let q=0;q<9;q++){const [x,y]=P(gx+.15+r()*.7,gy+.15+r()*.7);px(x,y-1,2,2,cols[q%cols.length])}}
-}
 let SEASON_C=null,FWS=0;
 /* variedad: cada restaurante, café o bar cambia sus colores de toldos y letreros */
 let PSW=null;const pcol=c=>PSW&&PSW[c]||c;

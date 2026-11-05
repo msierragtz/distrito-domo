@@ -10,7 +10,7 @@ function drawObj(t,gx,gy,ic){
     if(d.bt>=20)crane(gx,gy,H);
     return;
   }
-  const ART={kiosco:trKiosco,mirador:trMirador,cultura:trCultura,teleferico:trTeleferico,bar:artBar,resto:artResto,cafe:artCafe,tomates:artTomates,padel:artPadel,escuela:artEscuela,beis:artBeis,museo:artMuseo,rasca:artRasca,bosque:artBosque,plazacom:artPlazaCom,metro:artMetro,barber:artBarber,unas:artUnas,gym:artGym,paleteria:artPaleteria,boliche:artBoliche,cine:artCine,golf:artGolf,clinica:artClinica,cancha:artCancha,parque:artParque,plaza:artPlaza,dogpark:artDog,estac:artEstac,caseta:artCaseta,oficinas:artOfi};
+  const ART={_ofrenda:artOfrenda,_pino:artPino,_puesto:artPuesto,kiosco:trKiosco,mirador:trMirador,cultura:trCultura,teleferico:trTeleferico,bar:artBar,resto:artResto,cafe:artCafe,tomates:artTomates,padel:artPadel,escuela:artEscuela,beis:artBeis,museo:artMuseo,rasca:artRasca,bosque:artBosque,plazacom:artPlazaCom,metro:artMetro,barber:artBarber,unas:artUnas,gym:artGym,paleteria:artPaleteria,boliche:artBoliche,cine:artCine,golf:artGolf,clinica:artClinica,cancha:artCancha,parque:artParque,plaza:artPlaza,dogpark:artDog,estac:artEstac,caseta:artCaseta,oficinas:artOfi};
   if(ART[t.k]){const v=!ic&&VARP[t.k]?(t.s>>2)%4:0;PSW=v?VARP[t.k][v-1]:null;try{ART[t.k](t,gx,gy,ic?1:lvOf(t),ic)}finally{PSW=null}return}
   switch(t.k){
   case 'arbol':tree(gx+.5,gy+.5,.8+(s%4)*.08);break;

@@ -66,7 +66,7 @@ function start(data){
     TITLE=false;$('title').hidden=true;panX=0;panY=0;showMus();
     const who=nm?`, ${nm}`:'';
     say(!S.seen||fresh?`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`:`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
-    {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo.':'Día de Muertos: papel picado y cempasúchil por todo el Distrito.'),5000)}
+    {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a El Domo.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
     if(!S.loanTip&&!S.loan){S.loanTip=1;setTimeout(()=>say('Consejo: si te falta dinero para crecer, el botón naranja Crédito, arriba, te presta y lo pagas poco a poco.'),9000)}
     if(S.fromBak){delete S.fromBak;cur+=' Ojo: tu guardada venía dañada y recuperé el respaldo de hace un minuto.'}
     S.seen=1;save();refreshUI(true);
@@ -87,7 +87,7 @@ function start(data){
     g.innerHTML=`<h2>Guía del Distrito<button class="x" type="button" aria-label="Cerrar">✕</button></h2>
       <p class="intro">Los vecinos pagan renta (profesionistas $0.10/s, familias $0.065, estudiantes $0.045), más si están contentos y si su zona tiene plusvalía. Llegan más si tienen cerca verde, comercio que les guste, estacionamiento y dog park.</p>`
       +[['Herramientas',FIXED],...TABS.map(t=>[t[1],t[2]])].map(([n,ks])=>`<h3>${n}</h3>`+ks.map(row).join('')).join('')
-      +`<h3>Encargos</h3><p class="intro">Desde los 150 vecinos, el botón Encargos (arriba) tiene 3 encargos a la vez: uno de Barrio, uno de Vecinos y un Reto con tiempo. Al cumplirlos ganas bonos o abres edificios nuevos (barbería, salón de uñas, boliche, campo de golf, cine, paletería y gimnasio). Desde los 3,000 vecinos salen 6 encargos más difíciles que abren las obras grandes (pestaña Especiales): Bosque urbano, Museo del Domo, Rascacielos, Estadio de Béisbol, Plaza comercial y Estación del Metro. Ninguno castiga: si un reto se acaba, vuelve más tarde. Puedes cambiar un encargo cada 5 minutos.</p><h3>Teclado</h3><p class="intro">Esc: la manita (¿Qué es?) · Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer, Shift+H adelanta la hora, Shift+F mide el rendimiento.</p>`;
+      +`<h3>Encargos</h3><p class="intro">Desde los 150 vecinos, el botón Encargos (arriba) tiene 3 encargos a la vez: uno de Barrio, uno de Vecinos y un Reto con tiempo. Al cumplirlos ganas bonos o abres edificios nuevos (barbería, salón de uñas, boliche, campo de golf, cine, paletería y gimnasio). Desde los 3,000 vecinos salen 6 encargos más difíciles que abren las obras grandes (pestaña Especiales): Bosque urbano, Museo del Domo, Rascacielos, Estadio de Béisbol, Plaza comercial y Estación del Metro. Ninguno castiga: si un reto se acaba, vuelve más tarde. Puedes cambiar un encargo cada 5 minutos.</p><h3>Teclado</h3><p class="intro">Esc: la manita (¿Qué es?) · F: modo foto (fotos, video, paseo y time-lapse de cómo creció tu Distrito) · Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer, Shift+H adelanta la hora, Shift+F mide el rendimiento.</p>`;
     g.querySelector('.x').onclick=()=>{g.hidden=true;$('guideb').setAttribute('aria-expanded',false)}};
   $('guideb').onclick=e=>{e.stopPropagation();const g=$('guide');g.hidden=!g.hidden;$('guideb').setAttribute('aria-expanded',!g.hidden);if(!g.hidden)renderGuide()};
   $('pauseb').onclick=e=>{e.stopPropagation();setPause(!PAUSED)};
@@ -106,10 +106,10 @@ function start(data){
   let musT=0;
   let last=performance.now(),saveT=0,slowA=1/60,slowT=0;
   function loop(now){
-    const rdt=(now-last)/1000,dt=(PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt)))*TS;last=now;T+=dt;camStep(Math.min(.1,Math.max(0,rdt)));
+    const rdt=(now-last)/1000,dt=(PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt)))*TS;last=now;T+=dt;camStep(Math.min(.1,Math.max(0,rdt)));fotoStep(Math.min(.1,Math.max(0,rdt)));
     if(rdt<1&&!document.hidden){FTA=FTA*.96+rdt*.04;if(!AUTOLOW&&FTA>1/24)AUTOLOW=true;else if(AUTOLOW&&FTA<1/45)AUTOLOW=false}
     if(!TITLE&&!OPT.low&&!S.slowTip&&rdt<1&&!document.hidden){slowA=slowA*.97+rdt*.03;slowT+=dt;if(slowT>12&&slowA>1/26){S.slowTip=1;say('¿El juego va lento en este aparato? En el botón ⚙ puedes activar "Calidad baja".')}}
-    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED)tick(dt);updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}
+    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt)}if(!TL)updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();
     loanT+=dt;if(loanT>1){loanT=0;renderLoan();renderMoney();renderMis()}
     musT+=dt;if(musT>.5){musT=0;JAZZ.update({night:NIGHT,sat:stats.sat,ev:S.ev?S.ev.id:null,red:S.$<0,phase:S.phase||1,kiosk:!!S.g.find(t=>t.k==='kiosco'&&!(t.b>0)),vec:S.maxV||0})}
     saveT+=dt;if(saveT>5&&!TITLE){saveT=0;save()}

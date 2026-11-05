@@ -73,6 +73,12 @@ function sparkle(i){const [x,y]=P(i%N+.5,Math.floor(i/N)+.5);for(let k=0;k<22;k+
 function drawFireworks(){
   const dt=Math.min(.05,T-FWlast);FWlast=T;
   // noche del Grito: cohetes verde, blanco y rojo de vez en cuando
+  // año nuevo: cohetes de todos colores
+  if(ANYO()&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*.45){const cx=bw*(.1+Math.random()*.8),cy=bh*(.06+Math.random()*.3),col=CONF_C[Math.floor(Math.random()*CONF_C.length)],np=OPT.low?14:30;
+    for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=18+Math.random()*24;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.2+Math.random()*.5,c:col})}}
+  // el Grito: los cohetes salen sobre El Domo
+  if(GRITO_XY&&!TITLE&&!lowMo()&&Math.random()<dt*2.2){const cx=GRITO_XY[0]+(Math.random()-.5)*90,cy=GRITO_XY[1]-20-Math.random()*60,col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=OPT.low?16:36;
+    for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=22+Math.random()*28;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.4+Math.random()*.6,c:col})}}
   if(SEASON_C==='patrias'&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*(GRITO()?.5:.08)){const cx=bw*(.15+Math.random()*.7),cy=bh*(.08+Math.random()*.25),col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=OPT.low?14:28;
     for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=20+Math.random()*22;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.2+Math.random()*.5,c:col})}}
   if(FWQ>0){FWQ-=dt;if(Math.random()<dt*2.2){const cx=bw*(.15+Math.random()*.7),cy=bh*(.1+Math.random()*.3),col=['#f26a21','#ffd84d','#ff5d8f','#3fa7d6','#59cd90','#ffffff'][Math.floor(Math.random()*6)];
@@ -86,6 +92,6 @@ function showCredits(){
   box.innerHTML=`<h2>¡DISTRITO DOMO COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina.</p>
     <p class="ctime">Lo lograste en <b>${tm}</b> de juego</p>
     <p><b>${Math.round(S.maxV).toLocaleString('es-MX')}</b> vecinos · <b>${S.lots||0}</b> terrenos comprados</p>
-    <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><button id="crok" type="button">Seguir jugando</button>`;
-  box.hidden=false;document.getElementById('crok').onclick=()=>{box.hidden=true};
+    <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><div class="cbtns"><button id="crtl" type="button">▶ Ver cómo creció</button><button id="crok" type="button">Seguir jugando</button></div>`;
+  box.hidden=false;document.getElementById('crok').onclick=()=>{box.hidden=true};document.getElementById('crtl').onclick=()=>{box.hidden=true;tlStart({})};
 }

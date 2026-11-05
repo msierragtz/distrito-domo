@@ -36,11 +36,14 @@ legacy/             (ya no existe en main; está en el historial: versiones v53�
 | `arte/*.js` | Un archivo por familia de edificios |
 | `objetos.js` | `drawObj`: qué dibujo le toca a cada casilla |
 | `vehiculos.js`, `transeuntes.js`, `cielo.js` | Coches, camión, tráiler, gente caminando, cielo y sierra |
+| `temporadas.js` | Día de Muertos, Navidad y Fiestas Patrias: adornos en vivo, ofrendas, pinos, puestos, el Grito frente a El Domo |
 | `huella.js` | Edificios de varias casillas (2×1, 2×2, 3×3) |
 | `fuegos.js`, `juice.js` | Fuegos, polvo, destello, confeti, obra piso por piso, momentos de cámara, zoom suave |
 | `render.js` | Imágenes en caché, sombras, suelo, el cuadro completo, la manita |
+| `clima.js` | Reflejos en los charcos y relámpagos con trueno |
 | `interfaz.js`, `entrada.js`, `pantalla.js` | Barra y paneles; mouse, toque, rueda y pellizco; rendimiento y orientación |
 | `musica.js` | Jazz procedural y efectos de sonido |
+| `foto.js` | Modo foto, paseo de cámara, grabación de video, historia del mapa y time-lapse |
 | `arranque.js` | Cargar la partida y el ciclo principal |
 
 **Importante:** todo el código vive dentro de un mismo cierre `(()=>{ … })()` que abre `datos.js` y cierra `arranque.js`. Los archivos no son módulos: se pegan uno tras otro en el orden de `orden.json`, así que todos ven las variables de todos. Un archivo nuevo se agrega a `orden.json` en el lugar que le toque. El siguiente paso de la base técnica sería pasarlos a módulos de verdad, poco a poco.
@@ -78,6 +81,10 @@ Todas abren el juego en Chromium con ganchos de prueba (`build/arnes.html`, se a
 | `tests/obras.py` | Pone las 6 obras grandes en una ciudad de 2,600 vecinos y captura cada etapa de obra |
 | `tests/escena.py` | Escena con todas las obras, en los 4 giros |
 | `tests/juice.py` | Momento del Domo, confeti, zoom con rueda e inercia |
+| `tests/temporadas.py` | Capturas de la ciudad grande por temporada y hora (`SOLO=noche,lluvia-noche` para elegir) |
+| `tests/detalle.py` | Acercamientos en la escena de muestra (`tests/datos/escena-muestra.js`) |
+| `tests/foto.py` | Modo foto: hora, clima, temporada, filtro, guardar foto, grabar video, paseo y time-lapse; revisa que la partida no cambie |
+| `tests/timelapse.py` | Time-lapse desde una partida sin historia y regreso a la partida real |
 | `tests/bots/correr.py` | Bots novato, intermedio, experto, muy experto y descuidado (`SEEDS=1,2,3`, `NOSTOP=1`) |
 
 Para usar otro Chromium: `CHROME=/ruta/al/chrome`.
@@ -86,4 +93,3 @@ Para usar otro Chromium: `CHROME=/ruta/al/chrome`.
 
 Ver `docs/pendientes.md`. Para una versión comercial, antes que nada hay que resolver el uso de marcas e instituciones reales (Banregio, DeAcero, UDEM, Tec y el propio Distrito Domo).
 
-El revisor marca que `slide` y `swings` están definidas dos veces (en `arte/escuela.js` y `arte/areas-verdes.js`). Gana la segunda, así que la escuela y el parque usan el mismo dibujo de columpios y resbaladilla. Viene de antes y no rompe nada, pero conviene renombrar una.

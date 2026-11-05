@@ -1,9 +1,6 @@
 /* ESCUELA — 1 Guardería · 2 Escuela primaria · 3 Colegio privado · 4 Campus Domo (concreto aparente con un gran pórtico, a la UDEM; ladrillo y prados, a la ASF) */
 function flagPole(fx,fy,h=26){const [ax,ay]=P(fx,fy);px(ax,ay-h,.6,h,'#8a9099');px(ax-.5,ay-.6,1.6,.6,'#6b7078');
   px(ax+.6,ay-h+.5,1.6,3.4,'#1f8a4c');px(ax+2.2,ay-h+.5,1.6,3.4,'#ffffff');px(ax+3.8,ay-h+.5,1.6,3.4,'#d62828');px(ax+2.6,ay-h+1.6,.8,1,'#a07a3a')}
-function swings(fx,fy){const a=P(fx-.1,fy),b=P(fx+.1,fy);for(const q of [a,b]){line(q[0]-1.5,q[1],q[0],q[1]-7,'#d62828');line(q[0]+1.5,q[1],q[0],q[1]-7,'#d62828')}line(a[0],a[1]-7,b[0],b[1]-7,'#d62828');
-  for(const f of [.33,.66]){const x=a[0]+(b[0]-a[0])*f,y=a[1]+(b[1]-a[1])*f;px(x,y-7,.4,4.6,'#555');px(x-.8,y-2.4,2,.7,'#f2c94c')}}
-function slide(fx,fy){const [x,y]=P(fx,fy);px(x-3,y-6,.6,6,'#3a6ea5');px(x-1,y-6,.6,6,'#3a6ea5');px(x-3.2,y-6.5,3,1,'#3a6ea5');for(let k=1;k<6;k+=2)px(x-3,y-k,2.6,.4,'#3a6ea5');line(x-.5,y-6,x+5,y-.5,'#e5534b',false,2)}
 function artEscuela(t,gx,gy,L){
   if(L===1){ // guardería: casita de un piso en colores pastel, resbaladilla y columpios
     const g=box(gx+.1,gy+.1,gx+.56,gy+.5,0,7,'#f2c7d6','#f6d77a','#e9c25e');

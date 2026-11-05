@@ -25,6 +25,7 @@
  "arte/negocios-v63b.js",
  "arte/obras-grandes.js",
  "arte/trofeos.js",
+ "temporadas.js",
  "objetos.js",
  "vehiculos.js",
  "transeuntes.js",
@@ -33,9 +34,11 @@
  "fuegos.js",
  "juice.js",
  "render.js",
+ "clima.js",
  "interfaz.js",
  "entrada.js",
  "pantalla.js",
  "musica.js",
+ "foto.js",
  "arranque.js"
 ]

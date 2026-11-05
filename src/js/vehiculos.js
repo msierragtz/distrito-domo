@@ -4,6 +4,21 @@ const CARS=[];{const r=rng(5),cc=['#d64545','#f4f4f4','#3a6ea5','#2b2b2b','#9aa0
   // en cada carril, el camión y el tráiler van a la misma velocidad y a media avenida de distancia: así nunca se enciman
   for(const row of [OFF,OFF+12])for(const dir of [1,-1]){const o=r()*N,sp=.82+r()*.1,tr=row===OFF+12||dir<0;
     CARS.push({row,lane:dir>0?.32:.68,dir,sp,off:o,type:'bus'});if(tr)CARS.push({row,lane:dir>0?.32:.68,dir,sp,off:o+N/2,type:'trailer'})}}
+// tráfico (v65): cada vehículo lleva su posición y su velocidad. Si alcanza al de enfrente en su carril, frena;
+// un coche que se queda atrás de un camión o tráiler lo rebasa por el lado de adentro y regresa a su carril
+const VLEN={car:.5,bus:1.15,trailer:1.56};let TRFT=0;
+function trafficStep(){const dt=Math.min(.1,Math.max(0,T-TRFT));TRFT=T;for(const c of CARS)if(c.x==null){c.x=c.off;c.v=c.sp;c.lo=0;c.stuck=0}if(!dt)return;
+  const lanes=new Map();for(const c of CARS){const key=c.row+'|'+c.dir;if(!lanes.has(key))lanes.set(key,[]);lanes.get(key).push(c)}
+  for(const L of lanes.values()){
+    for(const c of L){let ahead=null,gap=1e9;
+      for(const o of L){if(o===c||(c.pass&&o.type))continue;if(!!o.pass!==!!c.pass&&!o.type)continue;const g=(((o.x-c.x)*c.dir)%N+N)%N;if(g>0&&g<gap){gap=g;ahead=o}}
+      const need=ahead?(VLEN[c.type||'car']+VLEN[ahead.type||'car'])/2+.3:0;let tv=c.sp;
+      if(ahead&&gap<need+1.4)tv=Math.max(0,Math.min(c.sp,ahead.v+(gap-need)*1.6));
+      // atorado atrás de uno grande: rebasa
+      if(!c.type&&!c.pass&&ahead&&ahead.type&&gap<need+.5){c.stuck+=dt;if(c.stuck>1.2){c.pass=ahead;c.stuck=0}}else if(!c.pass)c.stuck=0;
+      if(c.pass){tv=c.sp*1.15;const g2=(((c.x-c.pass.x)*c.dir)%N+N)%N;if(g2>0&&g2<N/2&&g2>(VLEN.car+VLEN[c.pass.type])/2+.25&&!L.some(o=>o!==c&&!o.pass&&Math.min((((o.x-c.x)%N)+N)%N,(((c.x-o.x)%N)+N)%N)<(VLEN.car+VLEN[o.type||'car'])/2+.2))c.pass=null}
+      const acc=tv>c.v?1.2:5;c.v+=Math.max(-acc*dt,Math.min(acc*dt,tv-c.v));c.x=((c.x+c.dir*c.v*dt)%N+N)%N;
+      const lo=c.pass?(c.dir>0?.13:-.13):0;c.lo+=(lo-c.lo)*Math.min(1,dt*4)}}}
 const CARC=new Map();
 function carSprite(col,nb){const key=`${col}|${ROT}|${nb}|${RES}`;let sp=CARC.get(key);if(sp)return sp;
   const w=36,h=26,c=mkCanvas(w,h),pc=ctx,po={ox:cam.ox,oy:cam.oy},pn=NIGHT,pnc=NCOL;ctx=hdctx(c,false);

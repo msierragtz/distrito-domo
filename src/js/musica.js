@@ -202,7 +202,7 @@ const JAZZ=(()=>{
   /* ---------- efectos: mismo sintetizador, notas del acorde que suena, volumen bajo y con límite ---------- */
   const fx={on:true,vol:.6};try{const p=JSON.parse(localStorage.getItem('distritoDomo.efectos')||'null');if(p)Object.assign(fx,p)}catch(e){}
   let fxBus=null,fxDry=null;const lastFx={},recentFx=[];
-  const CD={build:.12,street:.2,done:2,levelup:.4,unlock:1,phase:3,buy:1,money:1,demolish:.3,nope:4,recover:5,event:3};
+  const CD={trueno:1.2,foto:.3,build:.12,street:.2,done:2,levelup:.4,unlock:1,phase:3,buy:1,money:1,demolish:.3,nope:4,recover:5,event:3};
   const QUANT={done:1,levelup:1,unlock:1,phase:1,recover:1,event:1};
   function fxVol(){if(fxBus)fxBus.gain.setTargetAtTime(fx.on?fx.vol*1.25:0,ctx.currentTime,.05)}
   function ensureFx(){if(!ctx&&!build())return false;if(ctx.state!=='running')ctx.resume().catch(()=>{});
@@ -229,6 +229,8 @@ const JAZZ=(()=>{
     demolish(t){noise(.35,.12,{hp:700,type:'lowpass',q:.7,at:t,bus:fxDry});thump(t,.3,70)},
     nope(t){felt((curCh||CH.Cmaj7).root+12,t,.25)},
     recover(t){const c=curCh||CH.Cmaj7;epiano(c.root+24,t,.18,.42,fxDry,false);epiano(c.root+24+c.third,t+.15,.4,.45,fxDry,false)},
+    trueno(t){noise(2.6,.42,{hp:140,type:'lowpass',q:.5,at:t,bus:fxDry});noise(.3,.22,{hp:900,type:'lowpass',q:.7,at:t,bus:fxDry});thump(t,.45,52);thump(t+.35,.3,44)},
+    foto(t){noise(.035,.28,{hp:2600,at:t,bus:fxDry});wood(t+.07,.55)},
     event(t){const k=[...(curCh||CH.Cmaj7).keys].sort((a,b)=>a-b);vibes(k[3]+12,t,.35,.9,fxDry);vibes(k[1]+12,t+.32,.6,.9,fxDry)}
   };
   function sfx(name){try{

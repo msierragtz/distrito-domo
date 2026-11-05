@@ -81,7 +81,7 @@ function buyParcel(p){
   recompute();save();refreshUI(true);
   say(p==='DA'?`¡Compraste el Terreno DeAcero! La fábrica se achicó y ya no baja la plusvalía de tus edificios. Mantenimiento +${S.lots*8}%.`:`¡Compraste el ${P_.name}! El Distrito crece, pero también el mantenimiento (+${S.lots*8}%) y lo que exigen los vecinos (+${S.lots*3}%).`,true);return true;
 }
-function serialize(){S.t=Date.now();return JSON.parse(JSON.stringify(S))}
+function serialize(){S.t=Date.now();return withReal(()=>JSON.parse(JSON.stringify(S)))}
 let saveN=0;
 function save(now){const str=JSON.stringify(serialize());
   try{const cur=localStorage.getItem(KEY);if(cur&&saveN++%12===0)localStorage.setItem(KEY+'.respaldo',cur);localStorage.setItem(KEY,str)}catch(e){}
