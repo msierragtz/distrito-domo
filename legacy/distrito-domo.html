@@ -149,6 +149,7 @@ body.demo #reset{display:none}
 @media (max-width:560px){#guide{width:calc(100% - 24px);font-size:16px}}
 #pausebar{position:absolute;top:10px;left:50%;transform:translateX(-50%);padding:6px 14px;font-family:var(--f-pixel);font-size:10px;line-height:1.4;z-index:4;white-space:nowrap;max-width:calc(100% - 140px);overflow:hidden;text-overflow:ellipsis}
 #pausebar[hidden]{display:none}
+#perf{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:6px;z-index:9;font:15px var(--f-text);background:rgba(15,22,51,.8);color:#d9def0;padding:2px 8px;border-radius:4px;pointer-events:none;font-variant-numeric:tabular-nums}#perf[hidden]{display:none}
 #opts{position:absolute;top:10px;right:calc(max(12px,env(safe-area-inset-right,0px)) + 48px);width:min(320px,calc(100% - 90px));padding:12px 14px;font-size:19px;line-height:1.15;z-index:6;display:grid;gap:9px}
 #opts[hidden]{display:none}
 #opts h2{font-family:var(--f-pixel);font-size:11px;margin:0}
@@ -668,10 +669,15 @@ function msgStep(dt){
 }
 
 /* ---------- día y noche ---------- */
-const SKY=[[0,'#6fb7e6','#cfeefc'],[.42,'#6fb7e6','#cfeefc'],[.52,'#4a5b92','#f5a35c'],[.62,'#0f1633','#2a3563'],[.88,'#0f1633','#2a3563'],[.95,'#5a5f99','#f2b07a'],[1,'#6fb7e6','#cfeefc']];
+// cielo por hora (v54): amanecer rosado, mediodía limpio, atardecer naranja y coral, anochecer morado, noche azul
+const SKY=[[0,'#8a93cf','#ffc8a2'],[.05,'#79b2e4','#ffe6c8'],[.12,'#6fb7e6','#d4f0fc'],[.38,'#6fb7e6','#d4f0fc'],[.44,'#7aa6da','#ffe2b4'],[.49,'#5a6bb0','#ffa95c'],[.53,'#3b3f80','#f2795e'],[.58,'#1e2354','#704c80'],[.64,'#0b1130','#1d2856'],[.86,'#0b1130','#1d2856'],[.92,'#272c63','#5f5488'],[.97,'#6670b0','#f4ab8c'],[1,'#8a93cf','#ffc8a2']];
 const NF=[[0,0],[.42,0],[.52,.45],[.62,1],[.88,1],[.95,.45],[1,0]];
 const hex2=h=>{const n=parseInt(h.slice(1),16);return[n>>16,n>>8&255,n&255]};
 const mix=(a,b,f)=>{const A=hex2(a),B=hex2(b);return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*f))})`};
+// acepta #hex o rgb(): sirve para mezclar con los colores del cielo, que ya vienen en rgb()
+const c3=s=>s[0]==='#'?hex2(s):s.match(/\d+/g).slice(0,3).map(Number);
+const mx=(a,b,f)=>{const A=c3(a),B=c3(b);return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*f))})`};
+const mxa=(a,b,f,al)=>{const A=c3(a),B=c3(b);return`rgba(${A.map((v,i)=>Math.round(v+(B[i]-v)*f))},${al.toFixed(3)})`};
 function keyf(arr,p,col){for(let i=1;i<arr.length;i++)if(p<=arr[i][0]){const a=arr[i-1],b=arr[i],f=(p-a[0])/(b[0]-a[0]);return col?[mix(a[1],b[1],f),mix(a[2],b[2],f)]:a[1]+(b[1]-a[1])*f}return col?[arr[0][1],arr[0][2]]:0}
 let NIGHT=0,NCOL='';
 
@@ -743,7 +749,12 @@ const VARP={
 delete VARP.resto; // cada línea de restaurante ya tiene su propio dibujo
 function px(x,y,w,h,c,lit){x=rr(x);y=rr(y);ctx.fillStyle=pcol(c);ctx.fillRect(x,y,w,h);if(!lit&&NIGHT>0){ctx.fillStyle=NCOL;ctx.fillRect(x,y,w,h)}}
 let GLOWS=null;
-function glow(x,y,r,a){if(GLOWS){GLOWS.push([x,y,r,a]);return}if(NIGHT<.15)return;const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(255,210,120,${a*NIGHT})`);g.addColorStop(1,'rgba(255,210,120,0)');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)}
+// halos de luz (v54): una textura guardada y mezcla aditiva, así la luz suma sobre la noche en vez de tapar
+const GTEX={};let LIGHTN=0;
+function gtex(c){let t=GTEX[c];if(t)return t;t=document.createElement('canvas');t.width=t.height=64;const x=t.getContext('2d'),g=x.createRadialGradient(32,32,0,32,32,32);
+  const [r,gg,b]=c3(c);g.addColorStop(0,`rgba(${r},${gg},${b},1)`);g.addColorStop(.25,`rgba(${r},${gg},${b},.55)`);g.addColorStop(.6,`rgba(${r},${gg},${b},.16)`);g.addColorStop(1,`rgba(${r},${gg},${b},0)`);x.fillStyle=g;x.fillRect(0,0,64,64);return GTEX[c]=t}
+function glow(x,y,r,a,c){if(GLOWS){GLOWS.push([x,y,r,a,c]);return}if(NIGHT<.15)return;const ga=ctx.globalAlpha,k=Math.min(1,a*NIGHT*(OPT.hc?.6:.85))*ga;if(k<.01)return;
+  LIGHTN++;ctx.globalCompositeOperation='lighter';ctx.globalAlpha=k;ctx.drawImage(gtex(c||'#ffb86a'),x-r*1.25,y-r*1.25,r*2.5,r*2.5);ctx.globalAlpha=ga;ctx.globalCompositeOperation='source-over'}
 const up=(p,d)=>[p[0],p[1]-d];
 function box(x0,y0,x1,y1,lift,h,top,left,right){
   const {T:T_,R,B,L}=orient([P(x0,y0),P(x1,y0),P(x1,y1),P(x0,y1)]);
@@ -1643,6 +1654,7 @@ function drawObj(t,gx,gy,ic){
     for(const f of [.2,.45,.7,.95]){const a=up(P(gx+f,gy),9),b=up(P(gx+f,gy+1),9);line(a[0],a[1],b[0],b[1],'#b6bbc1')}
     if(gy===OFF+13)face(g,'L',.1,2,.8,4,'#7d8288');
     if(t.p==='DA'){const sg=SIGNS.DA;if(sg[0]===gx&&sg[1]===gy)forSale(gx,gy,9)}
+    if(chimney(gx,gy)){const c=cb(gx+.38,gy+.38,gx+.62,gy+.62,9,CHIM_H,'#b9b4ad');for(const v of [CHIM_H-10,CHIM_H-6])face(c,'L',0,v,1,2,'#c8452f'),face(c,'B',0,v,1,2,'#a5381f')}
     break}
   case 'tanque':case 'torreagua':{
     const [x,y]=P(gx+.5,gy+.5),h=ic?24:62,r=ic?9:14;
@@ -1662,8 +1674,8 @@ function drawObj(t,gx,gy,ic){
   case 'domo':{
     const [x,y]=P(gx+.5,gy+.5),R=ic?15:30;
     box(gx+.05,gy+.4,gx+.2,gy+.6,0,3,'#3a3a3a','#2b2b2b','#222');box(gx+.4,gy+.05,gx+.6,gy+.2,0,3,'#3a3a3a','#2b2b2b','#222');
-    arcTop(x,y-2,R+(ic?1.5:2.5),ic?3:5,'#f26a21');arcTop(x,y-2,R+(ic?1.5:2.5),1,'#ff9a5c');
-    for(let k=0;k<=6;k++){const an=Math.PI*k/6;glow(x-Math.cos(an)*R,y-2-Math.sin(an)*R,8,.45)}
+    const on=!ic&&NIGHT>.25;arcTop(x,y-2,R+(ic?1.5:2.5),ic?3:5,on?'#e85f1c':'#f26a21',on);arcTop(x,y-2,R+(ic?1.5:2.5),1,on?'#ffc08a':'#ff9a5c',on);
+    for(let k=0;k<=6;k++){const an=Math.PI*k/6;glow(x-Math.cos(an)*R,y-2-Math.sin(an)*R,9,.5,'#ff8a3a')}
     break}
   }
 }
@@ -1688,7 +1700,9 @@ function drawCar(c){
   const x0=c.fx-.22,y0=c.fy-.11,[cx,cy]=P(c.fx,c.fy);
   const s1=carSprite(c.c,NLO);ctx.drawImage(s1.c,rr(cx-s1.ax),rr(cy-s1.ay),s1.c.width/RES,s1.c.height/RES);
   if(NFR){const s2=carSprite(c.c,NHI);ctx.globalAlpha=NFR;ctx.drawImage(s2.c,rr(cx-s2.ax),rr(cy-s2.ay),s2.c.width/RES,s2.c.height/RES);ctx.globalAlpha=1}
-  if(NIGHT>.3){const [x,y]=P(c.dir>0?x0+.44:x0,c.fy);glow(x,y-2,6,.7)}
+  if(NIGHT>.3){const fx=c.dir>0?x0+.44:x0,[x,y]=P(fx,c.fy),[ax,ay]=P(fx+c.dir*.55,c.fy),[bx,by]=P(c.dir>0?x0:x0+.44,c.fy);
+    glow(x,y-2,5,.7,'#fff1c8');if(!OPT.low){const ga=ctx.globalAlpha;ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=Math.min(1,.5*NIGHT)*ga;ctx.translate((x+ax)/2,(y+ay)/2);ctx.rotate(Math.atan2(ay-y,ax-x));ctx.drawImage(gtex('#ffe3a6'),-11,-3.5,22,7);ctx.restore()}
+    glow(bx,by-2,2.5,.6,'#ff3b2f')}
 }
 /* transeúntes: figuras con volumen, caminado de 4 cuadros y algo de cada grupo (mochila, saco, niño o carriola, perro con correa, paraguas).
    Cada uno se dibuja una vez por cuadro de animación y se guarda en caché con contorno delgado. */
@@ -1732,24 +1746,61 @@ function drawWalker(w){
   ctx.drawImage(sp.c,Math.round((X-sp.ax)*RES)/RES,Math.round((Y-sp.ay)*RES)/RES,sp.c.width/RES,sp.c.height/RES);
   if(w.noisy&&NIGHT>.3&&Math.floor(T*2+w.ph)%3===0)glow(X,Y-8,6,.6)}
 
-/* fondo: cielo y la Sierra Madre */
-const ridges=[0,1,2].map(l=>{const r=rng(77+l),pts=[];let h=.5;for(let i=0;i<=70;i++){h+=(r()-.5)*(.5+l*.15)+(r()<.08?.35:0);h=Math.max(.15,Math.min(1,h));pts.push(h)}return pts});
-const RIDGE=[];
+/* fondo: cielo y la Sierra Madre (v54: sol, luna, estrellas que titilan, bruma por hora y siluetas de Las Mitras y La Huasteca) */
+const ridges=[0,1,2].map(l=>{const r=rng(77+l),pts=[];let h=.5;for(let i=0;i<=70;i++){h+=(r()-.5)*(.5+l*.15)+(r()<.08?.35:0);h=Math.max(.15,Math.min(1,h));pts.push(h)}
+  // la capa lejana lleva las coronas de Las Mitras y el lomo con su cuerno; la de en medio, el cañón de La Huasteca
+  if(l===0){[.62,.8,.97,.74,1,.7,.93,.66,.86,.6].forEach((v,k)=>pts[14+k]=v);[.55,.72,.86,.9,.78,.62,.58,.66,.84,.96,.82].forEach((v,k)=>pts[50+k]=v)}
+  if(l===1){[.8,.9,.95,.5,.22,.16,.3,.88,.92,.85].forEach((v,k)=>pts[34+k]=v)}
+  return pts});
+const RIDGE=[],RBASE=['#a7b3c2','#8796a8','#6c7c90'],RHAZE=[.6,.38,.2];
+const STARS=(()=>{const r=rng(9),a=[];for(let i=0;i<120;i++)a.push([r(),r(),r(),r()<.12?2:1]);return a})();
+// dónde va el sol (o la luna) en pantalla: a la altura del arco del día y del lado de donde vienen las sombras
+function skyBody(ph){const s=sunAt(ph);if(!s)return null;const th=ph/.5*Math.PI,[ax,ay]=P(N/2,N/2),[bx,by]=P(N/2-s.dx,N/2-s.dy),vx=bx-ax,vy=by-ay,L=Math.hypot(vx,vy)||1;return {vx:vx/L,el:Math.sin(th)}}
 function drawBack(sky){
   const g=ctx.createLinearGradient(0,0,0,bh);g.addColorStop(0,sky[0]);g.addColorStop(1,sky[1]);
   ctx.fillStyle=g;ctx.fillRect(0,0,bw,bh);
-  if(NIGHT>.5){const r=rng(9);ctx.fillStyle=`rgba(255,255,255,${(NIGHT-.5)*1.6})`;for(let i=0;i<60;i++)ctx.fillRect(Math.floor(r()*bw),Math.floor(r()*bh*.45),1,1)}
-  else for(let i=0;i<4;i++){const x=((i*173+T*3*(1+i*.3))%(bw+120))-60,y=18+i*17;px(x,y,34,6,'#fff');px(x+6,y-4,18,4,'#fff');px(x+4,y+6,24,2,'#f0f6fa')}
-  const cols=['#a7b3c2','#8796a8','#6c7c90'],base=cam.oy+N*TH*.2;
-  // la sierra se pinta una vez por capa y solo se mueve (antes se rasterizaba línea por línea en cada cuadro)
-  const nk=Math.round(NIGHT*32);
+  const ph=S.clock/DAY,base=cam.oy+N*TH*.2,hz=base-34;
+  // estrellas que titilan
+  if(NIGHT>.45){const al=Math.min(1,(NIGHT-.45)*1.8);for(const [sx,sy,tw,sz] of STARS){const y=Math.floor(sy*Math.max(30,hz-20));const a=al*(.45+.55*Math.abs(Math.sin(T*(.6+tw*1.7)+tw*20)));if(a<.05)continue;ctx.fillStyle=`rgba(255,255,240,${a.toFixed(2)})`;ctx.fillRect(Math.floor(sx*bw),y,sz,sz);if(sz>1&&a>.7){ctx.fillRect(Math.floor(sx*bw)-1,y+.5,4,1)}}}
+  // sol: blanco al mediodía, naranja cerca de la sierra, con halo
+  const sun=skyBody(ph);
+  if(sun){const x=bw/2+sun.vx*bw*.42,y=hz-sun.el*(hz-18)*.92,low=1-Math.min(1,sun.el*2.2),rad=6+low*3,col=mx('#fff6d6','#ff9a4a',low);
+    ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.35+low*.35;ctx.drawImage(gtex(mx('#fff0c0','#ff8a3a',low)),x-rad*6,y-rad*6,rad*12,rad*12);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,rad,0,7);ctx.fill()}
+  // luna llena con sus manchas: sigue el mismo arco doce horas después
+  const moon=ph>.5?skyBody(ph-.5):null;
+  if(moon&&NIGHT>.15){const x=bw/2+moon.vx*bw*.42,y=hz-moon.el*(hz-18)*.92,a=Math.min(1,(NIGHT-.15)*2);
+    ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.25*a;ctx.drawImage(gtex('#9fb4ff'),x-30,y-30,60,60);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+    ctx.globalAlpha=a;ctx.fillStyle='#f3efd8';ctx.beginPath();ctx.arc(x,y,5.5,0,7);ctx.fill();ctx.fillStyle='#d6d0b4';ctx.fillRect(Math.round(x-2),Math.round(y-2),2,2);ctx.fillRect(Math.round(x+1),Math.round(y+1),2,1);ctx.fillRect(Math.round(x-1),Math.round(y+2),1,1);ctx.globalAlpha=1}
+  // nubes: blancas de día, con panza rosa al atardecer
+  if(NIGHT<.6){const ca=1-NIGHT/.6,top=mx('#ffffff',sky[1],.25),bot=mx('#e9f1f8',sky[1],.55);ctx.globalAlpha=ca;
+    for(let i=0;i<4;i++){const x=((i*173+T*3*(1+i*.3))%(bw+120))-60,y=18+i*17;ctx.fillStyle=top;ctx.fillRect(Math.round(x),y,34,6);ctx.fillRect(Math.round(x+6),y-4,18,4);ctx.fillStyle=bot;ctx.fillRect(Math.round(x+4),y+6,24,2)}ctx.globalAlpha=1}
+  // un avión que cruza de vez en cuando (de noche solo se ven sus luces) y parvadas al amanecer y al atardecer
+  {const cyc=95,p=(T%cyc)/30;if(p<1){const x=-20+p*(bw+40),y=hz*.28+Math.sin(T*.07)*4;
+    if(NIGHT<.5){ctx.fillStyle=mx('#ffffff',sky[0],.25);ctx.fillRect(Math.round(x),Math.round(y),8,2);ctx.fillRect(Math.round(x)+2,Math.round(y)-2,2,2);ctx.fillRect(Math.round(x)+4,Math.round(y)+1,2,2);
+      ctx.fillStyle=`rgba(255,255,255,${(.45*(1-NIGHT*2)).toFixed(2)})`;ctx.fillRect(Math.round(x)-22,Math.round(y)+1,22,1)}
+    else{if(Math.floor(T*2)%2){ctx.fillStyle='#ff4040';ctx.fillRect(Math.round(x),Math.round(y),1,1)}if(Math.floor(T*1.3)%3===0){ctx.fillStyle='#ffffff';ctx.fillRect(Math.round(x)+5,Math.round(y),1,1)}glow(x+3,y,4,.5,'#ffffff')}}}
+  if(NIGHT<.55&&(ph<.14||(ph>.4&&ph<.52))&&!lowMo()){const cyc=40,p=(T%cyc)/22;if(p<1){const x0=bw+20-p*(bw+60),y0=hz*.5;ctx.fillStyle=mx('#2a2f45',sky[1],.25);
+    for(let k=0;k<7;k++){const row=Math.ceil(k/2),side=k%2?1:-1,x=Math.round(x0+row*5),y=Math.round(y0+side*row*3+Math.sin(T*3+k)*1),fl=Math.floor(T*6+k)%2;
+      ctx.fillRect(x-2,y-fl,2,1);ctx.fillRect(x,y,1,1);ctx.fillRect(x+1,y-fl,2,1)}}}
+  // resplandor de la zona metropolitana detrás de la sierra
+  if(NIGHT>.2){const gg=ctx.createLinearGradient(0,hz-70,0,hz+10);gg.addColorStop(0,'rgba(255,140,70,0)');gg.addColorStop(1,`rgba(255,140,70,${(.22*NIGHT).toFixed(3)})`);ctx.fillStyle=gg;ctx.fillRect(0,hz-70,bw,80)}
+  // la sierra: cada capa se mezcla con el horizonte (más lejos, más bruma) y se oscurece de noche
+  const sb=Math.round(ph*48),nk=Math.round(NIGHT*24),rim=sun&&sun.el<.45?(1-sun.el/.45):0,rimSide=sun?Math.sign(sun.vx):0;
   ridges.forEach((pts,l)=>{
     const par=.15+l*.1,w=Math.ceil(bw*1.6),off=Math.round((panX/zoom)*par-bw*.3),hh=46+l*18,y0=Math.round(base-24+l*14),top=y0-hh-2,H=hh+6;
-    let rc=RIDGE[l];const key=`${w}|${H}|${nk}|${RES}`;
+    let rc=RIDGE[l];const key=`${w}|${H}|${nk}|${sb}|${RES}|${OPT.hc?1:0}`;
     if(!rc||rc.key!==key){const c=mkCanvas(w,H),pc=ctx;ctx=hdctx(c,false);
-      try{const pp=[[0,H]];pts.forEach((h,i)=>pp.push([Math.round(i*w/70),hh+2-Math.round(h*hh)]));pp.push([w,H]);poly(pp,cols[l])}finally{ctx=pc}
-      rc=RIDGE[l]={c,key}}
-    ctx.drawImage(rc.c,off,top,w,H);if(top+H<bh){ctx.fillStyle=cols[l];ctx.fillRect(off,top+H,w,bh-top-H);if(NIGHT>0){ctx.fillStyle=NCOL;ctx.fillRect(off,top+H,w,bh-top-H)}}
+      const col=mx(mx(RBASE[l],sky[1],RHAZE[l]),'#0a0f2c',NIGHT*(.55+l*.12)*(OPT.hc?.6:1));
+      try{const pp=[[0,H]];pts.forEach((h,i)=>pp.push([Math.round(i*w/70),hh+2-Math.round(h*hh)]));pp.push([w,H]);ctx.fillStyle=col;rasterPoly(pp);
+        // borde encendido del lado del sol cuando está bajo
+        if(rim>.05&&l<2){ctx.fillStyle=mxa('#ffe0a0','#ff9a50',rim,.85*rim*(1-l*.35));for(let i=0;i<70;i++){const a=pp[i+1],b=pp[i+2];if((b[1]-a[1])*rimSide<=0)continue;for(let xx=a[0];xx<b[0];xx++){const yy=a[1]+(b[1]-a[1])*(xx-a[0])/(b[0]-a[0]);ctx.fillRect(xx,yy,1,1.5)}}}
+        // de noche, lucecitas de las colonias en las faldas del cerro cercano
+        if(l===2&&NIGHT>.35){const r=rng(31),al=Math.min(1,(NIGHT-.35)*2);for(let k=0;k<70;k++){const cx=r()*w,n=3+Math.floor(r()*6);for(let q=0;q<n;q++){const xx=Math.round(cx+(r()-.5)*14),yy=Math.round(H-2-r()*r()*Math.min(18,H*.35));
+          ctx.fillStyle=r()<.82?`rgba(255,196,120,${(al*(.55+r()*.45)).toFixed(2)})`:`rgba(225,238,255,${(al*.7).toFixed(2)})`;ctx.fillRect(xx,yy,1,1)}}}
+      }finally{ctx=pc}
+      rc=RIDGE[l]={c,key,col}}
+    ctx.drawImage(rc.c,off,top,w,H);if(top+H<bh){ctx.fillStyle=rc.col;ctx.fillRect(off,top+H,w,bh-top-H)}
   });
 }
 function drawEdges(){
@@ -1805,6 +1856,13 @@ function outline(c,pass=RES){
     if((x>0&&a[i-1])||(x<w-1&&a[i+1])||(y>0&&a[i-w])||(y<h-1&&a[i+w])){const j=i*4;d[j]=OL[0];d[j+1]=OL[1];d[j+2]=OL[2];d[j+3]=215}}
   c.putImageData(im,0,0);if(pass>1)outline(c,pass-1);
 }
+/* humo de las chimeneas de DeAcero: bocanadas que suben y se van con el viento; de noche, foco rojo y resplandor del horno */
+// el humo va en el aire: se pinta después de toda la ciudad para que ningún edificio lo tape
+let SMOKEQ=[];
+function chimSmoke(gx,gy){const [x,y0]=P(gx+.5,gy+.5),y=y0-9-CHIM_H,n=lowMo()?3:OPT.low?4:7,c=mx('#f2efe9','#8a8ea8',NIGHT*.8),c2=mx('#b9b5ae','#55597a',NIGHT*.8);
+  for(let k=0;k<n;k++){const p=lowMo()?k/n:((T*.18+k/n+gx*.13)%1),r=1.6+p*6.5,a=(1-p)*(.75-.2*NIGHT),cx=x+p*p*26+Math.sin(p*6+gx)*1.5,cy=y-2-p*34;if(a<.02)continue;
+    ctx.globalAlpha=a;ctx.fillStyle=c2;ctx.beginPath();ctx.arc(cx+.6,cy+.8,r,0,7);ctx.fill();ctx.fillStyle=c;ctx.beginPath();ctx.arc(cx-.3,cy-.3,r*.86,0,7);ctx.fill()}
+  ctx.globalAlpha=1;if(NIGHT>.3){if(Math.floor(T*1.2+gx)%2)px(x-.5,y-1,1.5,1.5,'#ff3b2f',true);glow(x,y-1,4,.7,'#ff3b2f');glow(x,y0-3,10,.45,'#ff7a2a')}}
 /* partes animadas: se dibujan en vivo encima de la imagen guardada */
 function drawDyn(t,gx,gy){
   const s=t.s;if(SEASON_C)seasonDeco(t,gx,gy);
@@ -1812,6 +1870,7 @@ function drawDyn(t,gx,gy){
     px(x-2,y-3,4,2,c);px(x+(dir>0?2:-3),y-4,2,2,c);px(x-2,y-1,1,1,'#333');px(x+1,y-1,1,1,'#333');px(x+(dir>0?-3:2),y-4,1,1,c)}}
   else if(t.k==='teleferico'&&!(t.b>0))telCabins(gx,gy);
   else if(t.k==='caseta'&&NIGHT>.2){const [x,y]=P(gx+.5,gy+.48);px(x,y-13,2,1,Math.floor(T*2)%2?'#3b82f6':'#d62828',true);glow(x,y-13,8,.5)}
+  else if(t.k==='fabrica'&&chimney(gx,gy))SMOKEQ.push([gx,gy]);
   else if((t.k==='tanque'||t.k==='torreagua')&&NIGHT>.3){const [x,y]=P(gx+.5,gy+.5);px(x,y-62-27,1,1,Math.floor(T*1.5)%2?'#ff3b3b':'#661111',true)}
   if(t.ub>0){const d=DEFS[t.k],FH=t.k==='torre'?6:7;crane(gx,gy,t.f*FH+3+FH)}
   if(t.ct>0){const p=1-t.ct/(t.ctt||60),h=t.f*7+3+p*60;crane(gx,gy,h);scaffold(gx,gy,.14,h*.92)}
@@ -1826,6 +1885,7 @@ function drawDyn(t,gx,gy){
       park:[[-1,-2],[0,-2],[1,-2],[-1,-1],[1,-1],[-1,0],[0,0],[1,0],[-1,1]],dog:[[-2,-2],[0,-2],[2,-2],[-1,0],[0,0],[1,0],[-1,1],[0,1],[1,1]]}[b.wk];
     for(const [a,c] of ic)px(x+a,y+c+bob,1,1,col,true)}
 }
+const CHIM_H=58,chimney=(gx,gy)=>gy===OFF+15&&gx%7===3;
 const SPH={mirador:104,teleferico:110,torre:200,edificio:116,ladrillo:116,oficinas:112,tanque:120,torreagua:120,domo:70,fabrica:40,calle:40,arbol:40,ajeno:44,lotedomo:44};
 // caché por nivel de noche: solo 4 niveles (día, tarde, anochecer, noche) y se funden dos a la vez
 let WLATE=0;
@@ -1833,16 +1893,21 @@ const SPRL=new Map(),SPR={clear(){SPRL.clear()}},LASTSPR=new Map();let sprBudget
 const NLV=[0,1/3,2/3,1];let NLO=0,NHI=0,NFR=0;
 function nightPair(n){const k=Math.min(2,Math.floor(n*3+1e-6));NLO=NLV[k];NHI=NLV[k+1];NFR=Math.max(0,Math.min(1,(n-NLO)*3));if(OPT.low){if(NFR>=.5)NLO=NHI;NFR=0}if(NFR<.03){NFR=0}else if(NFR>.97){NLO=NHI;NFR=0}
   for(const k2 of SPRL.keys())if(k2!==NLO&&k2!==NHI)SPRL.delete(k2)}
-const ncol=n=>`rgba(16,22,60,${(n*(OPT.hc?.38:.55)).toFixed(3)})`;
+// tinte que oscurece lo que no tiene luz propia: violeta cálido en la tarde, azul profundo de noche (v54)
+const NTINT=[[0,[86,46,96],0],[1/3,[86,46,96],.2],[2/3,[40,30,92],.43],[1,[8,14,48],.63]];
+const ncol=n=>{let k=1;while(k<NTINT.length-1&&n>NTINT[k][0])k++;const a=NTINT[k-1],b=NTINT[k],f=Math.max(0,Math.min(1,(n-a[0])/(b[0]-a[0]))),c=a[1].map((v,i)=>Math.round(v+(b[1][i]-v)*f)),al=(a[2]+(b[2]-a[2])*f)*(OPT.hc?.65:1);
+  return `rgba(${c},${al.toFixed(3)})`};
 function hasObj(t,gx,gy){const k=t.k;if(k==='lote'||k==='part')return false;if(k==='calle')return !t.hw&&(gx*3+gy)%4===0;if(k==='ajeno')return t.s%9===0||t.s%4===1||Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy);return true}
 // los negocios brillan de noche para que se encuentren rápido (altura del letrero)
+// color del letrero de noche: neón rosa en bares, azul en lo cultural y oficinas, verde en el pádel; lo demás, cálido
+const NEON={bar:'#ff6fae',cultura:'#7fd6ff',oficinas:'#c9dcff',padel:'#8dffb0',caseta:'#9fc4ff'};
 const SHOPGLOW={cafe:6,resto:8,bar:8,tomates:8,padel:4,oficinas:10,caseta:6,cultura:12,kiosco:8};
 function makeSprite(t,gx,gy,nb){
-  const sz=SZ(t.k),h=SPH[t.k]||64,w=t.k==='domo'?84:sz>1?sz*34+24:64,c=mkCanvas(w,h);
+  const sz=SZ(t.k),h=t.k==='fabrica'&&chimney(gx,gy)?84:SPH[t.k]||64,w=t.k==='domo'?84:sz>1?sz*34+24:64,c=mkCanvas(w,h);
   const ax=w/2,ay=h-6-sz*8,pc=ctx,pcam={ox:cam.ox,oy:cam.oy},pn=NIGHT,pnc=NCOL,pg=GLOWS;
   ctx=hdctx(c);const [rx,ry]=rot(gx+sz/2,gy+sz/2);cam.ox=ax-(rx-ry)*TW/2;cam.oy=ay-(rx+ry)*TH/2;
   NIGHT=nb;NCOL=ncol(nb);GLOWS=[];let glows=[];
-  try{drawObj(t,gx,gy,false);if(SHOPGLOW[t.k]&&!(t.b>0)){const [sx,sy]=P(gx+sz/2,gy+sz/2);GLOWS.push([sx,sy-SHOPGLOW[t.k],13+5*(sz-1),.6])}glows=GLOWS.map(g=>[g[0]-ax,g[1]-ay,g[2],g[3]]);outline(ctx)}
+  try{drawObj(t,gx,gy,false);if(SHOPGLOW[t.k]&&!(t.b>0)){const [sx,sy]=P(gx+sz/2,gy+sz/2);GLOWS.push([sx,sy-SHOPGLOW[t.k],13+5*(sz-1),.6,NEON[t.k]])}glows=GLOWS.map(g=>[g[0]-ax,g[1]-ay,g[2],g[3],g[4]]);outline(ctx)}
   catch(e){console.warn('dibujo',t.k,e)}
   finally{GLOWS=pg;ctx=pc;cam.ox=pcam.ox;cam.oy=pcam.oy;NIGHT=pn;NCOL=pnc}
   return {c,ax,ay,glows};
@@ -1856,11 +1921,11 @@ function getSprite(t,gx,gy,i,nb,ghost){
   sprBudget--;if(M.size>1600)M.clear();
   sp=makeSprite(t,gx,gy,nb);M.set(base,sp);LASTSPR.set(base,sp);return sp;
 }
-function drawSprite(sp,gx,gy,sz=1,ng){const [cx,cy]=P(gx+sz/2,gy+sz/2);ctx.drawImage(sp.c,rr(cx-sp.ax),rr(cy-sp.ay),sp.c.width/RES,sp.c.height/RES);if(!ng)for(const g of sp.glows)glow(cx+g[0],cy+g[1],g[2],g[3])}
+function drawSprite(sp,gx,gy,sz=1,ng){const [cx,cy]=P(gx+sz/2,gy+sz/2);ctx.drawImage(sp.c,rr(cx-sp.ax),rr(cy-sp.ay),sp.c.width/RES,sp.c.height/RES);if(!ng)for(const g of sp.glows)glow(cx+g[0],cy+g[1],g[2],g[3],g[4])}
 function drawSprN(t,gx,gy,i,sz,a,ghost){const s1=getSprite(t,gx,gy,i,NLO,ghost);ctx.globalAlpha=a;
   if(!NFR){drawSprite(s1,gx,gy,sz);return}
   drawSprite(s1,gx,gy,sz,true);const s2=getSprite(t,gx,gy,i,NHI,ghost);if(s2!==s1){ctx.globalAlpha=a*NFR;drawSprite(s2,gx,gy,sz,true);ctx.globalAlpha=a}
-  const [cx,cy]=P(gx+sz/2,gy+sz/2);for(const g of s1.glows)glow(cx+g[0],cy+g[1],g[2],g[3])}
+  const [cx,cy]=P(gx+sz/2,gy+sz/2);for(const g of s1.glows)glow(cx+g[0],cy+g[1],g[2],g[3],g[4])}
 /* sombras: altura y huella de cada cosa */
 function shadowOf(t){const k=t.k;
   if(k==='edificio'||k==='ladrillo')return [.1,(t.f||3)*7+3];if(k==='torre')return [.16,(t.f||16)*6+3];
@@ -1900,7 +1965,7 @@ function groundLayer(nb,ph){
 }
 function tileFill(pts){rasterPoly(pts)}
 function render(){
-  const ph=S.clock/DAY;NIGHT=keyf(NF,ph);NCOL=ncol(NIGHT);
+  const ph=S.clock/DAY;NIGHT=keyf(NF,ph);NCOL=ncol(NIGHT);LIGHTN=0;
   SEASON_C=SEASON();const nb=Math.round(NIGHT*16)/16;sprBudget=14;WBUD=OPT.low?2:5;nightPair(NIGHT);WLATE=ph>.62&&ph<.88?Math.min(2,Math.floor((ph-.62)/.26*3)):0;
   cam.ox=Math.round(bw/2+panX/zoom);cam.oy=Math.round(bh/2-N*TH/2+panY/zoom+30);
   drawBack(keyf(SKY,ph,true));
@@ -1945,6 +2010,7 @@ function render(){
     ctx.fillStyle='rgba(255,255,255,.1)';ctx.fill();ctx.lineJoin='round';ctx.strokeStyle=OPT.hc?'rgba(20,24,40,.9)':'rgba(20,24,40,.55)';ctx.lineWidth=OPT.hc?2.6:1.6;ctx.stroke();ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=OPT.hc?1.1:.7;ctx.stroke();ctx.restore()}
   // hora dorada: una luz cálida muy suave al amanecer y al atardecer
   {const gh=Math.max(0,1-Math.abs(ph-.46)/.07),gm=Math.max(0,1-Math.min(Math.abs(ph-.985),Math.abs(ph+.015))/.04),a=.09*Math.max(gh,gm*.7);if(a>.004){ctx.fillStyle=`rgba(255,160,80,${a.toFixed(3)})`;ctx.fillRect(0,0,bw,bh)}}
+  for(const [a,b] of SMOKEQ)chimSmoke(a,b);SMOKEQ=[];
   drawWeather(ph);drawCoins();priceTag();placeTag();
   drawFireworks();
 }
@@ -2244,7 +2310,15 @@ addEventListener('keydown',e=>{if(TITLE||e.target&&e.target.tagName==='INPUT')re
   if(e.shiftKey&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.repeat){
     if(e.code==='KeyL'){const ev=EVENTS.find(q=>q.id==='lluvia');S.ev={id:ev.id,t:ev.dur};sfx('event');say(ev.msg,true)}
     if(e.code==='KeyN'){S.clock=172.5;say('Son las 5:30 pm: ya viene el atardecer.',true)}
-    if(e.code==='KeyD')setDemo(!document.body.classList.contains('demo'),true)}});
+    if(e.code==='KeyD')setDemo(!document.body.classList.contains('demo'),true);
+    if(e.code==='KeyF')perfShow(!PERF.on);
+    if(e.code==='KeyH'){S.clock=(S.clock+DAY/16)%DAY;say('Adelanté la hora: '+clockTxt()+'.',true)}}});
+function clockTxt(){const hr=(S.clock/DAY*24+6)%24,h=Math.floor(hr),m=Math.floor((hr-h)*60/15)*15;return `${(h%12)||12}:${String(m).padStart(2,'0')} ${h<12?'am':'pm'}`}
+/* medidor de rendimiento (Shift+F): ms que tarda en dibujarse cada cuadro y cuadros por segundo */
+const PERF={on:false,r:0,f:0,n:0,t:0,el:null};
+function perfShow(v){PERF.on=v;if(!PERF.el){PERF.el=document.createElement('div');PERF.el.id='perf';document.getElementById('stage').appendChild(PERF.el)}PERF.el.hidden=!v}
+function perfStep(rms,fdt){PERF.r=PERF.r*.95+rms*.05;PERF.f=PERF.f*.95+fdt*.05;if(!PERF.on)return;PERF.t+=fdt;if(PERF.t<.25)return;PERF.t=0;
+  PERF.el.textContent=`dibujo ${PERF.r.toFixed(1)} ms · ${Math.round(1/Math.max(.001,PERF.f))} fps · luces ${LIGHTN} · ${bw}×${bh}@${RES}`}
 function setDemo(on,tell){document.body.classList.toggle('demo',on);try{localStorage.setItem(KEY+'.presentador',on?'1':'')}catch(e){}
   if(tell)say(on?'Modo presentador: Reiniciar oculto. Shift+L tormenta · Shift+N atardecer · C centra la vista · Shift+D para salir.':'Modo presentador apagado.',true)}
 try{if(localStorage.getItem(KEY+'.presentador')==='1')setDemo(true,false)}catch(e){}
@@ -2606,7 +2680,7 @@ function start(data){
     g.innerHTML=`<h2>Guía del Distrito<button class="x" type="button" aria-label="Cerrar">✕</button></h2>
       <p class="intro">Los vecinos pagan renta (profesionistas $0.10/s, familias $0.065, estudiantes $0.045), más si están contentos y si su zona tiene plusvalía. Llegan más si tienen cerca verde, comercio que les guste, estacionamiento y dog park.</p>`
       +[['Herramientas',FIXED],...TABS.map(t=>[t[1],t[2]])].map(([n,ks])=>`<h3>${n}</h3>`+ks.map(row).join('')).join('')
-      +`<h3>Teclado</h3><p class="intro">Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer.</p>`;
+      +`<h3>Teclado</h3><p class="intro">Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer, Shift+H adelanta la hora, Shift+F mide el rendimiento.</p>`;
     g.querySelector('.x').onclick=()=>{g.hidden=true;$('guideb').setAttribute('aria-expanded',false)}};
   $('guideb').onclick=e=>{e.stopPropagation();const g=$('guide');g.hidden=!g.hidden;$('guideb').setAttribute('aria-expanded',!g.hidden);if(!g.hidden)renderGuide()};
   $('pauseb').onclick=e=>{e.stopPropagation();setPause(!PAUSED)};
@@ -2626,7 +2700,7 @@ function start(data){
   function loop(now){
     const rdt=(now-last)/1000,dt=PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt));last=now;T+=dt;
     if(!TITLE&&!OPT.low&&!S.slowTip&&rdt<1&&!document.hidden){slowA=slowA*.97+rdt*.03;slowT+=dt;if(slowT>12&&slowA>1/26){S.slowTip=1;say('¿El juego va lento en este aparato? En el botón ⚙ puedes activar "Calidad baja".')}}
-    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED)tick(dt);updWalkers(dt);msgStep(dt);refreshUI();render();
+    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED)tick(dt);updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}
     loanT+=dt;if(loanT>1){loanT=0;renderLoan();renderMoney()}
     musT+=dt;if(musT>.5){musT=0;JAZZ.update({night:NIGHT,sat:stats.sat,ev:S.ev?S.ev.id:null,red:S.$<0,phase:S.phase||1,kiosk:!!S.g.find(t=>t.k==='kiosco'&&!(t.b>0)),vec:S.maxV||0})}
     saveT+=dt;if(saveT>5&&!TITLE){saveT=0;save()}
