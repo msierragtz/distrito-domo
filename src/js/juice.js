@@ -47,7 +47,7 @@ function camTo(i,dur){const t=S.g[i],[dw,dh]=DIMT(t),[a,b]=rot(i%N+dw/2,Math.flo
 function momento(i){const t=S.g[i];if(TITLE||!t||!DEFS[t.k])return;const dom=t.k==='domo',el=$('cine');
   camTo(i,1.4);flashAt(i,1.6);confetti(i,dom?90:60);celebrate(dom?6:4);sfx('phase');
   CINE={t:0,dur:dom?5.4:4.2,slow:dom&&!lowMo()};
-  if(el){el.querySelector('b').textContent=dom?'¡EL DOMO ESTÁ LISTO!':`¡${DEFS[t.k].name.toUpperCase()}!`;el.querySelector('small').textContent=dom?'El arco naranja ya es parte del cielo de Santa Catarina.':MOMSUB[t.k]||'';
+  if(el){el.querySelector('b').textContent=dom?(DIST==='ribera'?'¡EL PUENTE ATIRANTADO ESTÁ LISTO!':'¡EL DOMO ESTÁ LISTO!'):`¡${DEFS[t.k].name.toUpperCase()}!`;el.querySelector('small').textContent=dom?(DIST==='ribera'?'El pilón blanco ya cruza el río: la Ribera tiene su emblema.':'El arco naranja ya es parte del cielo de Santa Catarina.'):MOMSUB[t.k]||'';
     el.hidden=false;void el.offsetWidth;el.classList.add('on')}}
 // cámara: viaje suave, inercia al soltar el arrastre, cámara lenta y zoom animado; corre con el tiempo real (no se frena en pausa)
 function camStep(rdt){

@@ -259,9 +259,44 @@ body.foto #cv,body.tl #cv{cursor:grab}
 body.foto #stage,body.tl #stage{grid-row:1/-1}
 @media (max-width:560px){#fMsg{font-size:15px;top:8px}}
 
-/* v66: selector de distrito (inicio y opciones) */
-.dsel{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:8px 0 2px;font-size:12px}
-.dsel button{font:inherit;padding:4px 10px;border:2px solid #3a2f25;background:#f4ead6;color:#2b2118;cursor:pointer;border-radius:3px}
-.dsel button[aria-pressed="true"]{background:#2f7fb8;color:#fff;border-color:#1d4f73;cursor:default}
-.dsel small{flex-basis:100%;text-align:center;opacity:.75}
+/* v66–67: distritos. Selector del inicio, botón «Distritos», panel, tarjeta del desbloqueo y pantalla de viaje */
+.dsel{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:4px 0 2px;font-size:15px}
+.dsel button{font:inherit;padding:4px 10px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;border-radius:5px}
+.dsel button[aria-pressed="true"]{background:#2f7fb8;color:#fff;cursor:default}
 body.ribera .tarc path,body.ribera .brand svg path{stroke:#2f7fb8}
+body.ribera #cine .ct b{text-shadow:3px 3px 0 #2f7fb8}
+#distb{position:relative;vertical-align:2px;margin-left:8px;font-family:var(--f-text);font-size:14px;line-height:1.15;letter-spacing:0;background:#dcecf8;color:var(--ink);border:0;border-radius:5px;padding:1px 7px;cursor:pointer}
+#distb[hidden]{display:none}#distb:focus-visible{outline:3px solid #fff;outline-offset:2px}#distb .ic{margin-right:4px}
+#distb.new{animation:dpulse 1.4s ease-in-out infinite}#distb.new::after{content:'';position:absolute;top:-4px;right:-4px;width:9px;height:9px;border-radius:50%;background:#2f7fb8;border:2px solid var(--ink)}
+@keyframes dpulse{50%{box-shadow:0 0 0 4px rgba(95,166,214,.6)}}
+body.rm #distb.new{animation:none}
+@media (max-width:560px){#distb .lb{display:none}#distb .ic{margin:0}#distb{padding:1px 6px;margin-left:5px}}
+#distbox{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 32px));padding:12px 16px 12px;font-size:18px;line-height:1.2;z-index:6}
+#distbox[hidden],#ribnew[hidden]{display:none}
+#distbox h2{font-family:var(--f-pixel);font-size:11px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+#distbox .x{font:inherit;font-size:14px;border:0;background:none;cursor:pointer;color:var(--ink)}
+.dcard{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 8px;border:2px solid #c8cde0;border-radius:6px;margin-bottom:8px}
+.dcard.here{border-color:var(--ink);background:#f4f7ff}.dcard.lk{opacity:.6}
+.dcard .em svg{width:44px;height:27px;display:block}
+.dcard .dt b{display:block;font-family:var(--f-pixel);font-size:10px;margin-bottom:3px}.dcard .dt small{display:block;color:var(--muted);font-size:16px}
+.dcard button{font:inherit;font-size:16px;padding:5px 12px;border-radius:6px;border:2px solid var(--ink);background:#2f7fb8;color:#fff;cursor:pointer;white-space:nowrap}
+.dcard .aq{font-size:15px;color:var(--muted)}
+#distbox .dn{margin:2px 0 0;font-size:15px;color:var(--muted)}
+#ribnew{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,calc(100% - 28px));max-height:calc(100% - 20px);overflow:auto;padding:14px 18px 16px;font-size:18px;line-height:1.25;z-index:7}
+#ribnew .rill{display:block;width:100%;height:auto;border:2px solid var(--ink);border-radius:5px;margin-bottom:10px}
+#ribnew h2{font-family:var(--f-pixel);font-size:13px;color:#2f7fb8;margin:0 0 8px;text-align:center}
+#ribnew ul{margin:0 0 12px;padding-left:20px}#ribnew li{margin-bottom:5px}
+#ribnew .cbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#ribnew button{font:inherit;padding:6px 16px;border-radius:6px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}#ribnew button.go{background:#2f7fb8;color:#fff;font-weight:bold}
+#viaje{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#2a2140,#0b0f1e 70%);opacity:0;transition:opacity .45s ease}
+#viaje.rib{background:radial-gradient(circle at 50% 45%,#173a5a,#0b0f1e 70%)}
+#viaje[hidden]{display:none}#viaje.on{opacity:1}
+#viaje .vj{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px;text-align:center;color:#fff}
+#viaje .em svg{width:120px;height:72px;display:block}
+#viaje b{font-family:var(--f-pixel);font-size:clamp(13px,2.6vw,20px);letter-spacing:.04em;text-shadow:3px 3px 0 #f26a21}#viaje.rib b{text-shadow:3px 3px 0 #2f7fb8}
+#viaje small{font-family:var(--f-text);font-size:19px;opacity:.85;min-height:1.2em}
+#viaje .dots{display:flex;gap:8px}#viaje .dots i{width:8px;height:8px;background:#fff;opacity:.3;animation:vdot 1s infinite}
+#viaje .dots i:nth-child(2){animation-delay:.2s}#viaje .dots i:nth-child(3){animation-delay:.4s}
+@keyframes vdot{40%{opacity:1}}
+body.rm #viaje .dots i{animation:none;opacity:.7}
+@media (max-width:560px),(max-height:620px){#ribnew{font-size:16px;line-height:1.2;padding:10px 12px 12px}#ribnew .rill{height:92px;margin-bottom:6px}#ribnew li{margin-bottom:3px}#ribnew ul{margin-bottom:8px}}

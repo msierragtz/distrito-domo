@@ -28,7 +28,7 @@ legacy/             (ya no existe en main; está en el historial: versiones v53�
 | `errores.js` | Registro de los últimos 20 errores en el navegador |
 | `datos.js` | Perillas de economía (`ECO`), opciones, `DEFS` (todos los edificios), niveles y nombres |
 | `estado.js` | Partida nueva, terrenos, guardado, tipos de vecinos y gustos |
-| `ribera.js` | Distrito Ribera: su mapa, el río (seco, lluvias, crecida), puentes, malecón, Puente Atirantado y el cambio entre distritos |
+| `ribera.js` | Distrito Ribera: su mapa, el río (seco, lluvias, crecida), puentes, malecón, Puente Atirantado; el cambio entre distritos (tarjeta de los 3,000, panel «Tus distritos», viaje y llegada) |
 | `obras.js` | Obras grandes: constantes y ayudas |
 | `simulacion.js` | `recompute`, `satCalc`, `tick`: plusvalía, clientela, satisfacción, llegadas y salidas, eventos, quejas |
 | `encargos.js` | Los 24 encargos, su motor y su panel |
@@ -66,7 +66,7 @@ Para una versión nueva:
 1. Cambiar lo que haga falta en `src/`.
 2. `npm run build` y abrir `dist/distrito-domo.html` en el navegador.
 3. `npm test`.
-4. Subir `version` en `package.json` (0.65 → 0.66 = v66), hacer commit con lo que cambió.
+4. Subir `version` en `package.json` (0.66 → 0.67 = v67), hacer commit con lo que cambió.
 5. Publicar `dist/distrito-domo.html` en el artifact y, si toca, `npm run itch` para itch.io.
 
 `dist/distrito-domo.html` sí se guarda en git, para que siempre esté a la mano la última versión jugable.
@@ -85,7 +85,7 @@ Todas abren el juego en Chromium con ganchos de prueba (`build/arnes.html`, se a
 | `tests/temporadas.py` | Capturas de la ciudad grande por temporada y hora (`SOLO=noche,lluvia-noche` para elegir) |
 | `tests/detalle.py` | Acercamientos en la escena de muestra (`tests/datos/escena-muestra.js`) |
 | `tests/foto.py` | Modo foto: hora, clima, temporada, filtro, guardar foto, grabar video, paseo y time-lapse; revisa que la partida no cambie |
-| `tests/ribera.py` | Distrito Ribera: río, puentes, lecho, crecida, reparación, malecón, landmark, guardado separado e ir y volver al Domo |
+| `tests/ribera.py` | Distrito Ribera de punta a punta: tarjeta de los 3,000, viaje y llegada, río, puentes, lecho, crecida, reparación, malecón, landmark, panel de distritos, guardado separado, ir y volver, partidas de v66 |
 | `tests/timelapse.py` | Time-lapse desde una partida sin historia y regreso a la partida real |
 | `tests/bots/correr.py` | Bots novato, intermedio, experto, muy experto y descuidado (`SEEDS=1,2,3`, `NOSTOP=1`) |
 

@@ -1,6 +1,6 @@
 {
   "name": "distrito-domo",
-  "version": "0.66.0",
+  "version": "0.67.0",
   "private": true,
   "description": "Simulador de ciudad retro en el Distrito Domo de Santa Catarina, Nuevo León.",
   "type": "module",

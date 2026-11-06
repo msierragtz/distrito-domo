@@ -1,7 +1,7 @@
 
 /* ---------- arranque ---------- */
 function prep(d){
-  S=d;S.dist=DIST;fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
+  S=d;S.dist=DIST;ribFix();fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
   // hitos retirados: se devuelven como terreno y se reembolsa la mitad
   {let ref=0;const old={tim:15000,mercado:60000,grandomo:200000};const live=i=>{const a=S.g[i];return a&&MULTI(a.k)&&!old[a.k]};for(let i=0;i<S.g.length;i++){const t=S.g[i];if(t.k==='reserva'||(t.k==='part'&&!live(t.a))||old[t.k]){if(old[t.k])ref+=old[t.k]/2;S.g[i]={k:'lote',s:t.s||1,b:0}}}if(ref)S.$+=ref}
   if(!S.g.some(t=>t.k==='lotedomo'||t.k==='domo')){let i=idx(OFF+8,OFF+8);if(!(S.g[i].k==='lote'||S.g[i].k==='arbol'))i=S.g.findIndex((t,j)=>(t.k==='lote'||t.k==='arbol')&&connected(j%N,Math.floor(j/N)));if(i>=0)S.g[i]={k:'lotedomo',s:1,b:0}}
@@ -9,7 +9,7 @@ function prep(d){
   if(S.migG){const mx=stats.mix,t=mx.fam+mx.pro+mx.est;if(t>0){const v=S.v;for(const g of G3)S.pop[g]=v*mx[g]/t;fixPop()}delete S.migG;recompute()}
 }
 function start(data){
-  distBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
+  distBoot();const viajando=viajeBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
   buildTools();resize();
   refreshUI(true);
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
@@ -31,11 +31,11 @@ function start(data){
     if(framed)try{res=await Promise.race([(async()=>{const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return null;
         const id=await user.id();if(!id)return null;const sf=DIST==='ribera'?'-ribera':'',ref=db.doc('data/users/'+id+'/partida'+sf),pref=db.doc('data/users/'+id+'/anterior'+sf);const [snap,ps]=await Promise.all([ref.get(),pref.get().catch(()=>null)]);return {ref,pref,d:snap.exists?snap.data():null,p:ps&&ps.exists?ps.data():null}})(),
       new Promise(r=>setTimeout(()=>r(null),12000))])}catch(e){res=null}
-    if(!res){unlockTitle();showPrev();status(framed?'No pude conectar con tu cuenta: tu partida se guarda solo en este navegador. Descarga una copia de vez en cuando.':'Tu partida se guarda en este navegador. Descarga una copia de vez en cuando.',framed?'warn':'');return}
+    if(!res){unlockTitle();arrive();showPrev();status(framed?'No pude conectar con tu cuenta: tu partida se guarda solo en este navegador. Descarga una copia de vez en cuando.':'Tu partida se guarda en este navegador. Descarga una copia de vez en cuando.',framed?'warn':'');return}
     CLOUD.ref=res.ref;CLOUD.prevRef=res.pref;if(res.p&&typeof res.p.s==='string'){const pc=parseSave(res.p.s);if(pc&&(!prevD||(pc.t||0)>(prevD.t||0)))prevD=pc}let msg='Tu partida se guarda en tu cuenta de Claude.';
     const c=res.d&&typeof res.d.s==='string'?parseSave(res.d.s):null;
     if(c&&TITLE&&(!hasSave||(c.t||0)>(S.t||0))){adopt(c);msg=`Recuperé tu partida de tu cuenta (${vec(c)}).`}
-    CLOUD.ready=true;unlockTitle();status(msg,'ok');showPrev();
+    CLOUD.ready=true;unlockTitle();status(msg,'ok');showPrev();arrive();
     if(hasSave&&TITLE&&(!c||(S.t||0)>(c.t||0)))CLOUD.push(JSON.stringify(S),true)})();
   // copia de seguridad en un archivo, para pasarla a otro navegador o guardarla aparte
   $('texp').onclick=async()=>{const str=JSON.stringify(serialize()),d=new Date(),fn=`distrito-domo-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.json`;
@@ -59,6 +59,8 @@ function start(data){
     impD=d;impT=Date.now();$('timp').textContent='Sí, reemplazar';status(`La copia tiene ${vec(d)} y tu partida actual ${vec(S)}. Toca "Sí, reemplazar" para cargarla.`,'warn');
     setTimeout(()=>{if(Date.now()-impT>=8000){impD=null;$('timp').textContent='Cargar copia'}},8100)};
   let newArm=0;
+  // llegada de un viaje entre distritos: se entra directo (la pantalla de viaje tapa la de inicio) y se presenta el distrito
+  const arrive=()=>{if(!viajando||!TITLE)return;const nuevo=!hasSave;play(nuevo);llegada(nuevo)};
   const play=fresh=>{
     const nm=$('pname').value.trim().slice(0,20);
     if($('tmusic').checked){JAZZ.pref.on=false;JAZZ.toggle()}else{JAZZ.pref.on=false;JAZZ.setVol(JAZZ.pref.vol)}
@@ -66,7 +68,7 @@ function start(data){
     S.name=nm;try{localStorage.setItem('distritoDomo.nombre',nm)}catch(e){}
     TITLE=false;$('title').hidden=true;panX=0;panY=0;showMus();
     const who=nm?`, ${nm}`:'';
-    say(!S.seen||fresh?`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`:`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
+    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`:`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
     {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a El Domo.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
     if(!S.loanTip&&!S.loan){S.loanTip=1;setTimeout(()=>say('Consejo: si te falta dinero para crecer, el botón naranja Crédito, arriba, te presta y lo pagas poco a poco.'),9000)}
     if(S.fromBak){delete S.fromBak;cur+=' Ojo: tu guardada venía dañada y recuperé el respaldo de hace un minuto.'}

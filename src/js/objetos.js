@@ -30,6 +30,7 @@ function drawObj(t,gx,gy,ic){
       if(t.p==='mercado'){px(x-5,y-18,3,3,'#ffd23f');px(x-1,y-18,3,3,'#2a9d8f');px(x+3,y-18,3,3,'#d62828')}else arcTop(x+.5,y-15,5,2,'#ffffff')}
     break}
   case 'lotedomo':{
+    if(t.pu&&DIST==='ribera'){artLmSign(gx,gy);break}
     const E=[[P(gx+.06,gy+.06),P(gx+.94,gy+.06)],[P(gx+.06,gy+.06),P(gx+.06,gy+.94)],[P(gx+.94,gy+.06),P(gx+.94,gy+.94)],[P(gx+.06,gy+.94),P(gx+.94,gy+.94)]];
     for(const [a,b] of E)for(let k=0;k<=8;k++){const f=k/8;px(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-3,1,3,k%2?'#f26a21':'#ffffff')}
     const [x,y]=P(gx+.5,gy+.5);px(x,y-12,1,12,'#555');px(x-6,y-18,13,7,'#f26a21');

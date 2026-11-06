@@ -265,19 +265,54 @@ body.foto #cv,body.tl #cv{cursor:grab}
 body.foto #stage,body.tl #stage{grid-row:1/-1}
 @media (max-width:560px){#fMsg{font-size:15px;top:8px}}
 
-/* v66: selector de distrito (inicio y opciones) */
-.dsel{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:8px 0 2px;font-size:12px}
-.dsel button{font:inherit;padding:4px 10px;border:2px solid #3a2f25;background:#f4ead6;color:#2b2118;cursor:pointer;border-radius:3px}
-.dsel button[aria-pressed="true"]{background:#2f7fb8;color:#fff;border-color:#1d4f73;cursor:default}
-.dsel small{flex-basis:100%;text-align:center;opacity:.75}
+/* v66–67: distritos. Selector del inicio, botón «Distritos», panel, tarjeta del desbloqueo y pantalla de viaje */
+.dsel{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:4px 0 2px;font-size:15px}
+.dsel button{font:inherit;padding:4px 10px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;border-radius:5px}
+.dsel button[aria-pressed="true"]{background:#2f7fb8;color:#fff;cursor:default}
 body.ribera .tarc path,body.ribera .brand svg path{stroke:#2f7fb8}
+body.ribera #cine .ct b{text-shadow:3px 3px 0 #2f7fb8}
+#distb{position:relative;vertical-align:2px;margin-left:8px;font-family:var(--f-text);font-size:14px;line-height:1.15;letter-spacing:0;background:#dcecf8;color:var(--ink);border:0;border-radius:5px;padding:1px 7px;cursor:pointer}
+#distb[hidden]{display:none}#distb:focus-visible{outline:3px solid #fff;outline-offset:2px}#distb .ic{margin-right:4px}
+#distb.new{animation:dpulse 1.4s ease-in-out infinite}#distb.new::after{content:'';position:absolute;top:-4px;right:-4px;width:9px;height:9px;border-radius:50%;background:#2f7fb8;border:2px solid var(--ink)}
+@keyframes dpulse{50%{box-shadow:0 0 0 4px rgba(95,166,214,.6)}}
+body.rm #distb.new{animation:none}
+@media (max-width:560px){#distb .lb{display:none}#distb .ic{margin:0}#distb{padding:1px 6px;margin-left:5px}}
+#distbox{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 32px));padding:12px 16px 12px;font-size:18px;line-height:1.2;z-index:6}
+#distbox[hidden],#ribnew[hidden]{display:none}
+#distbox h2{font-family:var(--f-pixel);font-size:11px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+#distbox .x{font:inherit;font-size:14px;border:0;background:none;cursor:pointer;color:var(--ink)}
+.dcard{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 8px;border:2px solid #c8cde0;border-radius:6px;margin-bottom:8px}
+.dcard.here{border-color:var(--ink);background:#f4f7ff}.dcard.lk{opacity:.6}
+.dcard .em svg{width:44px;height:27px;display:block}
+.dcard .dt b{display:block;font-family:var(--f-pixel);font-size:10px;margin-bottom:3px}.dcard .dt small{display:block;color:var(--muted);font-size:16px}
+.dcard button{font:inherit;font-size:16px;padding:5px 12px;border-radius:6px;border:2px solid var(--ink);background:#2f7fb8;color:#fff;cursor:pointer;white-space:nowrap}
+.dcard .aq{font-size:15px;color:var(--muted)}
+#distbox .dn{margin:2px 0 0;font-size:15px;color:var(--muted)}
+#ribnew{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,calc(100% - 28px));max-height:calc(100% - 20px);overflow:auto;padding:14px 18px 16px;font-size:18px;line-height:1.25;z-index:7}
+#ribnew .rill{display:block;width:100%;height:auto;border:2px solid var(--ink);border-radius:5px;margin-bottom:10px}
+#ribnew h2{font-family:var(--f-pixel);font-size:13px;color:#2f7fb8;margin:0 0 8px;text-align:center}
+#ribnew ul{margin:0 0 12px;padding-left:20px}#ribnew li{margin-bottom:5px}
+#ribnew .cbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#ribnew button{font:inherit;padding:6px 16px;border-radius:6px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}#ribnew button.go{background:#2f7fb8;color:#fff;font-weight:bold}
+#viaje{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#2a2140,#0b0f1e 70%);opacity:0;transition:opacity .45s ease}
+#viaje.rib{background:radial-gradient(circle at 50% 45%,#173a5a,#0b0f1e 70%)}
+#viaje[hidden]{display:none}#viaje.on{opacity:1}
+#viaje .vj{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px;text-align:center;color:#fff}
+#viaje .em svg{width:120px;height:72px;display:block}
+#viaje b{font-family:var(--f-pixel);font-size:clamp(13px,2.6vw,20px);letter-spacing:.04em;text-shadow:3px 3px 0 #f26a21}#viaje.rib b{text-shadow:3px 3px 0 #2f7fb8}
+#viaje small{font-family:var(--f-text);font-size:19px;opacity:.85;min-height:1.2em}
+#viaje .dots{display:flex;gap:8px}#viaje .dots i{width:8px;height:8px;background:#fff;opacity:.3;animation:vdot 1s infinite}
+#viaje .dots i:nth-child(2){animation-delay:.2s}#viaje .dots i:nth-child(3){animation-delay:.4s}
+@keyframes vdot{40%{opacity:1}}
+body.rm #viaje .dots i{animation:none;opacity:.7}
+@media (max-width:560px),(max-height:620px){#ribnew{font-size:16px;line-height:1.2;padding:10px 12px 12px}#ribnew .rill{height:92px;margin-bottom:6px}#ribnew li{margin-bottom:3px}#ribnew ul{margin-bottom:8px}}
 </style>
 
 <div id="app">
   <header>
     <div class="brand">
       <svg viewBox="0 0 30 18" aria-hidden="true"><path d="M3 17 A12 12 0 0 1 27 17" fill="none" stroke="#f26a21" stroke-width="4"/></svg>
-      <h1>DISTRITO DOMO<small>Santa Catarina, N.L.</small></h1>
+      <h1>DISTRITO DOMO<button id="distb" type="button" hidden aria-label="Cambiar de distrito"><span class="ic">⇄</span><span class="lb">Cambiar</span></button><small>Santa Catarina, N.L.</small></h1>
     </div>
     <div class="stats">
       <div class="stat main"><span>Vecinos</span><b id="sV">0</b></div>
@@ -294,10 +329,12 @@ body.ribera .tarc path,body.ribera .brand svg path{stroke:#2f7fb8}
     <div class="zoom"><button class="box" id="zin" type="button" aria-label="Acercar">+</button><button class="box" id="zout" type="button" aria-label="Alejar">−</button><button class="box" id="rl" type="button" aria-label="Girar a la izquierda">⟲</button><button class="box" id="rr" type="button" aria-label="Girar a la derecha">⟳</button><button class="box" id="mus" type="button" aria-label="Música" aria-pressed="true">♪</button><button class="box" id="fxb" type="button" aria-label="Efectos de sonido" aria-pressed="true">FX</button><button class="box" id="heat" type="button" aria-label="Mapa de plusvalía" aria-pressed="false">$</button><button class="box" id="optb" type="button" aria-label="Opciones de imagen" aria-expanded="false">⚙</button><button class="box" id="fotob" type="button" aria-label="Modo foto (tecla F)" title="Modo foto (F)"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M5 3h6v2h3v9H2V5h3z"/><path fill="#fff" d="M6 7h4v4H6z"/><path fill="currentColor" d="M7 8h2v2H7z"/><path fill="#f26a21" d="M12 6h1v1h-1z"/></svg></button><button class="box" id="guideb" type="button" aria-label="Guía: qué hace cada edificio" aria-expanded="false">?</button><button class="box" id="pauseb" type="button" aria-label="Pausa (barra espaciadora o P)" aria-pressed="false">❚❚</button></div>
     <div id="guide" class="box" hidden role="dialog" aria-label="Guía del Distrito"></div>
     <div id="pausebar" class="box" hidden role="status">EN PAUSA · toca ▶ o la barra espaciadora para seguir</div>
-    <div id="opts" class="box" hidden role="dialog" aria-label="Opciones de imagen"><h2>Opciones de imagen</h2><label><input type="checkbox" id="oLow"> Calidad baja <small>para celulares lentos: menos gente en la calle y sin fundidos</small></label><label><input type="checkbox" id="oRm"> Menos movimiento <small>fuegos cortos, sin parpadeos ni rebotes</small></label><label><input type="checkbox" id="oHc"> Alto contraste <small>noche más clara, textos y cursor más marcados</small></label><label class="sel">Temporada <select id="oSe"><option value="auto">Según la fecha</option><option value="patrias">Fiestas Patrias</option><option value="muertos">Día de Muertos</option><option value="navidad">Navidad</option><option value="none">Ninguna</option></select></label><div id="odist" class="dsel" hidden>Distrito: <button id="odDomo" type="button">Domo</button><button id="odRib" type="button">Ribera</button><small>cada uno guarda su propia partida</small></div><small id="oErr" class="oerr"></small><button id="oOk" type="button">Listo</button></div>
+    <div id="opts" class="box" hidden role="dialog" aria-label="Opciones de imagen"><h2>Opciones de imagen</h2><label><input type="checkbox" id="oLow"> Calidad baja <small>para celulares lentos: menos gente en la calle y sin fundidos</small></label><label><input type="checkbox" id="oRm"> Menos movimiento <small>fuegos cortos, sin parpadeos ni rebotes</small></label><label><input type="checkbox" id="oHc"> Alto contraste <small>noche más clara, textos y cursor más marcados</small></label><label class="sel">Temporada <select id="oSe"><option value="auto">Según la fecha</option><option value="patrias">Fiestas Patrias</option><option value="muertos">Día de Muertos</option><option value="navidad">Navidad</option><option value="none">Ninguna</option></select></label><small id="oErr" class="oerr"></small><button id="oOk" type="button">Listo</button></div>
     <div id="dialog" class="box" role="status" aria-live="polite" title="Toca para leer el mensaje completo"></div>
     <div id="loanbox" class="box" hidden role="dialog" aria-label="Crédito Banregio"></div>
     <div id="misbox" class="box" hidden role="dialog" aria-label="Encargos del Distrito"></div>
+    <div id="distbox" class="box" hidden role="dialog" aria-label="Tus distritos"></div>
+    <div id="ribnew" class="box" hidden role="dialog" aria-label="Nuevo distrito"></div>
     <div id="moneybox" class="box" hidden role="dialog" aria-label="¿De dónde sale mi dinero?"></div>
     <div id="ptag" class="box" hidden aria-hidden="true"></div>
     <div id="cine" hidden aria-live="polite"><i class="lb t"></i><i class="lb b"></i><div class="ct"><b></b><small></small></div></div>
@@ -326,6 +363,7 @@ body.ribera .tarc path,body.ribera .brand svg path{stroke:#2f7fb8}
   <nav><div class="tabs" id="tabs" role="tablist" aria-label="Categorías de construcción"></div><div class="tools" id="tools"></div></nav>
 </div>
 <div id="gira" role="alert"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="10" y="3" width="12" height="22" rx="2" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M5 22 A12 12 0 0 0 16 30" fill="none" stroke="#f26a21" stroke-width="2.5"/><path d="M13 30 l3 0 l-1 -3" fill="none" stroke="#f26a21" stroke-width="2.5"/></svg><b>GIRA TU CELULAR</b><span>Distrito Domo se juega en vertical.</span><button id="giraok" type="button">Jugar así</button></div>
+<div id="viaje" hidden aria-live="polite"><div class="vj"><span class="em"></span><b></b><small></small><i class="dots"><i></i><i></i><i></i></i></div></div>
 <div id="title" role="dialog" aria-label="Pantalla de inicio">
   <div class="tbox box">
     <svg class="tarc" viewBox="0 0 60 34" aria-hidden="true"><path d="M5 32 A25 25 0 0 1 55 32" fill="none" stroke="#f26a21" stroke-width="7"/></svg>
@@ -606,7 +644,7 @@ function bizX(t,x,y,nb){const k=t.k,has=q=>nb.some(n=>n&&n.k===q&&!(n.b>0));
    se cambia de uno a otro desde la pantalla de inicio o desde ⚙. El río va casi seco todo el año (se puede jugar en el lecho:
    parques, canchas, dog parks y palmas), se llena en la temporada de lluvias y una vez por temporada crece de golpe y daña
    lo que esté abajo. Las calles lo cruzan con puentes, el malecón luce la orilla y la vista al agua sube la plusvalía. */
-const LECHO=['parque','cancha','dogpark','palma'],PUENTE_MIN=400;
+const LECHO=['parque','cancha','dogpark','palma'],PUENTE_MIN=400,LMY=OFF+5;
 // centro del río en cada fila: serpentea de norte a sur
 const cxR=y=>15+Math.round(2.4*Math.sin(y/4.6+.6));
 const isRio=t=>!!t&&(t.k==='rio'||t.pu===1||t.lecho===1);
@@ -624,8 +662,8 @@ function riberaGame(bono){const r=rng(4242),g=[];
   for(let x=OFF+3;x<=OFF+13;x++)set(x,OFF+5,{k:'calle'});
   const free=(x,y)=>{const t=at(x,y);return t&&(t.k==='lote'||t.k==='arbol')};
   const near=(x,y,o)=>{for(let d=0;d<4;d++)for(const [dx,dy] of [[0,0],[d,0],[-d,0],[0,d],[0,-d]])if(free(x+dx,y+dy)){set(x+dx,y+dy,o);return}};
-  // el terreno del landmark: en la orilla oriente, junto al puente
-  {const y=OFF+6,x=cxR(y)+2;if(free(x,y))set(x,y,{k:'lotedomo',s:1});else near(x,y,{k:'lotedomo',s:1})}
+  // el landmark va sobre el puente de en medio: su casilla central queda reservada (con conos) hasta construirlo
+  {const y=LMY,x=cxR(y);g[idx(x,y)]={k:'lotedomo',pu:1,rc:1,s:1,b:0}}
   near(OFF+2,OFF+11,{k:'ladrillo',f:4,bt:20});near(OFF+14,OFF+11,{k:'tomates',bt:8});near(OFF+15,OFF+2,{k:'tanque'});
   near(OFF+4,OFF+2,{k:'parque'});near(OFF+4,OFF+8,{k:'parque'});near(OFF+12,OFF+9,{k:'palma'});
   return {pv2:1,pop:{fam:9,pro:3,est:4},g,v:16,$:600+(bono||0),maxV:16,unl:['ver','calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0,dist:'ribera',rio:{t:DAY*2.2,w:.1},bono:bono||0}}
@@ -686,41 +724,110 @@ function artMalecon(t,gx,gy){const sides=rioSides(gx,gy),on=NIGHT>.25;
   for(const [u,v] of [[.25,.25],[.75,.75]]){const [x,y]=P(gx+u,gy+v);px(x,y-12,1,12,'#3d4250');px(x-1,y-13,3,2,on?'#ffe19a':'#e6e1cf',on);glow(x,y-12,9,.7)}
   palm(gx+.3,gy+.72,.8);bench(gx+.62,gy+.38);
   if(t.s%2===0)person(...P(gx+.5,gy+.6),{shirt:'#3fa7d6',pants:'#2b3a55',skin:'#c68642',hair:'#1c1c1c',dx:1,front:true,scale:.8,fr:0})}
-// El landmark de Ribera: pilón blanco en forma de «A» con su tablero; los tirantes se pintan en vivo (finos, sin contorno)
-// el pilón en A va en la orilla y el tablero cruza hacia el río (a lo largo de x); los tirantes se dibujan en vivo
-const ATU=[-1.15,1.95];
-function artAtirantado(gx,gy,ic){const H=ic?40:88,on=!ic&&NIGHT>.25,Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0],p[1]-h]};
-  box(gx+.3,gy+.12,gx+.7,gy+.88,0,4,'#cfc9bd','#b9b3a7','#a59f93');
-  const [a,b]=ATU,dk=7;
-  poly([Q(a,.36,dk-2),Q(b,.36,dk-2),Q(b,.64,dk-2),Q(a,.64,dk-2)],'#6b7280');poly([Q(a,.36,dk),Q(b,.36,dk),Q(b,.64,dk),Q(a,.64,dk)],'#9aa1ab');
-  poly([Q(a,.4,dk+.2),Q(b,.4,dk+.2),Q(b,.6,dk+.2),Q(a,.6,dk+.2)],'#5b616c');
-  for(const v of [.36,.64]){const A=Q(a,v,dk+2),B=Q(b,v,dk+2);line(A[0],A[1],B[0],B[1],on?'#ffb86a':'#e6e1d6')}
-  {const A=Q(a,.5,dk+.4),B=Q(b,.5,dk+.4);ctx.globalAlpha=.8;line(A[0],A[1],B[0],B[1],'#f2c94c');ctx.globalAlpha=1}
-  const T_=Q(.5,.5,H),L=Q(.5,.16,4),R=Q(.5,.84,4);
-  poly([[L[0]-2,L[1]],[L[0]+1.5,L[1]],[T_[0]+.8,T_[1]+8],[T_[0]-1.5,T_[1]+8]],'#f1efe9');poly([[R[0]-1.5,R[1]],[R[0]+2,R[1]],[T_[0]+1.5,T_[1]+8],[T_[0]-.8,T_[1]+8]],'#d9d5cc');
-  px(T_[0]-1.5,T_[1],3,9,'#f1efe9');px(T_[0]+.5,T_[1],1,9,'#d9d5cc');{const m=Q(.5,.5,H*.42);px(m[0]-5,m[1],10,1.6,'#d9d5cc')}
+// El landmark de Ribera va sobre el río, en el puente de en medio: el tablero cubre las 3 casillas del cruce (u de -1 a 2)
+// y el pilón en «A» se planta en el agua, a horcajadas del tablero. Los tirantes se pintan en vivo (finos, sin contorno).
+const ATU=[-1,2],DKH=2.5;
+function artLmSign(gx,gy){const Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0],p[1]-h]};
+  for(const [u,v] of [[.14,.3],[.14,.7],[.86,.3],[.86,.7]]){const [x,y]=Q(u,v,0);px(x-2,y,5,1,'#b4501a');px(x-1,y-4,3,4,'#f26a21');px(x-1,y-3,3,1,'#ffffff');px(x,y-5,1,1,'#f26a21')}
+  const [x,y]=Q(.5,.18,0);px(x,y-15,1,15,'#555');px(x-8,y-24,17,10,'#2f7fb8');px(x-8,y-24,17,1,'#5fa6d6');
+  for(let q=0;q<6;q++){px(x-q*.9,y-16-q*1.2,1,1,'#fff');px(x+q*.9,y-16-q*1.2,1,1,'#fff')}px(x-4,y-17,9,1,'#ffffff')}
+function artAtirantado(gx,gy,ic){const H=ic?40:86,on=!ic&&NIGHT>.25,Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0],p[1]-h]};
+  if(ic){box(gx+.2,gy+.2,gx+.8,gy+.8,0,3,'#cfc9bd','#b9b3a7','#a59f93')}
+  const [a,b]=ATU;
+  // pilas en el agua bajo las patas del pilón
+  for(const v of [.12,.88])box(gx+.38,gy+v-.08,gx+.62,gy+v+.08,0,3,'#bdb7aa','#a49e91','#8f897d');
+  // tablero: canto, carriles, banquetas blancas y barandal
+  poly([Q(a,.34,DKH-2.5),Q(b,.34,DKH-2.5),Q(b,.66,DKH-2.5),Q(a,.66,DKH-2.5)],'#7c8290');
+  poly([Q(a,.34,DKH),Q(b,.34,DKH),Q(b,.66,DKH),Q(a,.66,DKH)],'#eceae4');
+  poly([Q(a,.39,DKH+.1),Q(b,.39,DKH+.1),Q(b,.61,DKH+.1),Q(a,.61,DKH+.1)],'#555b67');
+  {const A=Q(a,.5,DKH+.2),B=Q(b,.5,DKH+.2);for(let q=0;q<12;q++){if(q%2)continue;const f0=q/12,f1=(q+1)/12;line(A[0]+(B[0]-A[0])*f0,A[1]+(B[1]-A[1])*f0,A[0]+(B[0]-A[0])*f1,A[1]+(B[1]-A[1])*f1,'#f2c94c')}}
+  for(const v of [.34,.66]){const A=Q(a,v,DKH+2.4),B=Q(b,v,DKH+2.4);line(A[0],A[1],B[0],B[1],on?'#ffcf8a':'#f4f2ec');
+    for(let q=0;q<=12;q++){const f=q/12;px(A[0]+(B[0]-A[0])*f,A[1]+(B[1]-A[1])*f,1,2.4,'#b9b6ae')}}
+  // pilón en «A»: dos patas desde las pilas hasta la cima, travesaño bajo el tablero y aguja con luz roja
+  const T_=Q(.5,.5,H),L0=Q(.5,.12,3),R0=Q(.5,.88,3),M=[T_[0],T_[1]+10];
+  poly([[L0[0]-1.6,L0[1]],[L0[0]+1.6,L0[1]],[M[0]+1,M[1]],[M[0]-1,M[1]]],'#f4f2ec');poly([[R0[0]-1.6,R0[1]],[R0[0]+1.6,R0[1]],[M[0]+1.4,M[1]],[M[0]-.6,M[1]]],'#d8d4ca');
+  {const l=Q(.5,.24,DKH-1),r=Q(.5,.76,DKH-1);line(l[0],l[1],r[0],r[1],'#d8d4ca');line(l[0],l[1]+1,r[0],r[1]+1,'#b9b6ae')}
+  {const l=[L0[0]+(M[0]-L0[0])*.55,L0[1]+(M[1]-L0[1])*.55],r=[R0[0]+(M[0]-R0[0])*.55,R0[1]+(M[1]-R0[1])*.55];line(l[0],l[1],r[0],r[1],'#e6e3db')}
+  px(T_[0]-1.5,T_[1],3,10.5,'#f4f2ec');px(T_[0]+.5,T_[1],1,10.5,'#d8d4ca');
   px(T_[0]-.5,T_[1]-2,1.4,1.4,on?'#ff3b30':'#b33',on);if(on)glow(T_[0],T_[1]-1.5,6,.9,'#ff3b30')}
-function atirDyn(gx,gy){const H=88,Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0],p[1]-h]},T_=Q(.5,.5,H),n=NIGHT>.3;
-  ctx.save();ctx.strokeStyle=n?'#c9d8ee':'#eef1f5';ctx.lineWidth=.45;ctx.globalAlpha=n?.9:.85;ctx.beginPath();
-  for(let q=0;q<7;q++){const hy=T_[1]+6+q*3.2;for(const e of ATU){const u=.5+(e-.5)*(.18+q*.13),D=Q(u,.5,7.5);ctx.moveTo(T_[0]+(D[0]<T_[0]?-.6:.6),hy);ctx.lineTo(D[0],D[1])}}
+function atirDyn(gx,gy){const H=86,Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0],p[1]-h]},T_=Q(.5,.5,H),n=NIGHT>.3;
+  ctx.save();ctx.strokeStyle=n?'#c9d8ee':'#ffffff';ctx.lineWidth=.45;ctx.globalAlpha=n?.9:.8;ctx.beginPath();
+  for(let q=0;q<8;q++){const hy=T_[1]+5+q*2.6;for(const e of ATU){const u=.5+(e-.5)*(.16+q*.115),D=Q(u,.5,DKH+.6);ctx.moveTo(T_[0]+(D[0]<T_[0]?-.6:.6),hy);ctx.lineTo(D[0],D[1])}}
   ctx.stroke();ctx.restore();
-  if(n){for(const u of [-.9,-.2,1.2,1.8]){const g=Q(u,.5,8);glow(g[0],g[1],7,.45,'#ffd9a0')}const m=Q(.5,.5,H*.45);glow(m[0],m[1],14,.35,'#cfe2ff')}}
+  if(n){for(const u of [-.7,0,1,1.7])for(const v of [.34,.66]){const g=Q(u,v,DKH+2.4);glow(g[0],g[1],6,.4,'#ffd9a0')}const m=Q(.5,.5,H*.5);glow(m[0],m[1],16,.35,'#cfe2ff')}}
+// partidas de v66: el terreno del landmark estaba en la orilla; ahora va sobre el puente de en medio
+function ribFix(){if(DIST!=='ribera'||!S||!S.g)return;const c=idx(cxR(LMY),LMY),t=S.g[c];
+  if(S.g.some(q=>q.k==='domo')||(t&&t.k==='lotedomo'))return;
+  for(let i=0;i<S.g.length;i++)if(S.g[i].k==='lotedomo')S.g[i]={k:'lote',s:S.g[i].s,b:0};
+  if(t&&(t.k==='calle'||t.k==='rio'))S.g[c]={k:'lotedomo',pu:1,rc:1,s:1,b:0}}
 
-/* ===== los dos distritos ===== */
-const DKEY='distritoDomo.distrito',UKEY='distritoDomo.riberaUnl';
+/* ===== los dos distritos =====
+   El cambio se ve así: tarjeta «¡Se abrió el Distrito Ribera!» a los 3,000 (después de la pantalla de los 3,000), botón «Distritos»
+   arriba con las dos ciudades, pantalla de viaje mientras se guarda y se recarga, y al llegar, título de cine y la cámara al landmark. */
+const DKEY='distritoDomo.distrito',UKEY='distritoDomo.riberaUnl',VKEY='distritoDomo.viaje';
 const riberaUnl=()=>{try{return localStorage.getItem(UKEY)==='1'}catch(e){return false}};
-async function goDist(to){if(to===DIST)return;if(to==='ribera'&&!riberaUnl()){say('El Distrito Ribera se abre cuando el Distrito Domo llega a 3,000 vecinos.',true);return}
-  try{const str=JSON.stringify(serialize());localStorage.setItem(KEY,str);if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
-  try{if(to==='ribera'&&DIST==='domo')localStorage.setItem('distritoDomo.riberaBono',String(Math.min(40000,Math.round((S.maxV||0)*6/500)*500)));localStorage.setItem(DKEY,to)}catch(e){}
-  location.reload()}
-// en el Distrito Domo: a los 3,000 se abre Ribera (una vez)
-function distStep(){if(TITLE||DIST!=='domo'||!S||(S.maxV||0)<3000)return;if(!riberaUnl()){try{localStorage.setItem(UKEY,'1')}catch(e){}distUI()}
-  if(!S.ribMsg){S.ribMsg=1;sfx('phase');say('¡Se abrió el Distrito Ribera! Un barrio nuevo junto al río, para empezar de cero con un bono de tu Distrito Domo. Ve desde ⚙ Opciones o desde la pantalla de inicio. Tu Distrito Domo te espera tal como lo dejes.',true)}}
-function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id of ['tdist','odist'])if($(id))$(id).hidden=!u;
-  for(const [id,d] of [['tdDomo','domo'],['tdRib','ribera'],['odDomo','domo'],['odRib','ribera']]){const b=$(id);if(b){b.setAttribute('aria-pressed',DIST===d);b.disabled=DIST===d}}}
+const bonoDe=mv=>Math.min(40000,Math.round((mv||0)*6/500)*500);
+const DN={domo:'Distrito Domo',ribera:'Distrito Ribera'};
+const EMB={domo:'<svg viewBox="0 0 30 18" aria-hidden="true"><path d="M3 17 A12 12 0 0 1 27 17" fill="none" stroke="#f26a21" stroke-width="4"/></svg>',
+  ribera:'<svg viewBox="0 0 30 18" aria-hidden="true"><path d="M1 15.5h28" stroke="#2f7fb8" stroke-width="2.6"/><path d="M11 17 L15 1.5 L19 17" fill="none" stroke="#2f7fb8" stroke-width="2.4"/><path d="M15 3.5 L2 14.5 M15 3.5 L28 14.5 M15 7 L6 14.5 M15 7 L24 14.5" stroke="#2f7fb8" stroke-width=".9"/></svg>'};
+let RIBW=0,VIAJE=null;
+function viajeShow(to,fade,txt,sub){const v=$('viaje');if(!v)return;v.querySelector('.em').innerHTML=EMB[to];v.querySelector('b').textContent=txt;v.querySelector('small').textContent=sub||'';
+  v.classList.toggle('rib',to==='ribera');v.hidden=false;if(fade){void v.offsetWidth}v.classList.add('on')}
+function viajeHide(){const v=$('viaje');if(!v)return;v.classList.remove('on');setTimeout(()=>{v.hidden=true},700)}
+async function goDist(to){if(to===DIST||goDist.on)return;if(to==='ribera'&&!riberaUnl()){say('El Distrito Ribera se abre cuando el Distrito Domo llega a 3,000 vecinos.',true);return}
+  goDist.on=1;for(const b of ['distbox','ribnew','credits','opts','misbox'])if($(b))$(b).hidden=true;sfx('phase');
+  viajeShow(to,true,`Viajando al ${DN[to]}`,TITLE?'':`Guardando tu ${DN[DIST]}…`);const t0=performance.now();
+  if(!TITLE)try{const str=JSON.stringify(serialize());localStorage.setItem(KEY,str);if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
+  try{if(to==='ribera'&&DIST==='domo')localStorage.setItem('distritoDomo.riberaBono',String(bonoDe(S.maxV)));localStorage.setItem(DKEY,to);localStorage.setItem(VKEY,JSON.stringify({to,t:Date.now()}))}catch(e){}
+  if(!TITLE)$('viaje').querySelector('small').textContent=`Tu ${DN[DIST]} quedó guardado, tal como está.`;
+  await new Promise(r=>setTimeout(r,Math.max(250,1500-(performance.now()-t0))));location.reload()}
+// al arrancar: ¿venimos de un viaje? entonces la pantalla de viaje sigue puesta y se entra directo, sin pantalla de inicio
+function viajeBoot(){try{const o=JSON.parse(localStorage.getItem(VKEY)||'null');localStorage.removeItem(VKEY);VIAJE=o&&o.to===DIST&&Date.now()-o.t<90000?o:null}catch(e){VIAJE=null}
+  if(VIAJE)viajeShow(DIST,false,`Llegando al ${DN[DIST]}`,'');return !!VIAJE}
+function llegada(nuevo){const el=$('cine'),i=S.g.findIndex(t=>t.k==='domo'||t.k==='lotedomo');viajeHide();
+  if(el){el.querySelector('b').textContent=DNAME.toUpperCase();
+    el.querySelector('small').textContent=nuevo?(DIST==='ribera'?'Un barrio nuevo a la orilla del río':'Santa Catarina, Nuevo León'):`${fmt(Math.round(S.v))} vecinos te esperaban`;
+    CINE={t:0,dur:4.2,slow:false};el.hidden=false;void el.offsetWidth;el.classList.add('on')}
+  if(i>=0&&!lowMo())setTimeout(()=>camTo(i,2.2),350)}
+// la primera vez en Ribera: qué tiene de distinto, en tres mensajes
+function ribIntro(who){const b=+(S.bono||0);
+  say(`¡Bienvenido al Distrito Ribera${who}! Empiezas de cero con $${fmt(S.$)}${b?`: $600 del Distrito más $${fmt(b)} de bono de tu Distrito Domo`:''}.`,true);
+  say('El río va casi seco: en el lecho puedes poner parques, canchas, dog parks y palmas. En la temporada de lluvias se llena, y si crece daña lo que haya abajo.');
+  say(`Para cruzar el río usa Calle encima del agua: hace un puente. El puente de en medio, el de los conos, es para ${DEFS.domo.name}.`)}
+// en el Distrito Domo: a los 3,000 se abre Ribera. La tarjeta sale una vez, después de la pantalla de los 3,000
+function distStep(){if(TITLE||DIST!=='domo'||!S||(S.maxV||0)<3000)return;if(!riberaUnl()){try{localStorage.setItem(UKEY,'1')}catch(e){}RIBW=performance.now();distUI()}
+  if(S.ribCard||performance.now()-RIBW<7000)return;const cr=$('credits');if((cr&&!cr.hidden)||CINE||PHOTO||TL||goDist.on)return;
+  S.ribCard=1;S.ribMsg=1;ribNewShow()}
+function ribNewShow(){const box=$('ribnew');if(!box)return;sfx('phase');
+  box.innerHTML=`<svg class="rill" viewBox="0 0 240 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="240" height="96" fill="#bfe3f5"/><path d="M0 60 L34 40 L62 50 L104 26 L146 48 L186 32 L240 54 V96 H0Z" fill="#9aa8bd"/><rect y="62" width="240" height="34" fill="#e2d3ad"/>
+    <path d="M0 84 C50 72 96 90 146 78 S214 70 240 74 L240 86 C214 82 180 92 146 90 S50 86 0 96Z" fill="#3f84b8"/><path d="M8 84 C60 76 100 90 146 82" stroke="#9cc7ea" stroke-width="1" fill="none"/>
+    <path d="M20 66 A13 13 0 0 1 46 66" stroke="#f26a21" stroke-width="5" fill="none"/><rect x="18" y="66" width="30" height="3" fill="#c9bfa5"/>
+    <rect x="92" y="74" width="74" height="4" fill="#eceae4"/><rect x="92" y="78" width="74" height="2" fill="#7c8290"/>
+    <path d="M122 82 L129 20 L136 82" fill="none" stroke="#f4f2ec" stroke-width="3"/><path d="M129 24 L96 74 M129 27 L104 74 M129 30 L112 74 M129 33 L120 74 M129 24 L162 74 M129 27 L154 74 M129 30 L146 74 M129 33 L138 74" stroke="#fff" stroke-width=".8"/>
+    <circle cx="129" cy="18.5" r="1.8" fill="#ff3b30"/></svg>
+    <h2>¡Se abrió el Distrito Ribera!</h2>
+    <ul><li>Un barrio nuevo, cruzado por un río que va seco casi todo el año y crece en la temporada de lluvias.</li>
+    <li>Empiezas de cero, con <b>$${fmt(600+bonoDe(S.maxV))}</b> (incluye un bono de tu Distrito Domo).</li>
+    <li>Tu Distrito Domo se queda tal cual: regresas cuando quieras con el botón <b>⇄ Cambiar</b>, junto al nombre del distrito, arriba a la izquierda.</li></ul>
+    <div class="cbtns"><button id="rnGo" type="button" class="go">Ir al Distrito Ribera</button><button id="rnNo" type="button">Ahora no</button></div>`;
+  box.hidden=false;$('rnGo').onclick=()=>goDist('ribera');$('rnNo').onclick=()=>{box.hidden=true;$('distb').classList.add('new');say('Cuando quieras ir al Distrito Ribera, toca «⇄ Cambiar», junto al nombre del distrito, arriba a la izquierda.',true)}}
+// panel «Distritos»: las dos ciudades, cuántos vecinos tiene cada una (lo guardado en este navegador) y un botón para ir
+function distInfo(d){if(d===DIST)return {v:Math.round(S.v||0),seen:1};let p=null;try{p=JSON.parse(localStorage.getItem(d==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4')||'null')}catch(e){}
+  return p&&p.g?{v:Math.round(p.v||0),seen:!!p.seen}:null}
+function renderDist(){const box=$('distbox');if(!box)return;const unl=riberaUnl()||DIST==='ribera';
+  const card=d=>{const here=d===DIST,lk=d==='ribera'&&!unl,inf=distInfo(d);
+    const nv=n=>Math.round(n).toLocaleString('es-MX'),sub=here?`${nv(inf.v)} vecinos · estás aquí`:lk?`Se abre a los 3,000 vecinos del Domo (vas en ${nv(S.maxV||0)})`:inf&&inf.seen?`${nv(inf.v)} vecinos te esperan, en pausa`:d==='ribera'?`Nuevo: un barrio con río. Llegas con $${fmt(600+bonoDe(DIST==='domo'?S.maxV:0))}`:'Tu partida del Domo';
+    return `<div class="dcard${here?' here':''}${lk?' lk':''}"><span class="em">${EMB[d]}</span><div class="dt"><b>${DN[d]}</b><small>${sub}</small></div>${here?'<span class="aq">Aquí</span>':lk?'<span class="aq">🔒</span>':`<button type="button" data-d="${d}">Ir →</button>`}</div>`};
+  box.innerHTML=`<h2>Tus distritos<button class="x" type="button" aria-label="Cerrar">✕</button></h2>${card('domo')}${card('ribera')}<p class="dn">Cada distrito guarda su propia partida. El que dejes se queda en pausa, tal como está.</p>`;
+  box.querySelector('.x').onclick=()=>{box.hidden=true};for(const b of box.querySelectorAll('button[data-d]'))b.onclick=()=>goDist(b.dataset.d)}
+let DBOUND=0;function distBind(){if(DBOUND)return;DBOUND=1;const on=(id,d)=>{const el=$(id);if(el)el.addEventListener('click',()=>goDist(d))};on('tdDomo','domo');on('tdRib','ribera');
+  const b=$('distb');if(b)b.addEventListener('click',e=>{e.stopPropagation();const x=$('distbox');x.hidden=!x.hidden;b.classList.remove('new');for(const o of ['misbox','loanbox','moneybox'])if($(o))$(o).hidden=true;if(!x.hidden)renderDist()})}
+function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id of ['tdist','distb'])if($(id))$(id).hidden=!u;
+  const lab=d=>{const inf=distInfo(d);return inf&&inf.seen?`${DN[d].replace('Distrito ','')} · ${fmt(inf.v)}`:d==='ribera'?'Ribera · nuevo':'Domo'};
+  for(const [id,d] of [['tdDomo','domo'],['tdRib','ribera']]){const b=$(id);if(b){b.setAttribute('aria-pressed',DIST===d);b.disabled=DIST===d;if(S)b.textContent=lab(d)}}}
 // en Ribera: nombres, título y textos propios
 function distBoot(){if(DIST!=='ribera'){DEFS.malecon.hidden=true;DEFS.malecon.unlock=Infinity;const i=ORDER.indexOf('malecon');if(i>=0)ORDER.splice(i,1);return}
-  Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El landmark de la Ribera: un pilón blanco con tirantes sobre el río. Sube mucho la satisfacción. Solo hay uno.'});
+  Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El emblema de la Ribera: un pilón blanco en A con tirantes, sobre el puente de en medio del río. Sube mucho la satisfacción. Solo hay uno.'});
   DEFS.lotedomo.name='Terreno del Puente';DEFS.cultura.name='Centro Cultural Ribera';DEFS.museo.name='Museo del Río';SPH.domo=110;
   Object.assign(PARCELS.W,{where:'junto a la calle Sauce'});Object.assign(PARCELS.E,{where:'junto a la calle Álamo'});
   Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
@@ -728,7 +835,7 @@ function distBoot(){if(DIST!=='ribera'){DEFS.malecon.hidden=true;DEFS.malecon.un
   for(const k in LV)if(Array.isArray(LV[k]))LV[k]=LV[k].map(n=>typeof n==='string'?n.replace(' del Domo',' del Río').replace('Domo','Ribera'):n);
   document.title='Distrito Ribera';for(const el of document.querySelectorAll('header h1'))el.firstChild.textContent='DISTRITO RIBERA';
   const tt=document.querySelector('#title .tt');if(tt)tt.innerHTML='DISTRITO<br>RIBERA';document.body.classList.add('ribera')}
-let DBOUND=0;function distBind(){if(DBOUND)return;DBOUND=1;const on=(id,d)=>{const el=$(id);if(el)el.addEventListener('click',()=>goDist(d))};on('tdDomo','domo');on('tdRib','ribera');on('odDomo','domo');on('odRib','ribera')}
+
 /* ---------- obras grandes (v64): se abren con encargos desde 3,000 vecinos; una de cada una ---------- */
 const OBRAS=['bosque','museo','rasca','beis','plazacom','metro'];
 // a qué capa de plusvalía alimenta cada obra: verde, comercio o estacionamiento
@@ -2748,6 +2855,7 @@ function drawObj(t,gx,gy,ic){
       if(t.p==='mercado'){px(x-5,y-18,3,3,'#ffd23f');px(x-1,y-18,3,3,'#2a9d8f');px(x+3,y-18,3,3,'#d62828')}else arcTop(x+.5,y-15,5,2,'#ffffff')}
     break}
   case 'lotedomo':{
+    if(t.pu&&DIST==='ribera'){artLmSign(gx,gy);break}
     const E=[[P(gx+.06,gy+.06),P(gx+.94,gy+.06)],[P(gx+.06,gy+.06),P(gx+.06,gy+.94)],[P(gx+.94,gy+.06),P(gx+.94,gy+.94)],[P(gx+.06,gy+.94),P(gx+.94,gy+.94)]];
     for(const [a,b] of E)for(let k=0;k<=8;k++){const f=k/8;px(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-3,1,3,k%2?'#f26a21':'#ffffff')}
     const [x,y]=P(gx+.5,gy+.5);px(x,y-12,1,12,'#555');px(x-6,y-18,13,7,'#f26a21');
@@ -3068,7 +3176,7 @@ function camTo(i,dur){const t=S.g[i],[dw,dh]=DIMT(t),[a,b]=rot(i%N+dw/2,Math.flo
 function momento(i){const t=S.g[i];if(TITLE||!t||!DEFS[t.k])return;const dom=t.k==='domo',el=$('cine');
   camTo(i,1.4);flashAt(i,1.6);confetti(i,dom?90:60);celebrate(dom?6:4);sfx('phase');
   CINE={t:0,dur:dom?5.4:4.2,slow:dom&&!lowMo()};
-  if(el){el.querySelector('b').textContent=dom?'¡EL DOMO ESTÁ LISTO!':`¡${DEFS[t.k].name.toUpperCase()}!`;el.querySelector('small').textContent=dom?'El arco naranja ya es parte del cielo de Santa Catarina.':MOMSUB[t.k]||'';
+  if(el){el.querySelector('b').textContent=dom?(DIST==='ribera'?'¡EL PUENTE ATIRANTADO ESTÁ LISTO!':'¡EL DOMO ESTÁ LISTO!'):`¡${DEFS[t.k].name.toUpperCase()}!`;el.querySelector('small').textContent=dom?(DIST==='ribera'?'El pilón blanco ya cruza el río: la Ribera tiene su emblema.':'El arco naranja ya es parte del cielo de Santa Catarina.'):MOMSUB[t.k]||'';
     el.hidden=false;void el.offsetWidth;el.classList.add('on')}}
 // cámara: viaje suave, inercia al soltar el arrastre, cámara lenta y zoom animado; corre con el tiempo real (no se frena en pausa)
 function camStep(rdt){
@@ -3661,7 +3769,7 @@ function act(i){
     if(!DEFS[t.k]){say('Aquí no hay nada que demoler.',true);return}
     if(t.k==='tanque'){say('¿El tanque? Ni lo mande Dios. Es el símbolo del Distrito.',true);return}
     if(DEFS[t.k].fixed||t.hw){say('Eso no es del Distrito, no se puede demoler.',true);return}
-    sfx('demolish');const refund=Math.round(DEFS[t.k].cost*.5);S.$+=refund;if(MULTI(t.k))for(const j of foot(i,...DIMT(t))||[])S.g[j]={k:'lote',s:S.g[j].s};S.g[i]=t.k==='domo'?{k:'lotedomo',s:t.s}:(t.pu||t.lecho)?{k:'rio',rc:t.rc,s:t.s,b:0}:{k:'lote',s:t.s};recompute();say(`Demoliste: ${DEFS[t.k].name}. Recuperaste $${fmt(refund)}.`,true);save();return}
+    sfx('demolish');const refund=Math.round(DEFS[t.k].cost*.5);S.$+=refund;if(MULTI(t.k))for(const j of foot(i,...DIMT(t))||[])S.g[j]={k:'lote',s:S.g[j].s};S.g[i]=t.k==='domo'?(t.pu?{k:'lotedomo',pu:1,rc:t.rc,s:t.s,b:0}:{k:'lotedomo',s:t.s}):(t.pu||t.lecho)?{k:'rio',rc:t.rc,s:t.s,b:0}:{k:'lote',s:t.s};recompute();say(`Demoliste: ${DEFS[t.k].name}. Recuperaste $${fmt(refund)}.`,true);save();return}
   const d=DEFS[tool];
   if(t.k===tool&&d.fmax){
     if(t.b>0||t.ub>0||t.ct>0){say('Ese edificio sigue en obra. Espera a que terminen.',true);return}
@@ -3684,7 +3792,7 @@ function act(i){
     const cost=costOf(tool);if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${d.name}.`,true);return}
     sfx('build');S.$-=cost;const sd=Math.floor(Math.random()*1000);for(const j of f)S.g[j]={k:'part',a:i,s:sd,b:0};S.g[i]={k:tool,s:sd,b:d.bt,bt:d.bt};if(tf.o)S.g[i].o=1;
     recompute();say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);save();refreshUI(true);return}
-  if(tool==='domo'&&t.k!=='lotedomo'){say(DIST==='ribera'?'El Puente Atirantado va en su terreno reservado, el de la cerca naranja junto al río.':'El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
+  if(tool==='domo'&&t.k!=='lotedomo'){say(DIST==='ribera'?'El Puente Atirantado va sobre el puente de en medio del río, el que tiene conos y el letrero azul.':'El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
   if(tool==='malecon'&&!rioSides(i%N,Math.floor(i/N)).length){say('El malecón va en la orilla: pégalo al río.',true);return}
   if(t.k==='rio'&&LECHO.includes(tool)&&!canBuild(t)){say(S.rio&&S.rio.cr>0?'¡El río está crecido! Espera a que baje.':'El río trae agua: espera a que baje para construir en el lecho.',true);return}
   if(t.k==='rio'&&!canBuild(t)){say('En el río solo van puentes (con Calle) y, cuando está seco, parques, canchas, dog parks y palmas en el lecho.',true);return}
@@ -3694,7 +3802,7 @@ function act(i){
   if(d.max&&(stats.counts[tool]||0)>=d.max){say(d.max===1?`${d.name} es único y ya está construido.`:`Ya tienes ${d.max}: ${d.name} llegó a su límite.`,true);return}
   const brg=t.k==='rio'&&tool==='calle',cost=brg?Math.max(PUENTE_MIN,costOf('calle')*80):costOf(tool);
   if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${brg?'un puente':d.name}. Espera a que los vecinos aporten${S.loan?'':', o pide un crédito con el botón Crédito'}.`,true);return}
-  sfx(tool==='calle'?'street':tool==='torreagua'?'buy':'build');S.$-=cost;S.g[i]={k:tool,s:Math.floor(Math.random()*1000),f:d.f0,b:d.bt,bt:d.bt};if(t.k==='rio'){if(brg)S.g[i].pu=1;else S.g[i].lecho=1;S.g[i].rc=t.rc}recompute();if(brg)say(`Construiste un puente sobre el río ($${fmt(cost)}).`,true);else if(t.k==='rio')say(`${d.name} en el lecho del río: sirve mientras esté seco. En la temporada de lluvias queda bajo el agua.`,true);
+  sfx(tool==='calle'?'street':tool==='torreagua'?'buy':'build');S.$-=cost;S.g[i]={k:tool,s:Math.floor(Math.random()*1000),f:d.f0,b:d.bt,bt:d.bt};if(t.k==='rio'){if(brg)S.g[i].pu=1;else S.g[i].lecho=1;S.g[i].rc=t.rc}if(t.k==='lotedomo'&&t.pu){S.g[i].pu=1;S.g[i].rc=t.rc}recompute();if(brg)say(`Construiste un puente sobre el río ($${fmt(cost)}).`,true);else if(t.k==='rio')say(`${d.name} en el lecho del río: sirve mientras esté seco. En la temporada de lluvias queda bajo el agua.`,true);
   if(tool!=='calle'&&!S.g[i].ok)say(`${d.name} necesita una avenida al lado para funcionar.`,true);
   else if(d.bt>=10)say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);
   save();refreshUI(true);
@@ -4197,7 +4305,7 @@ function fotoStep(rdt){tlStep(rdt);paseoStep(rdt);if(PHOTO&&!TL){const t=$('fHor
 
 /* ---------- arranque ---------- */
 function prep(d){
-  S=d;S.dist=DIST;fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
+  S=d;S.dist=DIST;ribFix();fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
   // hitos retirados: se devuelven como terreno y se reembolsa la mitad
   {let ref=0;const old={tim:15000,mercado:60000,grandomo:200000};const live=i=>{const a=S.g[i];return a&&MULTI(a.k)&&!old[a.k]};for(let i=0;i<S.g.length;i++){const t=S.g[i];if(t.k==='reserva'||(t.k==='part'&&!live(t.a))||old[t.k]){if(old[t.k])ref+=old[t.k]/2;S.g[i]={k:'lote',s:t.s||1,b:0}}}if(ref)S.$+=ref}
   if(!S.g.some(t=>t.k==='lotedomo'||t.k==='domo')){let i=idx(OFF+8,OFF+8);if(!(S.g[i].k==='lote'||S.g[i].k==='arbol'))i=S.g.findIndex((t,j)=>(t.k==='lote'||t.k==='arbol')&&connected(j%N,Math.floor(j/N)));if(i>=0)S.g[i]={k:'lotedomo',s:1,b:0}}
@@ -4205,7 +4313,7 @@ function prep(d){
   if(S.migG){const mx=stats.mix,t=mx.fam+mx.pro+mx.est;if(t>0){const v=S.v;for(const g of G3)S.pop[g]=v*mx[g]/t;fixPop()}delete S.migG;recompute()}
 }
 function start(data){
-  distBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
+  distBoot();const viajando=viajeBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
   buildTools();resize();
   refreshUI(true);
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
@@ -4227,11 +4335,11 @@ function start(data){
     if(framed)try{res=await Promise.race([(async()=>{const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return null;
         const id=await user.id();if(!id)return null;const sf=DIST==='ribera'?'-ribera':'',ref=db.doc('data/users/'+id+'/partida'+sf),pref=db.doc('data/users/'+id+'/anterior'+sf);const [snap,ps]=await Promise.all([ref.get(),pref.get().catch(()=>null)]);return {ref,pref,d:snap.exists?snap.data():null,p:ps&&ps.exists?ps.data():null}})(),
       new Promise(r=>setTimeout(()=>r(null),12000))])}catch(e){res=null}
-    if(!res){unlockTitle();showPrev();status(framed?'No pude conectar con tu cuenta: tu partida se guarda solo en este navegador. Descarga una copia de vez en cuando.':'Tu partida se guarda en este navegador. Descarga una copia de vez en cuando.',framed?'warn':'');return}
+    if(!res){unlockTitle();arrive();showPrev();status(framed?'No pude conectar con tu cuenta: tu partida se guarda solo en este navegador. Descarga una copia de vez en cuando.':'Tu partida se guarda en este navegador. Descarga una copia de vez en cuando.',framed?'warn':'');return}
     CLOUD.ref=res.ref;CLOUD.prevRef=res.pref;if(res.p&&typeof res.p.s==='string'){const pc=parseSave(res.p.s);if(pc&&(!prevD||(pc.t||0)>(prevD.t||0)))prevD=pc}let msg='Tu partida se guarda en tu cuenta de Claude.';
     const c=res.d&&typeof res.d.s==='string'?parseSave(res.d.s):null;
     if(c&&TITLE&&(!hasSave||(c.t||0)>(S.t||0))){adopt(c);msg=`Recuperé tu partida de tu cuenta (${vec(c)}).`}
-    CLOUD.ready=true;unlockTitle();status(msg,'ok');showPrev();
+    CLOUD.ready=true;unlockTitle();status(msg,'ok');showPrev();arrive();
     if(hasSave&&TITLE&&(!c||(S.t||0)>(c.t||0)))CLOUD.push(JSON.stringify(S),true)})();
   // copia de seguridad en un archivo, para pasarla a otro navegador o guardarla aparte
   $('texp').onclick=async()=>{const str=JSON.stringify(serialize()),d=new Date(),fn=`distrito-domo-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.json`;
@@ -4255,6 +4363,8 @@ function start(data){
     impD=d;impT=Date.now();$('timp').textContent='Sí, reemplazar';status(`La copia tiene ${vec(d)} y tu partida actual ${vec(S)}. Toca "Sí, reemplazar" para cargarla.`,'warn');
     setTimeout(()=>{if(Date.now()-impT>=8000){impD=null;$('timp').textContent='Cargar copia'}},8100)};
   let newArm=0;
+  // llegada de un viaje entre distritos: se entra directo (la pantalla de viaje tapa la de inicio) y se presenta el distrito
+  const arrive=()=>{if(!viajando||!TITLE)return;const nuevo=!hasSave;play(nuevo);llegada(nuevo)};
   const play=fresh=>{
     const nm=$('pname').value.trim().slice(0,20);
     if($('tmusic').checked){JAZZ.pref.on=false;JAZZ.toggle()}else{JAZZ.pref.on=false;JAZZ.setVol(JAZZ.pref.vol)}
@@ -4262,7 +4372,7 @@ function start(data){
     S.name=nm;try{localStorage.setItem('distritoDomo.nombre',nm)}catch(e){}
     TITLE=false;$('title').hidden=true;panX=0;panY=0;showMus();
     const who=nm?`, ${nm}`:'';
-    say(!S.seen||fresh?`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`:`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
+    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`:`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
     {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a El Domo.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
     if(!S.loanTip&&!S.loan){S.loanTip=1;setTimeout(()=>say('Consejo: si te falta dinero para crecer, el botón naranja Crédito, arriba, te presta y lo pagas poco a poco.'),9000)}
     if(S.fromBak){delete S.fromBak;cur+=' Ojo: tu guardada venía dañada y recuperé el respaldo de hace un minuto.'}
