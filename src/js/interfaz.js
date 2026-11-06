@@ -16,7 +16,7 @@ function makeIcon(k){
 }
 /* barra de abajo agrupada: herramientas fijas + pestañas */
 const FIXED=['ver','calle','mejorar','demoler'];
-const TABS=[['viv','Vivienda',['edificio','ladrillo','torre']],['neg','Negocios',['cafe','tomates','padel','resto','bar','oficinas','barber','unas','paleteria','boliche','gym','cine']],['ser','Servicios',['parque','plaza','dogpark','cancha','estac','caseta','escuela','clinica','golf','torreagua']],['esp','Especiales',['domo','kiosco','mirador','cultura','teleferico','bosque','museo','rasca','beis','plazacom','metro']]];
+const TABS=[['viv','Vivienda',['edificio','ladrillo','torre']],['neg','Negocios',['cafe','tomates','padel','resto','bar','oficinas','barber','unas','paleteria','boliche','gym','cine']],['ser','Servicios',['parque','malecon','plaza','dogpark','cancha','estac','caseta','escuela','clinica','golf','torreagua']],['esp','Especiales',['domo','kiosco','mirador','cultura','teleferico','bosque','museo','rasca','beis','plazacom','metro']]];
 const tabOf=k=>{for(const t of TABS)if(t[2].includes(k))return t[0];return FIXED.includes(k)?null:'ser'};
 let TAB=(()=>{try{const v=localStorage.getItem('distritoDomo.tab');if(TABS.some(t=>t[0]===v))return v}catch(e){}return 'viv'})();
 function setTab(id,quiet){TAB=id;try{localStorage.setItem('distritoDomo.tab',id)}catch(e){}
@@ -142,6 +142,8 @@ function act(i){
   if(HEAT){say(tileInfo(i),true);return}
   if(tool==='ver'){say(whatIs(i),true);return}
   if(tool==='mejorar'){if(t.k==='part'){i=t.a;t=S.g[i]}
+    if(t.dmg){if(rioWet()){say('Espera a que baje el agua para repararlo.',true);return}const c=Math.round(costOf(t.k)*.4)+20;if(S.$<c){sfx('nope');say(`Repararlo cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
+      sfx('build');S.$-=c;delete t.dmg;recompute();say(`Reparado: ${nameOf(t)}. Costó $${fmt(c)}.`,true);save();refreshUI(true);return}
     if(!LV[t.k]){say('Eso no tiene niveles. Toca un servicio o un edificio.',true);return}
     if(t.b>0||t.ub>0||t.lu>0||t.ct>0){say('Espera a que termine la obra.',true);return}
     const L=lvOf(t);if(L>=4){say(`${nameOf(t)} ya está en su nivel máximo.`,true);return}
@@ -160,7 +162,7 @@ function act(i){
     if(!DEFS[t.k]){say('Aquí no hay nada que demoler.',true);return}
     if(t.k==='tanque'){say('¿El tanque? Ni lo mande Dios. Es el símbolo del Distrito.',true);return}
     if(DEFS[t.k].fixed||t.hw){say('Eso no es del Distrito, no se puede demoler.',true);return}
-    sfx('demolish');const refund=Math.round(DEFS[t.k].cost*.5);S.$+=refund;if(MULTI(t.k))for(const j of foot(i,...DIMT(t))||[])S.g[j]={k:'lote',s:S.g[j].s};S.g[i]={k:t.k==='domo'?'lotedomo':'lote',s:t.s};recompute();say(`Demoliste: ${DEFS[t.k].name}. Recuperaste $${fmt(refund)}.`,true);save();return}
+    sfx('demolish');const refund=Math.round(DEFS[t.k].cost*.5);S.$+=refund;if(MULTI(t.k))for(const j of foot(i,...DIMT(t))||[])S.g[j]={k:'lote',s:S.g[j].s};S.g[i]=t.k==='domo'?{k:'lotedomo',s:t.s}:(t.pu||t.lecho)?{k:'rio',rc:t.rc,s:t.s,b:0}:{k:'lote',s:t.s};recompute();say(`Demoliste: ${DEFS[t.k].name}. Recuperaste $${fmt(refund)}.`,true);save();return}
   const d=DEFS[tool];
   if(t.k===tool&&d.fmax){
     if(t.b>0||t.ub>0||t.ct>0){say('Ese edificio sigue en obra. Espera a que terminen.',true);return}
@@ -183,14 +185,17 @@ function act(i){
     const cost=costOf(tool);if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${d.name}.`,true);return}
     sfx('build');S.$-=cost;const sd=Math.floor(Math.random()*1000);for(const j of f)S.g[j]={k:'part',a:i,s:sd,b:0};S.g[i]={k:tool,s:sd,b:d.bt,bt:d.bt};if(tf.o)S.g[i].o=1;
     recompute();say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);save();refreshUI(true);return}
-  if(tool==='domo'&&t.k!=='lotedomo'){say('El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
+  if(tool==='domo'&&t.k!=='lotedomo'){say(DIST==='ribera'?'El Puente Atirantado va en su terreno reservado, el de la cerca naranja junto al río.':'El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
+  if(tool==='malecon'&&!rioSides(i%N,Math.floor(i/N)).length){say('El malecón va en la orilla: pégalo al río.',true);return}
+  if(t.k==='rio'&&LECHO.includes(tool)&&!canBuild(t)){say(S.rio&&S.rio.cr>0?'¡El río está crecido! Espera a que baje.':'El río trae agua: espera a que baje para construir en el lecho.',true);return}
+  if(t.k==='rio'&&!canBuild(t)){say('En el río solo van puentes (con Calle) y, cuando está seco, parques, canchas, dog parks y palmas en el lecho.',true);return}
   if(t.k==='reserva'&&tool!==t.p){say(`Este terreno está reservado para el ${DEFS[t.p].name}.`,true);return}
-  if(t.k==='lotedomo'&&tool!=='domo'){say('Este terreno está reservado para El Domo.',true);return}
+  if(t.k==='lotedomo'&&tool!=='domo'){say(`Este terreno está reservado para ${DIST==='ribera'?'El Puente Atirantado':'El Domo'}.`,true);return}
   if(!canBuild(t)){say('Ese terreno ya está ocupado. Usa Demoler primero.',true);return}
   if(d.max&&(stats.counts[tool]||0)>=d.max){say(d.max===1?`${d.name} es único y ya está construido.`:`Ya tienes ${d.max}: ${d.name} llegó a su límite.`,true);return}
-  const cost=costOf(tool);
-  if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${d.name}. Espera a que los vecinos aporten${S.loan?'':', o pide un crédito con el botón Crédito'}.`,true);return}
-  sfx(tool==='calle'?'street':tool==='torreagua'?'buy':'build');S.$-=cost;S.g[i]={k:tool,s:Math.floor(Math.random()*1000),f:d.f0,b:d.bt,bt:d.bt};recompute();
+  const brg=t.k==='rio'&&tool==='calle',cost=brg?Math.max(PUENTE_MIN,costOf('calle')*80):costOf(tool);
+  if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${brg?'un puente':d.name}. Espera a que los vecinos aporten${S.loan?'':', o pide un crédito con el botón Crédito'}.`,true);return}
+  sfx(tool==='calle'?'street':tool==='torreagua'?'buy':'build');S.$-=cost;S.g[i]={k:tool,s:Math.floor(Math.random()*1000),f:d.f0,b:d.bt,bt:d.bt};if(t.k==='rio'){if(brg)S.g[i].pu=1;else S.g[i].lecho=1;S.g[i].rc=t.rc}recompute();if(brg)say(`Construiste un puente sobre el río ($${fmt(cost)}).`,true);else if(t.k==='rio')say(`${d.name} en el lecho del río: sirve mientras esté seco. En la temporada de lluvias queda bajo el agua.`,true);
   if(tool!=='calle'&&!S.g[i].ok)say(`${d.name} necesita una avenida al lado para funcionar.`,true);
   else if(d.bt>=10)say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);
   save();refreshUI(true);

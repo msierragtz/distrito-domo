@@ -85,7 +85,7 @@ function seasonDeco(t,gx,gy){const se=SEASON_C;if(!se)return;const k=t.k,on=NIGH
     else if(se==='navidad'&&sh01(gx,gy,4)<.6)pinata(gx,gy);
     else if(se==='muertos'&&on){for(let q=0;q<3;q++){const [x,y]=P(gx+.3+q*.18,gy+.72);veladora(x,y,q,q!==1)}}
     return}
-  if(k==='domo'&&!(t.b>0)){domoSeason(gx,gy,se);return}
+  if(k==='domo'&&!(t.b>0)&&DIST==='domo'){domoSeason(gx,gy,se);return}
   if((k==='torre'||k==='edificio'||k==='ladrillo')&&!(t.b>0)){
     if(se==='patrias'&&(gx+2*gy)%3===0){const so=shadowOf(t),[x,y]=P(gx+.5,gy+.5),top=y-(so?so[1]:60)-2;
       px(x,top-16,.6,16,'#8a8f99');const w=10,h=6,wv=lowMo()?0:Math.sin(T*4+gx)*.5;px(x+.5,top-12+wv,w/3,h,'#1f8a4c',true);px(x+.5+w/3,top-12+wv,w/3,h,'#ffffff',true);px(x+.5+2*w/3,top-12+wv,w/3,h,'#d62828',true);px(x+.5+w/2-1,top-10+wv,2,2,'#8a5a2b',true)}
@@ -95,7 +95,7 @@ function seasonDeco(t,gx,gy){const se=SEASON_C;if(!se)return;const k=t.k,on=NIGH
 }
 // momentos de temporada: el Grito una vez por noche y año nuevo
 function seasonStep(){if(TITLE)return;const ph=S.clock/DAY;
-  if(SEASON_C==='patrias'&&gritoNow()){if(SEAMSG!=='grito'){SEAMSG='grito';if(!REAL){sfx('phase');say('¡Viva México! ¡Viva el Distrito Domo! El Grito se da frente a El Domo: busca los fuegos artificiales.',true)}}}
+  if(SEASON_C==='patrias'&&gritoNow()){if(SEAMSG!=='grito'){SEAMSG='grito';if(!REAL){sfx('phase');say(DIST==='domo'?'¡Viva México! ¡Viva el Distrito Domo! El Grito se da frente a El Domo: busca los fuegos artificiales.':'¡Viva México! ¡Viva el Distrito Ribera! Cohetes tricolor sobre el río.',true)}}}
   else if(SEASON_C==='navidad'&&ANYO()&&NIGHT>.7){if(SEAMSG!=='anyo'){SEAMSG='anyo';if(!REAL)say('¡Feliz año nuevo! Cohetes sobre todo el Distrito.',true)}}
   else if(ph<.5)SEAMSG='';
   if(!gritoNow())GRITO_XY=null}

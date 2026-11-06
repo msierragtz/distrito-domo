@@ -10,7 +10,7 @@ function footFree(i,w,h,k=tool){const f=foot(i,w,h);return f&&f.every(j=>S.g[j].
 function toolFoot(i,k=tool){const out=[];for(const o of (DIM(k,0)[0]===DIM(k,0)[1]?[0]:[0,1])){const [w,h]=DIM(k,o),f=footFree(i,w,h,k);if(f)out.push({f,o,w,h})}
   return out.find(q=>footConnected(q.f))||out[0]||null}
 function footConnected(f){return f.some(j=>connected(j%N,Math.floor(j/N)))}
-const canBuild=(t,k=tool)=>k==='domo'?t.k==='lotedomo':(t.k==='lote'||t.k==='arbol');
+const canBuild=(t,k=tool)=>k==='domo'?t.k==='lotedomo':t.k==='rio'?(k==='calle'||(LECHO.includes(k)&&rioW()<.35&&!(S.rio&&S.rio.cr>0))):(t.k==='lote'||t.k==='arbol');
 const fmaxOf=k=>DEFS[k].fmax+((S.phase||1)>=3?(k==='torre'?10:2):0);
 const fmaxT=t=>fmaxOf(t.k)+(lvOf(t)-1); // cada nivel de vivienda permite un piso más
 const canUp=t=>t.k===tool&&DEFS[tool].fmax&&!(t.b>0)&&!(t.ub>0)&&!(t.ct>0)&&t.f<fmaxT(t);

@@ -68,6 +68,7 @@ function reservePlots(g){
   tryAt(3,'grandomo',[[14,12]]);tryAt(2,'mercado',[[9,6]]);
 }
 function newGame(){
+  if(DIST==='ribera'){let b=0;try{b=+localStorage.getItem('distritoDomo.riberaBono')||0}catch(e){}return riberaGame(b)}
   const g=embed(legacyGame());
   return {pv2:1,pop:{fam:9,pro:3,est:4},g,v:16,$:600,maxV:16,unl:['ver','calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0};
 }
@@ -79,7 +80,7 @@ function buyParcel(p){
   S.$-=cost;S.lots=(S.lots||0)+1;if(p==='DA')S.da=1;
   for(let i=0;i<S.g.length;i++){const t=S.g[i];if(isParcel(t)&&t.p===p)S.g[i]={k:p!=='DA'&&Math.random()<.07?'arbol':'lote',s:t.s,b:0}}
   recompute();save();refreshUI(true);
-  say(p==='DA'?`¡Compraste el Terreno DeAcero! La fábrica se achicó y ya no baja la plusvalía de tus edificios. Mantenimiento +${S.lots*8}%.`:`¡Compraste el ${P_.name}! El Distrito crece, pero también el mantenimiento (+${S.lots*8}%) y lo que exigen los vecinos (+${S.lots*3}%).`,true);return true;
+  say(p==='DA'&&DIST==='domo'?`¡Compraste el Terreno DeAcero! La fábrica se achicó y ya no baja la plusvalía de tus edificios. Mantenimiento +${S.lots*8}%.`:`¡Compraste el ${P_.name}! El Distrito crece, pero también el mantenimiento (+${S.lots*8}%) y lo que exigen los vecinos (+${S.lots*3}%).`,true);return true;
 }
 function serialize(){S.t=Date.now();return withReal(()=>JSON.parse(JSON.stringify(S)))}
 let saveN=0;

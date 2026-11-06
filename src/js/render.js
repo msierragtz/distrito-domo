@@ -62,6 +62,7 @@ function drawVisitors(t,gx,gy){const i=idx(gx,gy),n=visitorsOf(t,i);if(!n)return
 /* partes animadas: se dibujan en vivo encima de la imagen guardada */
 function drawDyn(t,gx,gy){
   const s=t.s;if(SEASON_C)seasonDeco(t,gx,gy);
+  if(DIST==='ribera'){if(t.k==='rio'||t.pu||t.lecho||t.dmg)rioDyn(t,gx,gy);if(t.k==='domo'&&!(t.b>0))atirDyn(gx,gy)}
   if(t.k==='parque'||t.k==='plaza')liveWater(t,gx,gy);else if(t.k==='cafe'||t.k==='resto'||t.k==='bar'||t.k==='tomates')drawVisitors(t,gx,gy);
   if((t.k==='escuela'||t.k==='cancha'||t.k==='clinica')&&!(t.b>0))liveSvc(t,gx,gy);
   if(t.k==='dogpark'){const L=lvOf(t),cx=[0,.5,.6,.68,.72][L],cy=[0,.5,.58,.68,.4][L],rr2=[0,.26,.2,.16,.13][L];for(let k=0;k<2;k++){const an=T*(1.2+k*.5)+k*3+s,fx=gx+cx+Math.cos(an)*rr2,fy=gy+cy+Math.sin(an)*rr2,[x,y]=P(fx,fy),dir=Math.cos(an+Math.PI/2)>0?1:-1,c=k?'#e8c07a':'#4a3526';
@@ -104,7 +105,7 @@ function nightPair(n){const k=Math.min(2,Math.floor(n*3+1e-6));NLO=NLV[k];NHI=NL
 const NTINT=[[0,[86,46,96],0],[1/3,[86,46,96],.2],[2/3,[40,30,92],.43],[1,[8,14,48],.63]];
 const ncol=n=>{let k=1;while(k<NTINT.length-1&&n>NTINT[k][0])k++;const a=NTINT[k-1],b=NTINT[k],f=Math.max(0,Math.min(1,(n-a[0])/(b[0]-a[0]))),c=a[1].map((v,i)=>Math.round(v+(b[1][i]-v)*f)),al=(a[2]+(b[2]-a[2])*f)*(OPT.hc?.65:1);
   return `rgba(${c},${al.toFixed(3)})`};
-function hasObj(t,gx,gy){const k=t.k;if(k==='lote'||k==='part')return false;if(k==='calle')return !t.hw&&(gx*3+gy)%4===0;if(k==='ajeno')return t.s%9===0||t.s%4===1||Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy);return true}
+function hasObj(t,gx,gy){const k=t.k;if(k==='lote'||k==='part'||k==='rio')return false;if(k==='calle')return !t.hw&&(gx*3+gy)%4===0;if(k==='ajeno')return t.s%9===0||t.s%4===1||Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy);return true}
 // los negocios brillan de noche para que se encuentren rápido (altura del letrero)
 // color del letrero de noche: neón rosa en bares, azul en lo cultural y oficinas, verde en el pádel; lo demás, cálido
 const NEON={boliche:'#c38dff',cine:'#ffd27a',gym:'#9fe8ff',bar:'#ff6fae',cultura:'#7fd6ff',oficinas:'#c9dcff',padel:'#8dffb0',caseta:'#9fc4ff'};
@@ -148,6 +149,7 @@ function drawSprN(t,gx,gy,i,sz,a,ghost){const s1=getSprite(t,gx,gy,i,NLO,ghost);
   const [qw,qh]=Array.isArray(sz)?sz:[sz,sz],[cx,cy]=P(gx+qw/2,gy+qh/2);for(const g of s1.glows)glow(cx+g[0],cy+g[1],g[2],g[3]*neonF(g[4],cx,cy),g[4])}
 /* sombras: altura y huella de cada cosa */
 function shadowOf(t){const k=t.k;
+  if(k==='domo'&&DIST==='ribera')return [.42,88];if(k==='malecon')return [.4,9];
   if(k==='edificio'||k==='ladrillo')return [.1,(t.f||3)*7+3];if(k==='torre')return [.16,(t.f||16)*6+3];
   const L=lvOf(t);
   if(k==='oficinas')return [.14,[0,39,45,57,63][L]];if(k==='tomates')return [[0,.18,.12,.12,.12][L],[0,10,11,11,12][L]];
@@ -298,12 +300,14 @@ function priceTag(){TAGW=null;
   TAGW={x:x*zoom,y:Math.max(30,(y-h)*zoom),l1,l2,cls:c?(can?'ok':'no'):'na'}}
 let TAGW=null,TAGK='';
 /* la manita: qué es cada cosa, en corto (etiqueta) y en largo (mensaje al tocar) */
-function whatName(t){if(t.k==='calle')return t.hw?'Avenida':'Calle';if(t.k==='ajeno')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'Terreno vecino';if(t.k==='lote')return 'Terreno libre';if(t.k==='arbol')return 'Árbol';
+function whatName(t){if(t.k==='calle')return t.pu?(t.hw?'Puente de la avenida':'Puente'):t.hw?'Avenida':'Calle';if(t.k==='rio')return 'Río';if(t.k==='ajeno')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'Terreno vecino';if(t.k==='lote')return 'Terreno libre';if(t.k==='arbol')return 'Árbol';
   if(t.k==='fabrica')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'DeAcero';return nameOf(t)}
 function whatShort(i){const t=S.g[i],d=DEFS[t.k],n=whatName(t);
   if(t.b>0||t.ct>0||t.ub>0||t.lu>0)return [n,'en obra'];
+  if(t.k==='rio'){const f=rioFase();return [n,f==='crecida'?'¡crecido!':f==='lluvias'?'con agua (temporada de lluvias)':'casi seco: el lecho se puede usar']}
+  if(t.dmg)return [n,'dañado por la crecida: repáralo con Mejorar'];if(t.lecho&&rioWet())return [n,'bajo el agua: vuelve cuando baje el río'];
   if(isParcel(t)&&PARCELS[t.p])return [n,S.maxV<PARCELS[t.p].unlock?`a la venta con ${fmt(PARCELS[t.p].unlock)} vecinos`:`se vende: $${fmt(lotPrice(t.p))}`];
-  if(t.k==='lote')return [n,'aquí se puede construir'];if(t.k==='lotedomo')return [n,'aquí va El Domo'];if(t.k==='calle')return [n,t.hw?'no es del Distrito':'lleva gente y servicios'];
+  if(t.k==='lote')return [n,'aquí se puede construir'];if(t.k==='lotedomo')return [n,`aquí va ${DEFS.domo.name}`];if(t.k==='calle')return [n,t.hw?'no es del Distrito':'lleva gente y servicios'];
   if(t.k==='fabrica')return [n,S.da?'ya no baja la plusvalía':'baja la plusvalía cerca'];if(t.k==='arbol')return [n,'en terreno libre'];if(t.k==='ajeno')return [n,''];
   if(d&&d.per)return [n,`${t.f} pisos · caben ${(t.f*d.per).toLocaleString('es-MX')} vecinos`];
   if(d&&d.obra)return [n,obraShort(t)];
@@ -316,7 +320,8 @@ function whatIs(i){let t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}const [n,l2]=wha
   if(isParcel(t)&&PARCELS[t.p]){const P_=PARCELS[t.p];return `${P_.name}, ${P_.where}. ${S.maxV<P_.unlock?`Se pone a la venta con ${fmt(P_.unlock)} vecinos.`:`Cuesta $${fmt(lotPrice(t.p))}: elige otra herramienta y tócalo dos veces para comprarlo.`}`}
   if(t.k==='ajeno')return 'Terreno vecino: no es del Distrito y no se puede construir.';
   if(t.k==='lote'||t.k==='arbol'){const r=tileInfo(i).split(' · ').slice(1).join(' · ');return `${t.k==='arbol'?'Árbol en terreno libre':n}. ${connected(i%N,Math.floor(i/N))?'Tiene calle cerca: aquí se puede construir.':'Todavía no le llega una calle; pon una junto para poder construir.'} ${r[0].toUpperCase()+r.slice(1)}`}
-  if(t.k==='lotedomo')return `Terreno del Domo: aquí va El Domo, que se desbloquea con ${DEFS.domo.unlock} vecinos y cuesta $${fmt(costOf('domo'))}.`;
+  if(t.k==='rio')return `Río: ${whatShort(i)[1]}. Se cruza con puentes (herramienta Calle, $${fmt(Math.max(PUENTE_MIN,costOf('calle')*80))}). Cuando está seco se pueden poner parques, canchas, dog parks y palmas en el lecho, pero en la temporada de lluvias quedan bajo el agua y una crecida los daña.`;
+  if(t.k==='lotedomo')return `${DEFS.lotedomo.name}: aquí va ${DEFS.domo.name}, que se desbloquea con ${DEFS.domo.unlock} vecinos y cuesta $${fmt(costOf('domo'))}.`;
   if(t.k==='calle')return t.hw?'Avenida: no es del Distrito. Hace ruido a 2 cuadras.':'Calle: conecta los edificios y por aquí caminan los vecinos.';
   if(t.k==='fabrica')return S.da?'DeAcero: desde que compraste su terreno ya no baja la plusvalía.':'DeAcero: la planta de acero. Baja la plusvalía a 3 cuadras; si compras el Terreno DeAcero deja de hacerlo.';
   let txt=tileInfo(i);if(l2&&!/^nivel/.test(l2))txt=txt.replace(nameOf(t),`${nameOf(t)} (${l2})`);if(d&&d.trophy)txt+=' Es un trofeo.';return txt}

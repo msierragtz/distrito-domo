@@ -16,7 +16,7 @@ const MIS=[
   {id:'domingo',tipo:'vecinos',min:200,name:'Domingo familiar',txt:'Que las familias estén al 75% de satisfacción durante 1 minuto seguido.',hold:60,cond:()=>stats.gs.fam>=.75,rew:{b:[4,1500]}},
   {id:'fiesta',tipo:'reto',min:250,name:'Fiesta en paz',txt:'Aguanta 5 minutos seguidos sin quejas por fiestas de estudiantes. Tienes 10 minutos.',hold:300,lim:600,cond:()=>stats.nuis<.05,rew:{b:[3,1500]}},
   {id:'unas',tipo:'vecinos',min:300,name:'Uñas listas',txt:'Que vivan 40 profesionistas en el Distrito.',goal:40,prog:()=>Math.floor(S.pop.pro+1e-6),rew:{u:'unas'}},
-  {id:'fotodomo',tipo:'barrio',min:400,name:'La foto del Domo',txt:'Construye El Domo con un parque o una plaza a 2 cuadras o menos.',goal:1,prog:()=>domoPark()?1:0,rew:{f:6000}},
+  {id:'fotodomo',tipo:'barrio',min:400,name:'La foto del Domo',txt:`Construye ${DIST==='ribera'?'El Puente Atirantado':'El Domo'} con un parque o una plaza a 2 cuadras o menos.`,goal:1,prog:()=>domoPark()?1:0,rew:{f:6000}},
   {id:'tormenta',tipo:'reto',min:450,name:'Tormenta regia',txt:'Se acerca una tormenta: pásala sin que la satisfacción baje de 60%.',ev:'lluvia',floor:.6,rew:{x:'sat'}},
   {id:'trasnoche',tipo:'barrio',min:600,name:'Noche de boliche',txt:'Pon 3 bares o restaurantes sobre la misma calle.',goal:3,prog:()=>streetBest(['bar','resto']).n,rew:{u:'boliche'}},
   {id:'agua',tipo:'reto',min:750,name:'Agua a tiempo',txt:'Construye una Torre de agua antes de llegar a 950 vecinos.',goal:1,prog:()=>Math.min(1,mBuilt('torreagua')),failIf:()=>S.v>=950,ok:()=>S.v<900||mBuilt('torreagua')>0,once:1,rew:{f:15000}},

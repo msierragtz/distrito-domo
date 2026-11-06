@@ -114,6 +114,8 @@ function speck(gx,gy,seed,n,cols,ins=.08){const r=rng(seed*7919+gx*131+gy*977);f
 const isSt=(x,y)=>inb(x,y)&&S.g[idx(x,y)].k==='calle';
 function drawGround(gx,gy,t){
   const k=t.k;
+  if(k==='rio'){drawRiver(gx,gy,t);return}if(t.pu){drawBridge(gx,gy,t);return}
+  if(k==='malecon'){diamond(gx,gy,0,'#d9d4ca');diamond(gx,gy,.06,'#b98b5a');for(let u=.12;u<.95;u+=.12){const a=P(gx+u,gy+.08),b=P(gx+u,gy+.92);line(a[0],a[1],b[0],b[1],'#a07548')}return}
   if(k==='calle'&&t.hw){
     diamond(gx,gy,0,'#474c57');speck(gx,gy,t.s,6,['#40454f','#4f5460']);
     for(const f of [.2,.6]){const a=P(gx+f,gy+.5);px(a[0]-2,a[1]-1,4,1,'#f2c94c');px(a[0]-2,a[1]+1,4,1,'#f2c94c')}

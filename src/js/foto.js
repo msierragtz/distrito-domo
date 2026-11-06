@@ -40,7 +40,7 @@ function histStep(dt){if(TITLE||REAL)return;if(!S.fotoTip&&S.maxV>=60&&(S.playT|
 
 /* ===== cuadros del time-lapse ===== */
 // el principio que no se grabó: de un Distrito vacío a la primera foto, calles primero y luego edificios del centro hacia afuera
-function synthFrames(target,v1,t1,n){const B=newGame().g.map(tcode),ch=[],SAME=['ajeno','fabrica','calle','lote','arbol','tanque','reserva','lotedomo'];
+function synthFrames(target,v1,t1,n){const B=newGame().g.map(tcode),ch=[],SAME=['ajeno','fabrica','calle','lote','arbol','tanque','reserva','lotedomo','rio'];
   for(let i=0;i<B.length;i++){const a=JSON.parse(B[i])[0],b=JSON.parse(target[i])[0];if(a===b&&SAME.includes(a))B[i]=target[i]}
   for(let i=0;i<target.length;i++)if(target[i]!==B[i])ch.push(i);if(!ch.length)return [];
   const T_=target.map(s=>JSON.parse(s)),isPart=i=>T_[i][0]==='part',street=i=>T_[i][0]==='calle',cx=N/2,cy=N/2+1;
@@ -83,7 +83,7 @@ function tlStep(rdt){if(!TL)return;TL.t+=rdt;const p=Math.min(1,TL.t/TL.dur),n=T
   if(p>=1){TL.end+=rdt;if(!TL.fw){TL.fw=1;celebrate(4);sfx('phase')}if(TL.end>4.8)tlStop()}}
 // letreros del time-lapse dentro del dibujo, para que también salgan en el video
 function tlHud(){const t=TL;if(!t)return;const H=Math.round(bh*.075),u=Math.max(5,Math.round(bh*.024));ctx.save();ctx.globalAlpha=1;ctx.fillStyle='#0b0f1e';ctx.fillRect(0,0,bw,H);ctx.fillRect(0,bh-H,bw,H);
-  ctx.textBaseline='middle';ctx.font=`${u}px "Press Start 2P", monospace`;ctx.textAlign='left';ctx.fillStyle='#f26a21';ctx.fillText('DISTRITO DOMO',Math.round(u*1.4),Math.round(H/2));
+  ctx.textBaseline='middle';ctx.font=`${u}px "Press Start 2P", monospace`;ctx.textAlign='left';ctx.fillStyle='#f26a21';ctx.fillText(DNAME.toUpperCase(),Math.round(u*1.4),Math.round(H/2));
   ctx.textAlign='right';ctx.fillStyle='#ffffff';ctx.fillText(S.name?`ASÍ CRECIÓ EL DISTRITO DE ${S.name.toUpperCase()}`.slice(0,40):'ASÍ CRECIÓ TU DISTRITO',Math.round(bw-u*1.4),Math.round(H/2));
   ctx.textAlign='left';ctx.font=`${Math.round(u*1.5)}px "Press Start 2P", monospace`;ctx.fillStyle='#ffd84d';ctx.fillText(`${Math.round(t.v).toLocaleString('es-MX')}`,Math.round(u*1.4),Math.round(bh-H/2));
   const w1=ctx.measureText(`${Math.round(t.v).toLocaleString('es-MX')}`).width;ctx.font=`${u}px "Press Start 2P", monospace`;ctx.fillStyle='#ffffff';ctx.fillText('VECINOS',Math.round(u*2+w1),Math.round(bh-H/2));
@@ -108,10 +108,10 @@ function recFrame(){if(!REC)return;const r=REC,f=PHOTO&&FILT[PHOTO.f];if(f&&f.cs
 /* ===== foto ===== */
 function vignette(x,W,H,a){const g=x.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.hypot(W,H)*.55);g.addColorStop(0,'rgba(10,8,20,0)');g.addColorStop(1,`rgba(10,8,20,${a})`);x.fillStyle=g;x.fillRect(0,0,W,H)}
 function caption(x,W,H){const u=Math.max(10,Math.round(H*.018)),pad=u,line2=`Santa Catarina, N.L. · ${Math.floor(withReal(()=>S.v)).toLocaleString('es-MX')} vecinos`;
-  x.font=`${u}px "Press Start 2P", monospace`;const w1=x.measureText('DISTRITO DOMO').width;x.font=`${Math.round(u*1.7)}px VT323, monospace`;const w2=x.measureText(line2).width;
+  x.font=`${u}px "Press Start 2P", monospace`;const w1=x.measureText(DNAME.toUpperCase()).width;x.font=`${Math.round(u*1.7)}px VT323, monospace`;const w2=x.measureText(line2).width;
   const bw2=Math.max(w1+u*2.6,w2)+pad*2,bh2=u*4.6,x0=W-bw2-u*1.5,y0=H-bh2-u*1.5;x.fillStyle='rgba(20,24,40,.78)';x.fillRect(x0,y0,bw2,bh2);x.fillStyle='#f26a21';x.fillRect(x0,y0,bw2,Math.max(2,u*.25));
   x.strokeStyle='#f26a21';x.lineWidth=Math.max(2,u*.35);x.beginPath();x.arc(x0+pad+u*.8,y0+pad+u*1.25,u*.8,Math.PI,0);x.stroke();
-  x.textBaseline='middle';x.textAlign='left';x.font=`${u}px "Press Start 2P", monospace`;x.fillStyle='#ffffff';x.fillText('DISTRITO DOMO',x0+pad+u*2.2,y0+pad+u*.9);
+  x.textBaseline='middle';x.textAlign='left';x.font=`${u}px "Press Start 2P", monospace`;x.fillStyle='#ffffff';x.fillText(DNAME.toUpperCase(),x0+pad+u*2.2,y0+pad+u*.9);
   x.font=`${Math.round(u*1.7)}px VT323, monospace`;x.fillStyle='#c8cde0';x.fillText(line2,x0+pad,y0+pad+u*2.8)}
 async function fotoSave(){if(!PHOTO)return;const k=Math.max(1,Math.min(4,Math.round(2400/cv.width))),W=cv.width*k,H=cv.height*k,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
   const f=FILT[PHOTO.f];if(f.css&&'filter' in x)x.filter=f.css;x.drawImage(cv,0,0,W,H);x.filter='none';if(f.vig)vignette(x,W,H,f.vig);if(PHOTO.pie)caption(x,W,H);

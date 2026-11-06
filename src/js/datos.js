@@ -3,7 +3,10 @@
 const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.95,fl:{torre:[2600,1.18],edificio:[170,1.34],ladrillo:[180,1.34]},lvBiz:[0,0,2.5,4,6],lvSvc:[0,0,3,6,10],infSvc:500,lvHome:[0,0,1.2,1.8,2.5],rentLv:.25,boot:[150,1.6,300,1.3]};
 // arranque: los negocios rinden más mientras el Distrito es chico (simulado: quita el tiempo muerto de los primeros 10 min y a los 60 min ya casi no cambia nada)
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
-const N=30, OFF=7, TW=32, TH=16, KEY='distritoDomo.v4', DAY=360;
+// distrito activo: Domo (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
+const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
+const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Domo',LM=DIST==='ribera'?'El Puente':'El Domo';
+const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
 const OPT=(()=>{const o={low:false,rm:false,hc:false,season:'auto'};try{Object.assign(o,JSON.parse(localStorage.getItem('distritoDomo.opciones')||'{}'))}catch(e){}return o})();
 const RMQ=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):null;let RMV=!!(RMQ&&RMQ.matches);try{RMQ&&RMQ.addEventListener('change',e=>{RMV=e.matches})}catch(e){}
@@ -33,6 +36,8 @@ const DEFS={
   domo:{R:6,val:[.22,6],name:'El Domo',cost:25000,unlock:300,bt:45,bonus:.12,max:1,upk:5,desc:'El arco naranja del Distrito. Sube mucho la satisfacción. Solo hay uno.'},
   tanque:{val:[.12,4],name:'Tanque de agua',cost:0,unlock:0,bt:0,bonus:.05,hidden:true,fixed:true,desc:''},
   reserva:{name:'Terreno reservado',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
+  rio:{name:'Río',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
+  malecon:{R:4,val:[.14,3],name:'Malecón',cost:150,grow:1.12,unlock:30,bt:6,verde:5,upk:.1,desc:'Paseo en la orilla del río, con barandal, faroles y palmas. Da verde a 4 cuadras y sube la plusvalía. Solo va junto al río.'},
   lotedomo:{name:'Terreno del Domo',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   fabrica:{name:'DeAcero',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   escuela:{R:5,val:[.12,4],name:'Escuela',cost:1500,grow:1.15,unlock:150,bt:20,verde:2,com:3,upk:0.4,max:2,desc:'Primaria y secundaria del Distrito: a las familias les encanta tenerla cerca y ayuda a que sus hijos crezcan aquí.'},

@@ -264,6 +264,13 @@ body.foto #cv,body.tl #cv{cursor:grab}
 @media (prefers-reduced-motion:reduce){#fflash.on{animation:none}}
 body.foto #stage,body.tl #stage{grid-row:1/-1}
 @media (max-width:560px){#fMsg{font-size:15px;top:8px}}
+
+/* v66: selector de distrito (inicio y opciones) */
+.dsel{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:8px 0 2px;font-size:12px}
+.dsel button{font:inherit;padding:4px 10px;border:2px solid #3a2f25;background:#f4ead6;color:#2b2118;cursor:pointer;border-radius:3px}
+.dsel button[aria-pressed="true"]{background:#2f7fb8;color:#fff;border-color:#1d4f73;cursor:default}
+.dsel small{flex-basis:100%;text-align:center;opacity:.75}
+body.ribera .tarc path,body.ribera .brand svg path{stroke:#2f7fb8}
 </style>
 
 <div id="app">
@@ -287,7 +294,7 @@ body.foto #stage,body.tl #stage{grid-row:1/-1}
     <div class="zoom"><button class="box" id="zin" type="button" aria-label="Acercar">+</button><button class="box" id="zout" type="button" aria-label="Alejar">−</button><button class="box" id="rl" type="button" aria-label="Girar a la izquierda">⟲</button><button class="box" id="rr" type="button" aria-label="Girar a la derecha">⟳</button><button class="box" id="mus" type="button" aria-label="Música" aria-pressed="true">♪</button><button class="box" id="fxb" type="button" aria-label="Efectos de sonido" aria-pressed="true">FX</button><button class="box" id="heat" type="button" aria-label="Mapa de plusvalía" aria-pressed="false">$</button><button class="box" id="optb" type="button" aria-label="Opciones de imagen" aria-expanded="false">⚙</button><button class="box" id="fotob" type="button" aria-label="Modo foto (tecla F)" title="Modo foto (F)"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M5 3h6v2h3v9H2V5h3z"/><path fill="#fff" d="M6 7h4v4H6z"/><path fill="currentColor" d="M7 8h2v2H7z"/><path fill="#f26a21" d="M12 6h1v1h-1z"/></svg></button><button class="box" id="guideb" type="button" aria-label="Guía: qué hace cada edificio" aria-expanded="false">?</button><button class="box" id="pauseb" type="button" aria-label="Pausa (barra espaciadora o P)" aria-pressed="false">❚❚</button></div>
     <div id="guide" class="box" hidden role="dialog" aria-label="Guía del Distrito"></div>
     <div id="pausebar" class="box" hidden role="status">EN PAUSA · toca ▶ o la barra espaciadora para seguir</div>
-    <div id="opts" class="box" hidden role="dialog" aria-label="Opciones de imagen"><h2>Opciones de imagen</h2><label><input type="checkbox" id="oLow"> Calidad baja <small>para celulares lentos: menos gente en la calle y sin fundidos</small></label><label><input type="checkbox" id="oRm"> Menos movimiento <small>fuegos cortos, sin parpadeos ni rebotes</small></label><label><input type="checkbox" id="oHc"> Alto contraste <small>noche más clara, textos y cursor más marcados</small></label><label class="sel">Temporada <select id="oSe"><option value="auto">Según la fecha</option><option value="patrias">Fiestas Patrias</option><option value="muertos">Día de Muertos</option><option value="navidad">Navidad</option><option value="none">Ninguna</option></select></label><small id="oErr" class="oerr"></small><button id="oOk" type="button">Listo</button></div>
+    <div id="opts" class="box" hidden role="dialog" aria-label="Opciones de imagen"><h2>Opciones de imagen</h2><label><input type="checkbox" id="oLow"> Calidad baja <small>para celulares lentos: menos gente en la calle y sin fundidos</small></label><label><input type="checkbox" id="oRm"> Menos movimiento <small>fuegos cortos, sin parpadeos ni rebotes</small></label><label><input type="checkbox" id="oHc"> Alto contraste <small>noche más clara, textos y cursor más marcados</small></label><label class="sel">Temporada <select id="oSe"><option value="auto">Según la fecha</option><option value="patrias">Fiestas Patrias</option><option value="muertos">Día de Muertos</option><option value="navidad">Navidad</option><option value="none">Ninguna</option></select></label><div id="odist" class="dsel" hidden>Distrito: <button id="odDomo" type="button">Domo</button><button id="odRib" type="button">Ribera</button><small>cada uno guarda su propia partida</small></div><small id="oErr" class="oerr"></small><button id="oOk" type="button">Listo</button></div>
     <div id="dialog" class="box" role="status" aria-live="polite" title="Toca para leer el mensaje completo"></div>
     <div id="loanbox" class="box" hidden role="dialog" aria-label="Crédito Banregio"></div>
     <div id="misbox" class="box" hidden role="dialog" aria-label="Encargos del Distrito"></div>
@@ -330,6 +337,7 @@ body.foto #stage,body.tl #stage{grid-row:1/-1}
       <button id="tcont" type="button" class="tb main">Continuar partida</button>
       <button id="tnew" type="button" class="tb">Nueva partida</button>
     </div>
+    <div id="tdist" class="dsel" hidden>Distrito: <button id="tdDomo" type="button">Domo</button><button id="tdRib" type="button">Ribera</button></div>
     <label class="tmus"><input type="checkbox" id="tmusic" checked> Música de jazz</label>
     <p class="tsave" id="tsave" role="status" aria-live="polite"></p>
     <div class="tcopy"><button id="texp" type="button">Descargar copia</button><button id="timp" type="button">Cargar copia</button><button id="tprev" type="button" hidden>Recuperar anterior</button><input id="tfile" type="file" accept=".json,application/json" hidden></div>
@@ -352,7 +360,10 @@ body.foto #stage,body.tl #stage{grid-row:1/-1}
 const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.95,fl:{torre:[2600,1.18],edificio:[170,1.34],ladrillo:[180,1.34]},lvBiz:[0,0,2.5,4,6],lvSvc:[0,0,3,6,10],infSvc:500,lvHome:[0,0,1.2,1.8,2.5],rentLv:.25,boot:[150,1.6,300,1.3]};
 // arranque: los negocios rinden más mientras el Distrito es chico (simulado: quita el tiempo muerto de los primeros 10 min y a los 60 min ya casi no cambia nada)
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
-const N=30, OFF=7, TW=32, TH=16, KEY='distritoDomo.v4', DAY=360;
+// distrito activo: Domo (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
+const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
+const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Domo',LM=DIST==='ribera'?'El Puente':'El Domo';
+const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
 const OPT=(()=>{const o={low:false,rm:false,hc:false,season:'auto'};try{Object.assign(o,JSON.parse(localStorage.getItem('distritoDomo.opciones')||'{}'))}catch(e){}return o})();
 const RMQ=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):null;let RMV=!!(RMQ&&RMQ.matches);try{RMQ&&RMQ.addEventListener('change',e=>{RMV=e.matches})}catch(e){}
@@ -382,6 +393,8 @@ const DEFS={
   domo:{R:6,val:[.22,6],name:'El Domo',cost:25000,unlock:300,bt:45,bonus:.12,max:1,upk:5,desc:'El arco naranja del Distrito. Sube mucho la satisfacción. Solo hay uno.'},
   tanque:{val:[.12,4],name:'Tanque de agua',cost:0,unlock:0,bt:0,bonus:.05,hidden:true,fixed:true,desc:''},
   reserva:{name:'Terreno reservado',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
+  rio:{name:'Río',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
+  malecon:{R:4,val:[.14,3],name:'Malecón',cost:150,grow:1.12,unlock:30,bt:6,verde:5,upk:.1,desc:'Paseo en la orilla del río, con barandal, faroles y palmas. Da verde a 4 cuadras y sube la plusvalía. Solo va junto al río.'},
   lotedomo:{name:'Terreno del Domo',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   fabrica:{name:'DeAcero',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   escuela:{R:5,val:[.12,4],name:'Escuela',cost:1500,grow:1.15,unlock:150,bt:20,verde:2,com:3,upk:0.4,max:2,desc:'Primaria y secundaria del Distrito: a las familias les encanta tenerla cerca y ayuda a que sus hijos crezcan aquí.'},
@@ -530,6 +543,7 @@ function reservePlots(g){
   tryAt(3,'grandomo',[[14,12]]);tryAt(2,'mercado',[[9,6]]);
 }
 function newGame(){
+  if(DIST==='ribera'){let b=0;try{b=+localStorage.getItem('distritoDomo.riberaBono')||0}catch(e){}return riberaGame(b)}
   const g=embed(legacyGame());
   return {pv2:1,pop:{fam:9,pro:3,est:4},g,v:16,$:600,maxV:16,unl:['ver','calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0};
 }
@@ -541,7 +555,7 @@ function buyParcel(p){
   S.$-=cost;S.lots=(S.lots||0)+1;if(p==='DA')S.da=1;
   for(let i=0;i<S.g.length;i++){const t=S.g[i];if(isParcel(t)&&t.p===p)S.g[i]={k:p!=='DA'&&Math.random()<.07?'arbol':'lote',s:t.s,b:0}}
   recompute();save();refreshUI(true);
-  say(p==='DA'?`¡Compraste el Terreno DeAcero! La fábrica se achicó y ya no baja la plusvalía de tus edificios. Mantenimiento +${S.lots*8}%.`:`¡Compraste el ${P_.name}! El Distrito crece, pero también el mantenimiento (+${S.lots*8}%) y lo que exigen los vecinos (+${S.lots*3}%).`,true);return true;
+  say(p==='DA'&&DIST==='domo'?`¡Compraste el Terreno DeAcero! La fábrica se achicó y ya no baja la plusvalía de tus edificios. Mantenimiento +${S.lots*8}%.`:`¡Compraste el ${P_.name}! El Distrito crece, pero también el mantenimiento (+${S.lots*8}%) y lo que exigen los vecinos (+${S.lots*3}%).`,true);return true;
 }
 function serialize(){S.t=Date.now();return withReal(()=>JSON.parse(JSON.stringify(S)))}
 let saveN=0;
@@ -587,6 +601,134 @@ function bizX(t,x,y,nb){const k=t.k,has=q=>nb.some(n=>n&&n.k===q&&!(n.b>0));
   if(k==='boliche'){const f=foot(idx(x,y),...DIMT(t))||[];return f.some(j=>{const jx=j%N,jy=Math.floor(j/N);return NB.some(([dx,dy])=>{if(!inb(jx+dx,jy+dy))return false;const q=S.g[anchorOf(idx(jx+dx,jy+dy))];return q&&(q.k==='cafe'||q.k==='resto')&&!(q.b>0)})})?1.2:1}
   if(k==='gym'){for(let yy=Math.max(0,y-3);yy<=Math.min(N-1,y+3);yy++)for(let xx=Math.max(0,x-3);xx<=Math.min(N-1,x+3);xx++){const q=S.g[idx(xx,yy)];if(q.k==='oficinas'&&!(q.b>0)&&Math.abs(xx-x)+Math.abs(yy-y)<=3)return 1.25}return 1}
   if(k==='paleteria')return S.ev&&S.ev.id==='calor'?3:1;return 1}
+/* ---------- Distrito Ribera (v66): segundo distrito con un río que lo atraviesa ----------
+   Se abre a los 3,000 vecinos del Distrito Domo. Cada distrito es su propia partida (su guardado, su nube y su historia);
+   se cambia de uno a otro desde la pantalla de inicio o desde ⚙. El río va casi seco todo el año (se puede jugar en el lecho:
+   parques, canchas, dog parks y palmas), se llena en la temporada de lluvias y una vez por temporada crece de golpe y daña
+   lo que esté abajo. Las calles lo cruzan con puentes, el malecón luce la orilla y la vista al agua sube la plusvalía. */
+const LECHO=['parque','cancha','dogpark','palma'],PUENTE_MIN=400;
+// centro del río en cada fila: serpentea de norte a sur
+const cxR=y=>15+Math.round(2.4*Math.sin(y/4.6+.6));
+const isRio=t=>!!t&&(t.k==='rio'||t.pu===1||t.lecho===1);
+const rioW=()=>DIST==='ribera'&&S&&S.rio?S.rio.w:0;
+const rioWet=()=>rioW()>.5;
+function riberaGame(bono){const r=rng(4242),g=[];
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const s=Math.floor(r()*1000),c=cxR(y),inR=Math.abs(x-c)<=1,rc=x===c?1:0,av=y===OFF||y===OFF+12;
+    if(inR){g.push(av?{k:'calle',hw:1,pu:1,rc,s,b:0}:{k:'rio',rc,s,b:0});continue}
+    if(av){g.push({k:'calle',hw:1,s,b:0});continue}
+    if(y>OFF&&y<OFF+12&&x>=OFF&&x<OFF+16){g.push({k:r()<.07?'arbol':'lote',s,b:0});continue}
+    g.push({k:'ajeno',p:parcelOf(x,y)||undefined,s,b:0})}
+  const at=(x,y)=>g[idx(x,y)],set=(x,y,o)=>{const t=at(x,y);if(t.k==='rio'||t.pu){if(o.k==='calle')g[idx(x,y)]={k:'calle',pu:1,rc:t.rc,s:t.s,b:0};return}g[idx(x,y)]=Object.assign({s:t.s,b:0},o)};
+  // calles: una en cada orilla y una que cruza el río con puente
+  for(let y=OFF+1;y<OFF+12;y++){set(OFF+3,y,{k:'calle'});set(OFF+13,y,{k:'calle'})}
+  for(let x=OFF+3;x<=OFF+13;x++)set(x,OFF+5,{k:'calle'});
+  const free=(x,y)=>{const t=at(x,y);return t&&(t.k==='lote'||t.k==='arbol')};
+  const near=(x,y,o)=>{for(let d=0;d<4;d++)for(const [dx,dy] of [[0,0],[d,0],[-d,0],[0,d],[0,-d]])if(free(x+dx,y+dy)){set(x+dx,y+dy,o);return}};
+  // el terreno del landmark: en la orilla oriente, junto al puente
+  {const y=OFF+6,x=cxR(y)+2;if(free(x,y))set(x,y,{k:'lotedomo',s:1});else near(x,y,{k:'lotedomo',s:1})}
+  near(OFF+2,OFF+11,{k:'ladrillo',f:4,bt:20});near(OFF+14,OFF+11,{k:'tomates',bt:8});near(OFF+15,OFF+2,{k:'tanque'});
+  near(OFF+4,OFF+2,{k:'parque'});near(OFF+4,OFF+8,{k:'parque'});near(OFF+12,OFF+9,{k:'palma'});
+  return {pv2:1,pop:{fam:9,pro:3,est:4},g,v:16,$:600+(bono||0),maxV:16,unl:['ver','calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0,dist:'ribera',rio:{t:DAY*2.2,w:.1},bono:bono||0}}
+
+/* ===== el agua: temporada seca, temporada de lluvias y crecida ===== */
+const RIOCYC=DAY*10;
+function rioFase(){const R=S.rio;if(!R)return 'seco';if(R.cr>0)return 'crecida';const ph=(R.t%RIOCYC)/RIOCYC;return ph>=.65&&ph<.95?'lluvias':'seco'}
+function rioStep(dt,quiet){if(DIST!=='ribera')return;const R=S.rio=S.rio||{t:DAY*2.2,w:.1};R.t+=dt;const f0=rioFase()==='lluvias'||R.cr>0;
+  const ll=rioFase()!=='seco';
+  if(ll!==!!R.ll){R.ll=ll;if(ll){R.cre=DAY*(.5+Math.random()*1.3);R.av=0;if(!quiet){sfx('event');say('Empezó la temporada de lluvias: el río se llena y el lecho queda bajo el agua. Lo que construiste en el lecho no funciona hasta que baje.',true)}
+      if(!S.ev){const e=EVENTS.find(q=>q.id==='lluvia');if(e)S.ev={id:'lluvia',t:e.dur}}}
+    else{R.cre=null;if(!quiet)say('Terminó la temporada de lluvias: el río baja y el lecho vuelve a servir.',true)}}
+  if(R.cre!=null&&ll){R.cre-=dt;if(R.cre<=50&&!R.av){R.av=1;if(!quiet){sfx('nope');say('¡Alerta! El río va a crecer en menos de un minuto. Lo que esté en el lecho se va a dañar y habrá que repararlo.',true)}}
+    if(R.cre<=0){R.cre=null;R.cr=75;let n=0;for(const t of S.g)if(t.lecho&&!(t.b>0)&&!t.dmg){t.dmg=1;n++}
+      if(!S.ev){const e=EVENTS.find(q=>q.id==='lluvia');if(e)S.ev={id:'lluvia',t:e.dur}}
+      if(!quiet){sfx('event');say(n?`¡Creció el río! El agua tapó el lecho y dañó ${n} ${n===1?'cosa':'cosas'}. Cuando baje, repáralas con «Mejorar».`:'¡Creció el río! Por suerte no había nada en el lecho.',true)}}}
+  if(R.cr>0)R.cr-=dt;
+  const tgt=R.cr>0?1:ll?.64:.1;R.w+=Math.max(-dt*.008,Math.min(dt*(R.cr>0?.05:.012),tgt-R.w));
+  const q=Math.round(R.w*14);if(q!==R.q){R.q=q;GV++}
+  const wet=R.w>.5;if(wet!==!!R.wet){R.wet=wet;recompute()}
+  void f0}
+
+/* ===== dibujo del río ===== */
+const midR=(a,b)=>(cxR(a)+cxR(b))/2+.5;
+function drawRiver(gx,gy,t){const w=rioW()||.1;
+  diamond(gx,gy,0,'#c4b796');speck(gx,gy,t.s,14,['#a99d82','#d6cbb0','#9a9284','#8f8e88','#b8b2a4']);
+  ctx.save();const D=[P(gx,gy),P(gx+1,gy),P(gx+1,gy+1),P(gx,gy+1)];ctx.beginPath();D.forEach((p,q)=>q?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.clip();
+  const hw=.1+w*1.45;
+  for(const y of [gy-1,gy,gy+1]){const xa=midR(y-1,y),xb=midR(y,y+1),q=(h,c)=>poly([P(xa-h,y),P(xa+h,y),P(xb+h,y+1),P(xb-h,y+1)],c);
+    q(hw+.14,'#a8946a');q(hw,'#3f84b8');if(hw>.3)q(hw*.45,'#4d92c4')}
+  ctx.restore();
+  // orillas: borde de concreto y pasto donde empieza la tierra
+  for(const [dx,dy,a,b] of [[-1,0,[0,0],[0,1]],[1,0,[1,0],[1,1]],[0,-1,[0,0],[1,0]],[0,1,[0,1],[1,1]]]){const n=inb(gx+dx,gy+dy)?S.g[idx(gx+dx,gy+dy)]:null;if(n&&isRio(n))continue;
+    // talud de concreto, como el del río Santa Catarina
+    const o=(u,k)=>[gx+u[0]-dx*k,gy+u[1]-dy*k],A=P(...o(a,0)),B=P(...o(b,0)),C=P(...o(b,.16)),D=P(...o(a,.16));
+    poly([A,B,C,D],'#b4afa4');line(A[0],A[1],B[0],B[1],'#e3ded2');line(D[0],D[1],C[0],C[1],'#857f72');
+    for(let q=1;q<4;q++){const f=q/4,u=[A[0]+(B[0]-A[0])*f,A[1]+(B[1]-A[1])*f],v=[D[0]+(C[0]-D[0])*f,D[1]+(C[1]-D[1])*f];line(u[0],u[1],v[0],v[1],'#a29c90')}}}
+// puentes: la avenida o la calle pasan por encima del río
+function drawBridge(gx,gy,t){drawRiver(gx,gy,t);const alongX=t.hw||isSt(gx-1,gy)||isSt(gx+1,gy);
+  const band=(u0,u1,c)=>poly(alongX?[P(gx,gy+u0),P(gx+1,gy+u0),P(gx+1,gy+u1),P(gx,gy+u1)]:[P(gx+u0,gy),P(gx+u0,gy+1),P(gx+u1,gy+1),P(gx+u1,gy)],c);
+  band(.1,.92,'#2f5f86');band(.08,.9,t.hw?'#8a8f99':'#d9d4ca');band(t.hw?.12:.2,t.hw?.86:.78,t.hw?'#474c57':'#585d69');
+  if(t.hw)for(const f of [.2,.6]){const a=P(gx+f,gy+.5);px(a[0]-2,a[1]-1,4,1,'#f2c94c');px(a[0]-2,a[1]+1,4,1,'#f2c94c')}
+  else{const c=P(gx+.5,gy+.5),m=alongX?P(gx+.8,gy+.5):P(gx+.5,gy+.8);px(c[0]-1,c[1],2,1,'#f4f4f4');px(m[0]-1,m[1],2,1,'#f4f4f4')}
+  for(const u of [.08,.9]){const a=alongX?P(gx,gy+u):P(gx+u,gy),b=alongX?P(gx+1,gy+u):P(gx+u,gy+1);line(a[0],a[1]-2,b[0],b[1]-2,'#c9c4b8');for(let q=0;q<=4;q++){const f=q/4;px(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-2,1,2,'#a9a49a')}}}
+// agua que corre (en vivo): reflejos que bajan por el río; agua sobre lo que se inundó en el lecho
+function rioDyn(t,gx,gy){const w=rioW();
+  if(t.lecho&&w>.5&&!(t.b>0)){ctx.globalAlpha=Math.min(.8,(w-.5)*3);diamond(gx,gy,.02,'#3f84b8');ctx.globalAlpha=1}
+  else if(t.dmg){ctx.globalAlpha=.55;diamond(gx,gy,.04,'#7a6440');ctx.globalAlpha=1;const r=rng(t.s+gx);for(let q=0;q<5;q++){const [x,y]=P(gx+.15+r()*.7,gy+.15+r()*.7);px(x,y-1,2,1,'#5a4a30')}}
+  if(w<.12||lowMo()||OPT.low)return;const hw=.1+w*1.45,xa=midR(gy-1,gy),xb=midR(gy,gy+1);
+  for(let q=0;q<3;q++){const f=((T*.28+sh01(gx,gy,q))%1),off=(sh01(gx,gy,q+5)-.5)*1.6*hw,x=xa+(xb-xa)*f+off;if(x<gx||x>gx+1)continue;const [sx,sy]=P(x,gy+f);
+    ctx.globalAlpha=.55;px(sx-1,sy,2.5,.7,NIGHT>.4?'#9cc7ea':'#d6ecf9',NIGHT>.4);ctx.globalAlpha=1}}
+
+/* ===== malecón y puente atirantado ===== */
+function rioSides(gx,gy){const out=[];for(const [dx,dy] of NB){const n=inb(gx+dx,gy+dy)?S.g[idx(gx+dx,gy+dy)]:null;if(n&&isRio(n))out.push([dx,dy])}return out}
+function artMalecon(t,gx,gy){const sides=rioSides(gx,gy),on=NIGHT>.25;
+  for(const [dx,dy] of (sides.length?sides:[[1,0]])){const a=dx?P(gx+(dx>0?.94:.06),gy+.04):P(gx+.04,gy+(dy>0?.94:.06)),b=dx?P(gx+(dx>0?.94:.06),gy+.96):P(gx+.96,gy+(dy>0?.94:.06));
+    for(let q=0;q<=6;q++){const f=q/6;px(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-4,1,4,'#6b7280')}line(a[0],a[1]-4,b[0],b[1]-4,'#9aa3ad');line(a[0],a[1]-2,b[0],b[1]-2,'#7b8591')}
+  for(const [u,v] of [[.25,.25],[.75,.75]]){const [x,y]=P(gx+u,gy+v);px(x,y-12,1,12,'#3d4250');px(x-1,y-13,3,2,on?'#ffe19a':'#e6e1cf',on);glow(x,y-12,9,.7)}
+  palm(gx+.3,gy+.72,.8);bench(gx+.62,gy+.38);
+  if(t.s%2===0)person(...P(gx+.5,gy+.6),{shirt:'#3fa7d6',pants:'#2b3a55',skin:'#c68642',hair:'#1c1c1c',dx:1,front:true,scale:.8,fr:0})}
+// El landmark de Ribera: pilón blanco en forma de «A» con su tablero; los tirantes se pintan en vivo (finos, sin contorno)
+// el pilón en A va en la orilla y el tablero cruza hacia el río (a lo largo de x); los tirantes se dibujan en vivo
+const ATU=[-1.15,1.95];
+function artAtirantado(gx,gy,ic){const H=ic?40:88,on=!ic&&NIGHT>.25,Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0],p[1]-h]};
+  box(gx+.3,gy+.12,gx+.7,gy+.88,0,4,'#cfc9bd','#b9b3a7','#a59f93');
+  const [a,b]=ATU,dk=7;
+  poly([Q(a,.36,dk-2),Q(b,.36,dk-2),Q(b,.64,dk-2),Q(a,.64,dk-2)],'#6b7280');poly([Q(a,.36,dk),Q(b,.36,dk),Q(b,.64,dk),Q(a,.64,dk)],'#9aa1ab');
+  poly([Q(a,.4,dk+.2),Q(b,.4,dk+.2),Q(b,.6,dk+.2),Q(a,.6,dk+.2)],'#5b616c');
+  for(const v of [.36,.64]){const A=Q(a,v,dk+2),B=Q(b,v,dk+2);line(A[0],A[1],B[0],B[1],on?'#ffb86a':'#e6e1d6')}
+  {const A=Q(a,.5,dk+.4),B=Q(b,.5,dk+.4);ctx.globalAlpha=.8;line(A[0],A[1],B[0],B[1],'#f2c94c');ctx.globalAlpha=1}
+  const T_=Q(.5,.5,H),L=Q(.5,.16,4),R=Q(.5,.84,4);
+  poly([[L[0]-2,L[1]],[L[0]+1.5,L[1]],[T_[0]+.8,T_[1]+8],[T_[0]-1.5,T_[1]+8]],'#f1efe9');poly([[R[0]-1.5,R[1]],[R[0]+2,R[1]],[T_[0]+1.5,T_[1]+8],[T_[0]-.8,T_[1]+8]],'#d9d5cc');
+  px(T_[0]-1.5,T_[1],3,9,'#f1efe9');px(T_[0]+.5,T_[1],1,9,'#d9d5cc');{const m=Q(.5,.5,H*.42);px(m[0]-5,m[1],10,1.6,'#d9d5cc')}
+  px(T_[0]-.5,T_[1]-2,1.4,1.4,on?'#ff3b30':'#b33',on);if(on)glow(T_[0],T_[1]-1.5,6,.9,'#ff3b30')}
+function atirDyn(gx,gy){const H=88,Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0],p[1]-h]},T_=Q(.5,.5,H),n=NIGHT>.3;
+  ctx.save();ctx.strokeStyle=n?'#c9d8ee':'#eef1f5';ctx.lineWidth=.45;ctx.globalAlpha=n?.9:.85;ctx.beginPath();
+  for(let q=0;q<7;q++){const hy=T_[1]+6+q*3.2;for(const e of ATU){const u=.5+(e-.5)*(.18+q*.13),D=Q(u,.5,7.5);ctx.moveTo(T_[0]+(D[0]<T_[0]?-.6:.6),hy);ctx.lineTo(D[0],D[1])}}
+  ctx.stroke();ctx.restore();
+  if(n){for(const u of [-.9,-.2,1.2,1.8]){const g=Q(u,.5,8);glow(g[0],g[1],7,.45,'#ffd9a0')}const m=Q(.5,.5,H*.45);glow(m[0],m[1],14,.35,'#cfe2ff')}}
+
+/* ===== los dos distritos ===== */
+const DKEY='distritoDomo.distrito',UKEY='distritoDomo.riberaUnl';
+const riberaUnl=()=>{try{return localStorage.getItem(UKEY)==='1'}catch(e){return false}};
+async function goDist(to){if(to===DIST)return;if(to==='ribera'&&!riberaUnl()){say('El Distrito Ribera se abre cuando el Distrito Domo llega a 3,000 vecinos.',true);return}
+  try{const str=JSON.stringify(serialize());localStorage.setItem(KEY,str);if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
+  try{if(to==='ribera'&&DIST==='domo')localStorage.setItem('distritoDomo.riberaBono',String(Math.min(40000,Math.round((S.maxV||0)*6/500)*500)));localStorage.setItem(DKEY,to)}catch(e){}
+  location.reload()}
+// en el Distrito Domo: a los 3,000 se abre Ribera (una vez)
+function distStep(){if(TITLE||DIST!=='domo'||!S||(S.maxV||0)<3000)return;if(!riberaUnl()){try{localStorage.setItem(UKEY,'1')}catch(e){}distUI()}
+  if(!S.ribMsg){S.ribMsg=1;sfx('phase');say('¡Se abrió el Distrito Ribera! Un barrio nuevo junto al río, para empezar de cero con un bono de tu Distrito Domo. Ve desde ⚙ Opciones o desde la pantalla de inicio. Tu Distrito Domo te espera tal como lo dejes.',true)}}
+function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id of ['tdist','odist'])if($(id))$(id).hidden=!u;
+  for(const [id,d] of [['tdDomo','domo'],['tdRib','ribera'],['odDomo','domo'],['odRib','ribera']]){const b=$(id);if(b){b.setAttribute('aria-pressed',DIST===d);b.disabled=DIST===d}}}
+// en Ribera: nombres, título y textos propios
+function distBoot(){if(DIST!=='ribera'){DEFS.malecon.hidden=true;DEFS.malecon.unlock=Infinity;const i=ORDER.indexOf('malecon');if(i>=0)ORDER.splice(i,1);return}
+  Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El landmark de la Ribera: un pilón blanco con tirantes sobre el río. Sube mucho la satisfacción. Solo hay uno.'});
+  DEFS.lotedomo.name='Terreno del Puente';DEFS.cultura.name='Centro Cultural Ribera';DEFS.museo.name='Museo del Río';SPH.domo=110;
+  Object.assign(PARCELS.W,{where:'junto a la calle Sauce'});Object.assign(PARCELS.E,{where:'junto a la calle Álamo'});
+  Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
+  Object.assign(PARCELS.DA,{name:'Ribera sur',where:'cruzando la avenida sur, junto al río'});
+  for(const k in LV)if(Array.isArray(LV[k]))LV[k]=LV[k].map(n=>typeof n==='string'?n.replace(' del Domo',' del Río').replace('Domo','Ribera'):n);
+  document.title='Distrito Ribera';for(const el of document.querySelectorAll('header h1'))el.firstChild.textContent='DISTRITO RIBERA';
+  const tt=document.querySelector('#title .tt');if(tt)tt.innerHTML='DISTRITO<br>RIBERA';document.body.classList.add('ribera')}
+let DBOUND=0;function distBind(){if(DBOUND)return;DBOUND=1;const on=(id,d)=>{const el=$(id);if(el)el.addEventListener('click',()=>goDist(d))};on('tdDomo','domo');on('tdRib','ribera');on('odDomo','domo');on('odRib','ribera')}
 /* ---------- obras grandes (v64): se abren con encargos desde 3,000 vecinos; una de cada una ---------- */
 const OBRAS=['bosque','museo','rasca','beis','plazacom','metro'];
 // a qué capa de plusvalía alimenta cada obra: verde, comercio o estacionamiento
@@ -612,10 +754,12 @@ function recompute(){
     if(t.k==='calle'&&!t.hw)streets.push([x,y]);
     if(!d)continue;
     counts[t.k]=(counts[t.k]||0)+1;if(t.k==='torreagua'&&!(t.b>0))wcap+=1000;if(t.k==='rasca'&&!(t.b>0))wcap-=300;if(t.k==='metro'&&t.b>0)metroB=true;
+    if(t.k==='rio'){t.ok=true;if(t.rc&&y%2===0)A.push({x,y,d:{val:[.035+.06*Math.min(1,rioW()/.6),2]},k:'rio',sz:1});continue}
     if(d.fixed){t.ok=true;bonus+=d.bonus||0;if(d.val)A.push({x,y,d,k:t.k,sz:1});continue}
     if(t.hw){t.ok=true;continue}
     t.ok=t.k==='calle'||(MULTI(t.k)?footConnected(foot(idx(x,y),...DIMT(t))||[idx(x,y)]):connected(x,y));
     const L=lvOf(t);upk+=(d.upk||0)*(d.per?(t.f||1):1)*(1+.4*(L-1));
+    if(t.lecho&&(t.dmg||rioWet())){t.ok=false;continue}
     if(!t.ok||t.b>0||(t.lu>0&&!d.per))continue;
     if(t.k==='teleferico')tour+=15;
     if(t.k==='museo'){t.mok=obraTouch(idx(x,y),['parque','plaza','golf','bosque']);if(!t.mok)continue;tour+=10}
@@ -760,6 +904,7 @@ function tick(dt,quiet){
   if(stats.ob&&stats.ob.beis){const Bs=S.beis=S.beis||{t:90,on:0};
     if(Bs.on>0){Bs.on-=dt;if(Bs.on<=0){Bs.on=0;Bs.t=BEIS_GAP;recompute();if(!quiet)say(Math.random()<.5?'Se acabó el juego en el Estadio: ganamos en la novena. La afición se va contenta.':'Terminó el juego en el Estadio. Mañana hay revancha.')}}
     else{Bs.t-=dt;if(Bs.t<=0){Bs.on=BEIS_DUR;recompute();if(!quiet){sfx('event');say(`¡Hay juego en el Estadio de Béisbol! Por 2 minutos entran $${BEIS_INC}/s y familias y estudiantes andan felices, pero cerca del estadio falta estacionamiento y hay ruido.`,true)}}}}
+  rioStep(dt,quiet);
   if(S.v>S.maxV)S.maxV=S.v;
   {const bm=bootMul();if(bm!==S.bootM){const had=S.bootM!=null;S.bootM=bm;if(had){recompute();if(!quiet&&bm===1)say('Tu Distrito ya creció: se acabó el impulso de arranque y los negocios ganan su precio normal.')}}}
   S.phase=S.phase||1;
@@ -833,7 +978,7 @@ const MIS=[
   {id:'domingo',tipo:'vecinos',min:200,name:'Domingo familiar',txt:'Que las familias estén al 75% de satisfacción durante 1 minuto seguido.',hold:60,cond:()=>stats.gs.fam>=.75,rew:{b:[4,1500]}},
   {id:'fiesta',tipo:'reto',min:250,name:'Fiesta en paz',txt:'Aguanta 5 minutos seguidos sin quejas por fiestas de estudiantes. Tienes 10 minutos.',hold:300,lim:600,cond:()=>stats.nuis<.05,rew:{b:[3,1500]}},
   {id:'unas',tipo:'vecinos',min:300,name:'Uñas listas',txt:'Que vivan 40 profesionistas en el Distrito.',goal:40,prog:()=>Math.floor(S.pop.pro+1e-6),rew:{u:'unas'}},
-  {id:'fotodomo',tipo:'barrio',min:400,name:'La foto del Domo',txt:'Construye El Domo con un parque o una plaza a 2 cuadras o menos.',goal:1,prog:()=>domoPark()?1:0,rew:{f:6000}},
+  {id:'fotodomo',tipo:'barrio',min:400,name:'La foto del Domo',txt:`Construye ${DIST==='ribera'?'El Puente Atirantado':'El Domo'} con un parque o una plaza a 2 cuadras o menos.`,goal:1,prog:()=>domoPark()?1:0,rew:{f:6000}},
   {id:'tormenta',tipo:'reto',min:450,name:'Tormenta regia',txt:'Se acerca una tormenta: pásala sin que la satisfacción baje de 60%.',ev:'lluvia',floor:.6,rew:{x:'sat'}},
   {id:'trasnoche',tipo:'barrio',min:600,name:'Noche de boliche',txt:'Pon 3 bares o restaurantes sobre la misma calle.',goal:3,prog:()=>streetBest(['bar','resto']).n,rew:{u:'boliche'}},
   {id:'agua',tipo:'reto',min:750,name:'Agua a tiempo',txt:'Construye una Torre de agua antes de llegar a 950 vecinos.',goal:1,prog:()=>Math.min(1,mBuilt('torreagua')),failIf:()=>S.v>=950,ok:()=>S.v<900||mBuilt('torreagua')>0,once:1,rew:{f:15000}},
@@ -1083,6 +1228,8 @@ function speck(gx,gy,seed,n,cols,ins=.08){const r=rng(seed*7919+gx*131+gy*977);f
 const isSt=(x,y)=>inb(x,y)&&S.g[idx(x,y)].k==='calle';
 function drawGround(gx,gy,t){
   const k=t.k;
+  if(k==='rio'){drawRiver(gx,gy,t);return}if(t.pu){drawBridge(gx,gy,t);return}
+  if(k==='malecon'){diamond(gx,gy,0,'#d9d4ca');diamond(gx,gy,.06,'#b98b5a');for(let u=.12;u<.95;u+=.12){const a=P(gx+u,gy+.08),b=P(gx+u,gy+.92);line(a[0],a[1],b[0],b[1],'#a07548')}return}
   if(k==='calle'&&t.hw){
     diamond(gx,gy,0,'#474c57');speck(gx,gy,t.s,6,['#40454f','#4f5460']);
     for(const f of [.2,.6]){const a=P(gx+f,gy+.5);px(a[0]-2,a[1]-1,4,1,'#f2c94c');px(a[0]-2,a[1]+1,4,1,'#f2c94c')}
@@ -2555,7 +2702,7 @@ function seasonDeco(t,gx,gy){const se=SEASON_C;if(!se)return;const k=t.k,on=NIGH
     else if(se==='navidad'&&sh01(gx,gy,4)<.6)pinata(gx,gy);
     else if(se==='muertos'&&on){for(let q=0;q<3;q++){const [x,y]=P(gx+.3+q*.18,gy+.72);veladora(x,y,q,q!==1)}}
     return}
-  if(k==='domo'&&!(t.b>0)){domoSeason(gx,gy,se);return}
+  if(k==='domo'&&!(t.b>0)&&DIST==='domo'){domoSeason(gx,gy,se);return}
   if((k==='torre'||k==='edificio'||k==='ladrillo')&&!(t.b>0)){
     if(se==='patrias'&&(gx+2*gy)%3===0){const so=shadowOf(t),[x,y]=P(gx+.5,gy+.5),top=y-(so?so[1]:60)-2;
       px(x,top-16,.6,16,'#8a8f99');const w=10,h=6,wv=lowMo()?0:Math.sin(T*4+gx)*.5;px(x+.5,top-12+wv,w/3,h,'#1f8a4c',true);px(x+.5+w/3,top-12+wv,w/3,h,'#ffffff',true);px(x+.5+2*w/3,top-12+wv,w/3,h,'#d62828',true);px(x+.5+w/2-1,top-10+wv,2,2,'#8a5a2b',true)}
@@ -2565,7 +2712,7 @@ function seasonDeco(t,gx,gy){const se=SEASON_C;if(!se)return;const k=t.k,on=NIGH
 }
 // momentos de temporada: el Grito una vez por noche y año nuevo
 function seasonStep(){if(TITLE)return;const ph=S.clock/DAY;
-  if(SEASON_C==='patrias'&&gritoNow()){if(SEAMSG!=='grito'){SEAMSG='grito';if(!REAL){sfx('phase');say('¡Viva México! ¡Viva el Distrito Domo! El Grito se da frente a El Domo: busca los fuegos artificiales.',true)}}}
+  if(SEASON_C==='patrias'&&gritoNow()){if(SEAMSG!=='grito'){SEAMSG='grito';if(!REAL){sfx('phase');say(DIST==='domo'?'¡Viva México! ¡Viva el Distrito Domo! El Grito se da frente a El Domo: busca los fuegos artificiales.':'¡Viva México! ¡Viva el Distrito Ribera! Cohetes tricolor sobre el río.',true)}}}
   else if(SEASON_C==='navidad'&&ANYO()&&NIGHT>.7){if(SEAMSG!=='anyo'){SEAMSG='anyo';if(!REAL)say('¡Feliz año nuevo! Cohetes sobre todo el Distrito.',true)}}
   else if(ph<.5)SEAMSG='';
   if(!gritoNow())GRITO_XY=null}
@@ -2581,7 +2728,7 @@ function drawObj(t,gx,gy,ic){
     if(d.bt>=20)crane(gx,gy,H);
     return;
   }
-  const ART={_ofrenda:artOfrenda,_pino:artPino,_puesto:artPuesto,kiosco:trKiosco,mirador:trMirador,cultura:trCultura,teleferico:trTeleferico,bar:artBar,resto:artResto,cafe:artCafe,tomates:artTomates,padel:artPadel,escuela:artEscuela,beis:artBeis,museo:artMuseo,rasca:artRasca,bosque:artBosque,plazacom:artPlazaCom,metro:artMetro,barber:artBarber,unas:artUnas,gym:artGym,paleteria:artPaleteria,boliche:artBoliche,cine:artCine,golf:artGolf,clinica:artClinica,cancha:artCancha,parque:artParque,plaza:artPlaza,dogpark:artDog,estac:artEstac,caseta:artCaseta,oficinas:artOfi};
+  const ART={malecon:artMalecon,_ofrenda:artOfrenda,_pino:artPino,_puesto:artPuesto,kiosco:trKiosco,mirador:trMirador,cultura:trCultura,teleferico:trTeleferico,bar:artBar,resto:artResto,cafe:artCafe,tomates:artTomates,padel:artPadel,escuela:artEscuela,beis:artBeis,museo:artMuseo,rasca:artRasca,bosque:artBosque,plazacom:artPlazaCom,metro:artMetro,barber:artBarber,unas:artUnas,gym:artGym,paleteria:artPaleteria,boliche:artBoliche,cine:artCine,golf:artGolf,clinica:artClinica,cancha:artCancha,parque:artParque,plaza:artPlaza,dogpark:artDog,estac:artEstac,caseta:artCaseta,oficinas:artOfi};
   if(ART[t.k]){const v=!ic&&VARP[t.k]?(t.s>>2)%4:0;PSW=v?VARP[t.k][v-1]:null;try{ART[t.k](t,gx,gy,ic?1:lvOf(t),ic)}finally{PSW=null}return}
   switch(t.k){
   case 'arbol':tree(gx+.5,gy+.5,.8+(s%4)*.08);break;
@@ -2629,6 +2776,7 @@ function drawObj(t,gx,gy,ic){
     if(ord>0){const band=ellRows(x,y-h-r*.7,r,r*.95).filter(([a,yy])=>Math.abs(yy-(y-h-r*.05))<1.6);spans(band,lc)}
     break}
   case 'domo':{
+    if(DIST==='ribera'){artAtirantado(gx,gy,ic);break}
     const [x,y]=P(gx+.5,gy+.5),R=ic?15:30;
     box(gx+.05,gy+.4,gx+.2,gy+.6,0,3,'#3a3a3a','#2b2b2b','#222');box(gx+.4,gy+.05,gx+.6,gy+.2,0,3,'#3a3a3a','#2b2b2b','#222');
     const on=!ic&&NIGHT>.25;arcTop(x,y-2,R+(ic?1.5:2.5),ic?3:5,on?'#e85f1c':'#f26a21',on);arcTop(x,y-2,R+(ic?1.5:2.5),1,on?'#ffc08a':'#ff9a5c',on);
@@ -2858,7 +3006,7 @@ function footFree(i,w,h,k=tool){const f=foot(i,w,h);return f&&f.every(j=>S.g[j].
 function toolFoot(i,k=tool){const out=[];for(const o of (DIM(k,0)[0]===DIM(k,0)[1]?[0]:[0,1])){const [w,h]=DIM(k,o),f=footFree(i,w,h,k);if(f)out.push({f,o,w,h})}
   return out.find(q=>footConnected(q.f))||out[0]||null}
 function footConnected(f){return f.some(j=>connected(j%N,Math.floor(j/N)))}
-const canBuild=(t,k=tool)=>k==='domo'?t.k==='lotedomo':(t.k==='lote'||t.k==='arbol');
+const canBuild=(t,k=tool)=>k==='domo'?t.k==='lotedomo':t.k==='rio'?(k==='calle'||(LECHO.includes(k)&&rioW()<.35&&!(S.rio&&S.rio.cr>0))):(t.k==='lote'||t.k==='arbol');
 const fmaxOf=k=>DEFS[k].fmax+((S.phase||1)>=3?(k==='torre'?10:2):0);
 const fmaxT=t=>fmaxOf(t.k)+(lvOf(t)-1); // cada nivel de vivienda permite un piso más
 const canUp=t=>t.k===tool&&DEFS[tool].fmax&&!(t.b>0)&&!(t.ub>0)&&!(t.ct>0)&&t.f<fmaxT(t);
@@ -2962,11 +3110,11 @@ function drawFireworks(){
 }
 function showCredits(){
   const box=document.getElementById('credits'),m=Math.max(1,Math.round((S.winT||S.playT||0)/60)),h=Math.floor(m/60),tm=h?`${h} h ${m%60} min`:`${m} min`;
-  box.innerHTML=`<h2>¡DISTRITO DOMO COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina.</p>
+  box.innerHTML=`<h2>¡${DNAME.toUpperCase()} COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina.</p>
     <p class="ctime">Lo lograste en <b>${tm}</b> de juego</p>
     <p><b>${Math.round(S.maxV).toLocaleString('es-MX')}</b> vecinos · <b>${S.lots||0}</b> terrenos comprados</p>
-    <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><div class="cbtns"><button id="crtl" type="button">▶ Ver cómo creció</button><button id="crok" type="button">Seguir jugando</button></div>`;
-  box.hidden=false;document.getElementById('crok').onclick=()=>{box.hidden=true};document.getElementById('crtl').onclick=()=>{box.hidden=true;tlStart({})};
+    <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><div class="cbtns"><button id="crtl" type="button">▶ Ver cómo creció</button>${DIST==='domo'?'<button id="crrib" type="button">Ir al Distrito Ribera</button>':''}<button id="crok" type="button">Seguir jugando</button></div>`;
+  box.hidden=false;document.getElementById('crok').onclick=()=>{box.hidden=true};document.getElementById('crtl').onclick=()=>{box.hidden=true;tlStart({})};{const b=document.getElementById('crrib');if(b)b.onclick=()=>{try{localStorage.setItem('distritoDomo.riberaUnl','1')}catch(e){}goDist('ribera')}}
 }
 /* ---------- contornos, imágenes en caché y sombras ---------- */
 const OL=[24,28,48];
@@ -3032,6 +3180,7 @@ function drawVisitors(t,gx,gy){const i=idx(gx,gy),n=visitorsOf(t,i);if(!n)return
 /* partes animadas: se dibujan en vivo encima de la imagen guardada */
 function drawDyn(t,gx,gy){
   const s=t.s;if(SEASON_C)seasonDeco(t,gx,gy);
+  if(DIST==='ribera'){if(t.k==='rio'||t.pu||t.lecho||t.dmg)rioDyn(t,gx,gy);if(t.k==='domo'&&!(t.b>0))atirDyn(gx,gy)}
   if(t.k==='parque'||t.k==='plaza')liveWater(t,gx,gy);else if(t.k==='cafe'||t.k==='resto'||t.k==='bar'||t.k==='tomates')drawVisitors(t,gx,gy);
   if((t.k==='escuela'||t.k==='cancha'||t.k==='clinica')&&!(t.b>0))liveSvc(t,gx,gy);
   if(t.k==='dogpark'){const L=lvOf(t),cx=[0,.5,.6,.68,.72][L],cy=[0,.5,.58,.68,.4][L],rr2=[0,.26,.2,.16,.13][L];for(let k=0;k<2;k++){const an=T*(1.2+k*.5)+k*3+s,fx=gx+cx+Math.cos(an)*rr2,fy=gy+cy+Math.sin(an)*rr2,[x,y]=P(fx,fy),dir=Math.cos(an+Math.PI/2)>0?1:-1,c=k?'#e8c07a':'#4a3526';
@@ -3074,7 +3223,7 @@ function nightPair(n){const k=Math.min(2,Math.floor(n*3+1e-6));NLO=NLV[k];NHI=NL
 const NTINT=[[0,[86,46,96],0],[1/3,[86,46,96],.2],[2/3,[40,30,92],.43],[1,[8,14,48],.63]];
 const ncol=n=>{let k=1;while(k<NTINT.length-1&&n>NTINT[k][0])k++;const a=NTINT[k-1],b=NTINT[k],f=Math.max(0,Math.min(1,(n-a[0])/(b[0]-a[0]))),c=a[1].map((v,i)=>Math.round(v+(b[1][i]-v)*f)),al=(a[2]+(b[2]-a[2])*f)*(OPT.hc?.65:1);
   return `rgba(${c},${al.toFixed(3)})`};
-function hasObj(t,gx,gy){const k=t.k;if(k==='lote'||k==='part')return false;if(k==='calle')return !t.hw&&(gx*3+gy)%4===0;if(k==='ajeno')return t.s%9===0||t.s%4===1||Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy);return true}
+function hasObj(t,gx,gy){const k=t.k;if(k==='lote'||k==='part'||k==='rio')return false;if(k==='calle')return !t.hw&&(gx*3+gy)%4===0;if(k==='ajeno')return t.s%9===0||t.s%4===1||Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy);return true}
 // los negocios brillan de noche para que se encuentren rápido (altura del letrero)
 // color del letrero de noche: neón rosa en bares, azul en lo cultural y oficinas, verde en el pádel; lo demás, cálido
 const NEON={boliche:'#c38dff',cine:'#ffd27a',gym:'#9fe8ff',bar:'#ff6fae',cultura:'#7fd6ff',oficinas:'#c9dcff',padel:'#8dffb0',caseta:'#9fc4ff'};
@@ -3118,6 +3267,7 @@ function drawSprN(t,gx,gy,i,sz,a,ghost){const s1=getSprite(t,gx,gy,i,NLO,ghost);
   const [qw,qh]=Array.isArray(sz)?sz:[sz,sz],[cx,cy]=P(gx+qw/2,gy+qh/2);for(const g of s1.glows)glow(cx+g[0],cy+g[1],g[2],g[3]*neonF(g[4],cx,cy),g[4])}
 /* sombras: altura y huella de cada cosa */
 function shadowOf(t){const k=t.k;
+  if(k==='domo'&&DIST==='ribera')return [.42,88];if(k==='malecon')return [.4,9];
   if(k==='edificio'||k==='ladrillo')return [.1,(t.f||3)*7+3];if(k==='torre')return [.16,(t.f||16)*6+3];
   const L=lvOf(t);
   if(k==='oficinas')return [.14,[0,39,45,57,63][L]];if(k==='tomates')return [[0,.18,.12,.12,.12][L],[0,10,11,11,12][L]];
@@ -3268,12 +3418,14 @@ function priceTag(){TAGW=null;
   TAGW={x:x*zoom,y:Math.max(30,(y-h)*zoom),l1,l2,cls:c?(can?'ok':'no'):'na'}}
 let TAGW=null,TAGK='';
 /* la manita: qué es cada cosa, en corto (etiqueta) y en largo (mensaje al tocar) */
-function whatName(t){if(t.k==='calle')return t.hw?'Avenida':'Calle';if(t.k==='ajeno')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'Terreno vecino';if(t.k==='lote')return 'Terreno libre';if(t.k==='arbol')return 'Árbol';
+function whatName(t){if(t.k==='calle')return t.pu?(t.hw?'Puente de la avenida':'Puente'):t.hw?'Avenida':'Calle';if(t.k==='rio')return 'Río';if(t.k==='ajeno')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'Terreno vecino';if(t.k==='lote')return 'Terreno libre';if(t.k==='arbol')return 'Árbol';
   if(t.k==='fabrica')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'DeAcero';return nameOf(t)}
 function whatShort(i){const t=S.g[i],d=DEFS[t.k],n=whatName(t);
   if(t.b>0||t.ct>0||t.ub>0||t.lu>0)return [n,'en obra'];
+  if(t.k==='rio'){const f=rioFase();return [n,f==='crecida'?'¡crecido!':f==='lluvias'?'con agua (temporada de lluvias)':'casi seco: el lecho se puede usar']}
+  if(t.dmg)return [n,'dañado por la crecida: repáralo con Mejorar'];if(t.lecho&&rioWet())return [n,'bajo el agua: vuelve cuando baje el río'];
   if(isParcel(t)&&PARCELS[t.p])return [n,S.maxV<PARCELS[t.p].unlock?`a la venta con ${fmt(PARCELS[t.p].unlock)} vecinos`:`se vende: $${fmt(lotPrice(t.p))}`];
-  if(t.k==='lote')return [n,'aquí se puede construir'];if(t.k==='lotedomo')return [n,'aquí va El Domo'];if(t.k==='calle')return [n,t.hw?'no es del Distrito':'lleva gente y servicios'];
+  if(t.k==='lote')return [n,'aquí se puede construir'];if(t.k==='lotedomo')return [n,`aquí va ${DEFS.domo.name}`];if(t.k==='calle')return [n,t.hw?'no es del Distrito':'lleva gente y servicios'];
   if(t.k==='fabrica')return [n,S.da?'ya no baja la plusvalía':'baja la plusvalía cerca'];if(t.k==='arbol')return [n,'en terreno libre'];if(t.k==='ajeno')return [n,''];
   if(d&&d.per)return [n,`${t.f} pisos · caben ${(t.f*d.per).toLocaleString('es-MX')} vecinos`];
   if(d&&d.obra)return [n,obraShort(t)];
@@ -3286,7 +3438,8 @@ function whatIs(i){let t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}const [n,l2]=wha
   if(isParcel(t)&&PARCELS[t.p]){const P_=PARCELS[t.p];return `${P_.name}, ${P_.where}. ${S.maxV<P_.unlock?`Se pone a la venta con ${fmt(P_.unlock)} vecinos.`:`Cuesta $${fmt(lotPrice(t.p))}: elige otra herramienta y tócalo dos veces para comprarlo.`}`}
   if(t.k==='ajeno')return 'Terreno vecino: no es del Distrito y no se puede construir.';
   if(t.k==='lote'||t.k==='arbol'){const r=tileInfo(i).split(' · ').slice(1).join(' · ');return `${t.k==='arbol'?'Árbol en terreno libre':n}. ${connected(i%N,Math.floor(i/N))?'Tiene calle cerca: aquí se puede construir.':'Todavía no le llega una calle; pon una junto para poder construir.'} ${r[0].toUpperCase()+r.slice(1)}`}
-  if(t.k==='lotedomo')return `Terreno del Domo: aquí va El Domo, que se desbloquea con ${DEFS.domo.unlock} vecinos y cuesta $${fmt(costOf('domo'))}.`;
+  if(t.k==='rio')return `Río: ${whatShort(i)[1]}. Se cruza con puentes (herramienta Calle, $${fmt(Math.max(PUENTE_MIN,costOf('calle')*80))}). Cuando está seco se pueden poner parques, canchas, dog parks y palmas en el lecho, pero en la temporada de lluvias quedan bajo el agua y una crecida los daña.`;
+  if(t.k==='lotedomo')return `${DEFS.lotedomo.name}: aquí va ${DEFS.domo.name}, que se desbloquea con ${DEFS.domo.unlock} vecinos y cuesta $${fmt(costOf('domo'))}.`;
   if(t.k==='calle')return t.hw?'Avenida: no es del Distrito. Hace ruido a 2 cuadras.':'Calle: conecta los edificios y por aquí caminan los vecinos.';
   if(t.k==='fabrica')return S.da?'DeAcero: desde que compraste su terreno ya no baja la plusvalía.':'DeAcero: la planta de acero. Baja la plusvalía a 3 cuadras; si compras el Terreno DeAcero deja de hacerlo.';
   let txt=tileInfo(i);if(l2&&!/^nivel/.test(l2))txt=txt.replace(nameOf(t),`${nameOf(t)} (${l2})`);if(d&&d.trophy)txt+=' Es un trofeo.';return txt}
@@ -3362,7 +3515,7 @@ function makeIcon(k){
 }
 /* barra de abajo agrupada: herramientas fijas + pestañas */
 const FIXED=['ver','calle','mejorar','demoler'];
-const TABS=[['viv','Vivienda',['edificio','ladrillo','torre']],['neg','Negocios',['cafe','tomates','padel','resto','bar','oficinas','barber','unas','paleteria','boliche','gym','cine']],['ser','Servicios',['parque','plaza','dogpark','cancha','estac','caseta','escuela','clinica','golf','torreagua']],['esp','Especiales',['domo','kiosco','mirador','cultura','teleferico','bosque','museo','rasca','beis','plazacom','metro']]];
+const TABS=[['viv','Vivienda',['edificio','ladrillo','torre']],['neg','Negocios',['cafe','tomates','padel','resto','bar','oficinas','barber','unas','paleteria','boliche','gym','cine']],['ser','Servicios',['parque','malecon','plaza','dogpark','cancha','estac','caseta','escuela','clinica','golf','torreagua']],['esp','Especiales',['domo','kiosco','mirador','cultura','teleferico','bosque','museo','rasca','beis','plazacom','metro']]];
 const tabOf=k=>{for(const t of TABS)if(t[2].includes(k))return t[0];return FIXED.includes(k)?null:'ser'};
 let TAB=(()=>{try{const v=localStorage.getItem('distritoDomo.tab');if(TABS.some(t=>t[0]===v))return v}catch(e){}return 'viv'})();
 function setTab(id,quiet){TAB=id;try{localStorage.setItem('distritoDomo.tab',id)}catch(e){}
@@ -3488,6 +3641,8 @@ function act(i){
   if(HEAT){say(tileInfo(i),true);return}
   if(tool==='ver'){say(whatIs(i),true);return}
   if(tool==='mejorar'){if(t.k==='part'){i=t.a;t=S.g[i]}
+    if(t.dmg){if(rioWet()){say('Espera a que baje el agua para repararlo.',true);return}const c=Math.round(costOf(t.k)*.4)+20;if(S.$<c){sfx('nope');say(`Repararlo cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
+      sfx('build');S.$-=c;delete t.dmg;recompute();say(`Reparado: ${nameOf(t)}. Costó $${fmt(c)}.`,true);save();refreshUI(true);return}
     if(!LV[t.k]){say('Eso no tiene niveles. Toca un servicio o un edificio.',true);return}
     if(t.b>0||t.ub>0||t.lu>0||t.ct>0){say('Espera a que termine la obra.',true);return}
     const L=lvOf(t);if(L>=4){say(`${nameOf(t)} ya está en su nivel máximo.`,true);return}
@@ -3506,7 +3661,7 @@ function act(i){
     if(!DEFS[t.k]){say('Aquí no hay nada que demoler.',true);return}
     if(t.k==='tanque'){say('¿El tanque? Ni lo mande Dios. Es el símbolo del Distrito.',true);return}
     if(DEFS[t.k].fixed||t.hw){say('Eso no es del Distrito, no se puede demoler.',true);return}
-    sfx('demolish');const refund=Math.round(DEFS[t.k].cost*.5);S.$+=refund;if(MULTI(t.k))for(const j of foot(i,...DIMT(t))||[])S.g[j]={k:'lote',s:S.g[j].s};S.g[i]={k:t.k==='domo'?'lotedomo':'lote',s:t.s};recompute();say(`Demoliste: ${DEFS[t.k].name}. Recuperaste $${fmt(refund)}.`,true);save();return}
+    sfx('demolish');const refund=Math.round(DEFS[t.k].cost*.5);S.$+=refund;if(MULTI(t.k))for(const j of foot(i,...DIMT(t))||[])S.g[j]={k:'lote',s:S.g[j].s};S.g[i]=t.k==='domo'?{k:'lotedomo',s:t.s}:(t.pu||t.lecho)?{k:'rio',rc:t.rc,s:t.s,b:0}:{k:'lote',s:t.s};recompute();say(`Demoliste: ${DEFS[t.k].name}. Recuperaste $${fmt(refund)}.`,true);save();return}
   const d=DEFS[tool];
   if(t.k===tool&&d.fmax){
     if(t.b>0||t.ub>0||t.ct>0){say('Ese edificio sigue en obra. Espera a que terminen.',true);return}
@@ -3529,14 +3684,17 @@ function act(i){
     const cost=costOf(tool);if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${d.name}.`,true);return}
     sfx('build');S.$-=cost;const sd=Math.floor(Math.random()*1000);for(const j of f)S.g[j]={k:'part',a:i,s:sd,b:0};S.g[i]={k:tool,s:sd,b:d.bt,bt:d.bt};if(tf.o)S.g[i].o=1;
     recompute();say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);save();refreshUI(true);return}
-  if(tool==='domo'&&t.k!=='lotedomo'){say('El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
+  if(tool==='domo'&&t.k!=='lotedomo'){say(DIST==='ribera'?'El Puente Atirantado va en su terreno reservado, el de la cerca naranja junto al río.':'El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
+  if(tool==='malecon'&&!rioSides(i%N,Math.floor(i/N)).length){say('El malecón va en la orilla: pégalo al río.',true);return}
+  if(t.k==='rio'&&LECHO.includes(tool)&&!canBuild(t)){say(S.rio&&S.rio.cr>0?'¡El río está crecido! Espera a que baje.':'El río trae agua: espera a que baje para construir en el lecho.',true);return}
+  if(t.k==='rio'&&!canBuild(t)){say('En el río solo van puentes (con Calle) y, cuando está seco, parques, canchas, dog parks y palmas en el lecho.',true);return}
   if(t.k==='reserva'&&tool!==t.p){say(`Este terreno está reservado para el ${DEFS[t.p].name}.`,true);return}
-  if(t.k==='lotedomo'&&tool!=='domo'){say('Este terreno está reservado para El Domo.',true);return}
+  if(t.k==='lotedomo'&&tool!=='domo'){say(`Este terreno está reservado para ${DIST==='ribera'?'El Puente Atirantado':'El Domo'}.`,true);return}
   if(!canBuild(t)){say('Ese terreno ya está ocupado. Usa Demoler primero.',true);return}
   if(d.max&&(stats.counts[tool]||0)>=d.max){say(d.max===1?`${d.name} es único y ya está construido.`:`Ya tienes ${d.max}: ${d.name} llegó a su límite.`,true);return}
-  const cost=costOf(tool);
-  if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${d.name}. Espera a que los vecinos aporten${S.loan?'':', o pide un crédito con el botón Crédito'}.`,true);return}
-  sfx(tool==='calle'?'street':tool==='torreagua'?'buy':'build');S.$-=cost;S.g[i]={k:tool,s:Math.floor(Math.random()*1000),f:d.f0,b:d.bt,bt:d.bt};recompute();
+  const brg=t.k==='rio'&&tool==='calle',cost=brg?Math.max(PUENTE_MIN,costOf('calle')*80):costOf(tool);
+  if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${brg?'un puente':d.name}. Espera a que los vecinos aporten${S.loan?'':', o pide un crédito con el botón Crédito'}.`,true);return}
+  sfx(tool==='calle'?'street':tool==='torreagua'?'buy':'build');S.$-=cost;S.g[i]={k:tool,s:Math.floor(Math.random()*1000),f:d.f0,b:d.bt,bt:d.bt};if(t.k==='rio'){if(brg)S.g[i].pu=1;else S.g[i].lecho=1;S.g[i].rc=t.rc}recompute();if(brg)say(`Construiste un puente sobre el río ($${fmt(cost)}).`,true);else if(t.k==='rio')say(`${d.name} en el lecho del río: sirve mientras esté seco. En la temporada de lluvias queda bajo el agua.`,true);
   if(tool!=='calle'&&!S.g[i].ok)say(`${d.name} necesita una avenida al lado para funcionar.`,true);
   else if(d.bt>=10)say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);
   save();refreshUI(true);
@@ -3919,7 +4077,7 @@ function histStep(dt){if(TITLE||REAL)return;if(!S.fotoTip&&S.maxV>=60&&(S.playT|
 
 /* ===== cuadros del time-lapse ===== */
 // el principio que no se grabó: de un Distrito vacío a la primera foto, calles primero y luego edificios del centro hacia afuera
-function synthFrames(target,v1,t1,n){const B=newGame().g.map(tcode),ch=[],SAME=['ajeno','fabrica','calle','lote','arbol','tanque','reserva','lotedomo'];
+function synthFrames(target,v1,t1,n){const B=newGame().g.map(tcode),ch=[],SAME=['ajeno','fabrica','calle','lote','arbol','tanque','reserva','lotedomo','rio'];
   for(let i=0;i<B.length;i++){const a=JSON.parse(B[i])[0],b=JSON.parse(target[i])[0];if(a===b&&SAME.includes(a))B[i]=target[i]}
   for(let i=0;i<target.length;i++)if(target[i]!==B[i])ch.push(i);if(!ch.length)return [];
   const T_=target.map(s=>JSON.parse(s)),isPart=i=>T_[i][0]==='part',street=i=>T_[i][0]==='calle',cx=N/2,cy=N/2+1;
@@ -3962,7 +4120,7 @@ function tlStep(rdt){if(!TL)return;TL.t+=rdt;const p=Math.min(1,TL.t/TL.dur),n=T
   if(p>=1){TL.end+=rdt;if(!TL.fw){TL.fw=1;celebrate(4);sfx('phase')}if(TL.end>4.8)tlStop()}}
 // letreros del time-lapse dentro del dibujo, para que también salgan en el video
 function tlHud(){const t=TL;if(!t)return;const H=Math.round(bh*.075),u=Math.max(5,Math.round(bh*.024));ctx.save();ctx.globalAlpha=1;ctx.fillStyle='#0b0f1e';ctx.fillRect(0,0,bw,H);ctx.fillRect(0,bh-H,bw,H);
-  ctx.textBaseline='middle';ctx.font=`${u}px "Press Start 2P", monospace`;ctx.textAlign='left';ctx.fillStyle='#f26a21';ctx.fillText('DISTRITO DOMO',Math.round(u*1.4),Math.round(H/2));
+  ctx.textBaseline='middle';ctx.font=`${u}px "Press Start 2P", monospace`;ctx.textAlign='left';ctx.fillStyle='#f26a21';ctx.fillText(DNAME.toUpperCase(),Math.round(u*1.4),Math.round(H/2));
   ctx.textAlign='right';ctx.fillStyle='#ffffff';ctx.fillText(S.name?`ASÍ CRECIÓ EL DISTRITO DE ${S.name.toUpperCase()}`.slice(0,40):'ASÍ CRECIÓ TU DISTRITO',Math.round(bw-u*1.4),Math.round(H/2));
   ctx.textAlign='left';ctx.font=`${Math.round(u*1.5)}px "Press Start 2P", monospace`;ctx.fillStyle='#ffd84d';ctx.fillText(`${Math.round(t.v).toLocaleString('es-MX')}`,Math.round(u*1.4),Math.round(bh-H/2));
   const w1=ctx.measureText(`${Math.round(t.v).toLocaleString('es-MX')}`).width;ctx.font=`${u}px "Press Start 2P", monospace`;ctx.fillStyle='#ffffff';ctx.fillText('VECINOS',Math.round(u*2+w1),Math.round(bh-H/2));
@@ -3987,10 +4145,10 @@ function recFrame(){if(!REC)return;const r=REC,f=PHOTO&&FILT[PHOTO.f];if(f&&f.cs
 /* ===== foto ===== */
 function vignette(x,W,H,a){const g=x.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.hypot(W,H)*.55);g.addColorStop(0,'rgba(10,8,20,0)');g.addColorStop(1,`rgba(10,8,20,${a})`);x.fillStyle=g;x.fillRect(0,0,W,H)}
 function caption(x,W,H){const u=Math.max(10,Math.round(H*.018)),pad=u,line2=`Santa Catarina, N.L. · ${Math.floor(withReal(()=>S.v)).toLocaleString('es-MX')} vecinos`;
-  x.font=`${u}px "Press Start 2P", monospace`;const w1=x.measureText('DISTRITO DOMO').width;x.font=`${Math.round(u*1.7)}px VT323, monospace`;const w2=x.measureText(line2).width;
+  x.font=`${u}px "Press Start 2P", monospace`;const w1=x.measureText(DNAME.toUpperCase()).width;x.font=`${Math.round(u*1.7)}px VT323, monospace`;const w2=x.measureText(line2).width;
   const bw2=Math.max(w1+u*2.6,w2)+pad*2,bh2=u*4.6,x0=W-bw2-u*1.5,y0=H-bh2-u*1.5;x.fillStyle='rgba(20,24,40,.78)';x.fillRect(x0,y0,bw2,bh2);x.fillStyle='#f26a21';x.fillRect(x0,y0,bw2,Math.max(2,u*.25));
   x.strokeStyle='#f26a21';x.lineWidth=Math.max(2,u*.35);x.beginPath();x.arc(x0+pad+u*.8,y0+pad+u*1.25,u*.8,Math.PI,0);x.stroke();
-  x.textBaseline='middle';x.textAlign='left';x.font=`${u}px "Press Start 2P", monospace`;x.fillStyle='#ffffff';x.fillText('DISTRITO DOMO',x0+pad+u*2.2,y0+pad+u*.9);
+  x.textBaseline='middle';x.textAlign='left';x.font=`${u}px "Press Start 2P", monospace`;x.fillStyle='#ffffff';x.fillText(DNAME.toUpperCase(),x0+pad+u*2.2,y0+pad+u*.9);
   x.font=`${Math.round(u*1.7)}px VT323, monospace`;x.fillStyle='#c8cde0';x.fillText(line2,x0+pad,y0+pad+u*2.8)}
 async function fotoSave(){if(!PHOTO)return;const k=Math.max(1,Math.min(4,Math.round(2400/cv.width))),W=cv.width*k,H=cv.height*k,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
   const f=FILT[PHOTO.f];if(f.css&&'filter' in x)x.filter=f.css;x.drawImage(cv,0,0,W,H);x.filter='none';if(f.vig)vignette(x,W,H,f.vig);if(PHOTO.pie)caption(x,W,H);
@@ -4039,7 +4197,7 @@ function fotoStep(rdt){tlStep(rdt);paseoStep(rdt);if(PHOTO&&!TL){const t=$('fHor
 
 /* ---------- arranque ---------- */
 function prep(d){
-  S=d;fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
+  S=d;S.dist=DIST;fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
   // hitos retirados: se devuelven como terreno y se reembolsa la mitad
   {let ref=0;const old={tim:15000,mercado:60000,grandomo:200000};const live=i=>{const a=S.g[i];return a&&MULTI(a.k)&&!old[a.k]};for(let i=0;i<S.g.length;i++){const t=S.g[i];if(t.k==='reserva'||(t.k==='part'&&!live(t.a))||old[t.k]){if(old[t.k])ref+=old[t.k]/2;S.g[i]={k:'lote',s:t.s||1,b:0}}}if(ref)S.$+=ref}
   if(!S.g.some(t=>t.k==='lotedomo'||t.k==='domo')){let i=idx(OFF+8,OFF+8);if(!(S.g[i].k==='lote'||S.g[i].k==='arbol'))i=S.g.findIndex((t,j)=>(t.k==='lote'||t.k==='arbol')&&connected(j%N,Math.floor(j/N)));if(i>=0)S.g[i]={k:'lotedomo',s:1,b:0}}
@@ -4047,7 +4205,7 @@ function prep(d){
   if(S.migG){const mx=stats.mix,t=mx.fam+mx.pro+mx.est;if(t>0){const v=S.v;for(const g of G3)S.pop[g]=v*mx[g]/t;fixPop()}delete S.migG;recompute()}
 }
 function start(data){
-  prep((data&&data.g)?data:(load()||newGame()));pruneDamaged();
+  distBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
   buildTools();resize();
   refreshUI(true);
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
@@ -4067,7 +4225,7 @@ function start(data){
   const unlockTitle=()=>{$('tcont').disabled=false;$('tnew').disabled=false};
   (async()=>{let res=null;await 0;
     if(framed)try{res=await Promise.race([(async()=>{const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return null;
-        const id=await user.id();if(!id)return null;const ref=db.doc('data/users/'+id+'/partida'),pref=db.doc('data/users/'+id+'/anterior');const [snap,ps]=await Promise.all([ref.get(),pref.get().catch(()=>null)]);return {ref,pref,d:snap.exists?snap.data():null,p:ps&&ps.exists?ps.data():null}})(),
+        const id=await user.id();if(!id)return null;const sf=DIST==='ribera'?'-ribera':'',ref=db.doc('data/users/'+id+'/partida'+sf),pref=db.doc('data/users/'+id+'/anterior'+sf);const [snap,ps]=await Promise.all([ref.get(),pref.get().catch(()=>null)]);return {ref,pref,d:snap.exists?snap.data():null,p:ps&&ps.exists?ps.data():null}})(),
       new Promise(r=>setTimeout(()=>r(null),12000))])}catch(e){res=null}
     if(!res){unlockTitle();showPrev();status(framed?'No pude conectar con tu cuenta: tu partida se guarda solo en este navegador. Descarga una copia de vez en cuando.':'Tu partida se guarda en este navegador. Descarga una copia de vez en cuando.',framed?'warn':'');return}
     CLOUD.ref=res.ref;CLOUD.prevRef=res.pref;if(res.p&&typeof res.p.s==='string'){const pc=parseSave(res.p.s);if(pc&&(!prevD||(pc.t||0)>(prevD.t||0)))prevD=pc}let msg='Tu partida se guarda en tu cuenta de Claude.';
@@ -4090,6 +4248,7 @@ function start(data){
   $('timp').onclick=()=>{if(impD&&Date.now()-impT<8000){adopt(impD);impD=null;$('timp').textContent='Cargar copia';status(`Listo: cargué la copia (${vec(S)}).`,'ok');CLOUD.push(JSON.stringify(S),true);return}$('tfile').value='';$('tfile').click()};
   $('tfile').onchange=async()=>{const f=$('tfile').files&&$('tfile').files[0];if(!f)return;let d=null;try{d=parseSave(await f.text())}catch(e){}
     if(!d){status('Ese archivo no es una copia de Distrito Domo.','warn');return}
+    if((d.dist||'domo')!==DIST){status(`Esa copia es del ${(d.dist||'domo')==='ribera'?'Distrito Ribera':'Distrito Domo'}: cámbiate a ese distrito y cárgala ahí.`,'warn');return}
     const dmsg=d.demo?' Es una partida de demostración: al terminar, toca «Recuperar anterior» para volver a la tuya.':'';
     if(!hasSave){adopt(d);status(`Listo: cargué la copia (${vec(S)}).${dmsg}`,'ok');CLOUD.push(JSON.stringify(S),true);return}
     if(d.demo){adopt(d);status(`Listo: cargué la demo (${vec(S)}).${dmsg}`,'ok');CLOUD.push(JSON.stringify(S),true);try{prevD=parseSave(localStorage.getItem(KEY+'.anterior'))}catch(e){}showPrev();return}
@@ -4147,7 +4306,7 @@ function start(data){
     const rdt=(now-last)/1000,dt=(PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt)))*TS;last=now;T+=dt;camStep(Math.min(.1,Math.max(0,rdt)));fotoStep(Math.min(.1,Math.max(0,rdt)));
     if(rdt<1&&!document.hidden){FTA=FTA*.96+rdt*.04;if(!AUTOLOW&&FTA>1/24)AUTOLOW=true;else if(AUTOLOW&&FTA<1/45)AUTOLOW=false}
     if(!TITLE&&!OPT.low&&!S.slowTip&&rdt<1&&!document.hidden){slowA=slowA*.97+rdt*.03;slowT+=dt;if(slowT>12&&slowA>1/26){S.slowTip=1;say('¿El juego va lento en este aparato? En el botón ⚙ puedes activar "Calidad baja".')}}
-    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt)}if(!TL)updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();
+    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt);distStep()}if(!TL)updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();
     loanT+=dt;if(loanT>1){loanT=0;renderLoan();renderMoney();renderMis()}
     musT+=dt;if(musT>.5){musT=0;JAZZ.update({night:NIGHT,sat:stats.sat,ev:S.ev?S.ev.id:null,red:S.$<0,phase:S.phase||1,kiosk:!!S.g.find(t=>t.k==='kiosco'&&!(t.b>0)),vec:S.maxV||0})}
     saveT+=dt;if(saveT>5&&!TITLE){saveT=0;save()}

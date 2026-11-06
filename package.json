@@ -1,6 +1,6 @@
 {
   "name": "distrito-domo",
-  "version": "0.65.0",
+  "version": "0.66.0",
   "private": true,
   "description": "Simulador de ciudad retro en el Distrito Domo de Santa Catarina, Nuevo León.",
   "type": "module",
@@ -9,7 +9,7 @@
     "lint": "node tools/lint.mjs",
     "itch": "node tools/build.mjs && node tools/itch.mjs",
     "arnes": "node tools/build.mjs && python3 tests/arnes.py",
-    "test": "npm run lint && npm run arnes && python3 tests/monkey.py && python3 tests/opciones.py && python3 tests/obras.py",
+    "test": "npm run lint && npm run arnes && python3 tests/monkey.py && python3 tests/opciones.py && python3 tests/obras.py && python3 tests/ribera.py",
     "bots": "npm run arnes && python3 tests/bots/correr.py"
   },
   "devDependencies": {

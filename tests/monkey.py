@@ -7,10 +7,12 @@ async def run(html,W,H,secs,build):
     b=await lanzar(p)
     pg=await b.new_page(viewport={'width':W,'height':H})
     errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
+    if os.environ.get('RIBERA'): await pg.add_init_script("localStorage.setItem('distritoDomo.distrito','ribera');localStorage.setItem('distritoDomo.riberaUnl','1')")
     await pg.goto('file://'+html);await pg.wait_for_timeout(600);await pg.click('#tcont',force=True);await pg.wait_for_timeout(300)
     if build: await pg.evaluate(CIUDAD)
     await pg.evaluate("__dd.setPause(false);__dd.S.$=1e7")
     if os.environ.get('TODO'): await pg.evaluate("for(const k of Object.keys(__dd.DEFS))if(!__dd.S.unl.includes(k))__dd.S.unl.push(k);__dd.S.maxV=Math.max(__dd.S.maxV,4800)")
+    if os.environ.get('RIBERA'): await pg.evaluate("__dd.S.rio.t=__dd.DAY*10*.649;__dd.rioStep(1,false);__dd.S.rio.cre=25")
     R=random.Random(7);n=0;import time;t0=time.time()
     keys=['Escape','Escape','q','e','1','2','3','4',' ','c','v','Shift+L','Shift+N','Shift+H','Shift+H','Shift+F','m','f','f']
     while time.time()-t0<secs:

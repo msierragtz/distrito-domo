@@ -258,3 +258,10 @@ body.foto #cv,body.tl #cv{cursor:grab}
 @media (prefers-reduced-motion:reduce){#fflash.on{animation:none}}
 body.foto #stage,body.tl #stage{grid-row:1/-1}
 @media (max-width:560px){#fMsg{font-size:15px;top:8px}}
+
+/* v66: selector de distrito (inicio y opciones) */
+.dsel{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:8px 0 2px;font-size:12px}
+.dsel button{font:inherit;padding:4px 10px;border:2px solid #3a2f25;background:#f4ead6;color:#2b2118;cursor:pointer;border-radius:3px}
+.dsel button[aria-pressed="true"]{background:#2f7fb8;color:#fff;border-color:#1d4f73;cursor:default}
+.dsel small{flex-basis:100%;text-align:center;opacity:.75}
+body.ribera .tarc path,body.ribera .brand svg path{stroke:#2f7fb8}

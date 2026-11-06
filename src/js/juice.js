@@ -89,9 +89,9 @@ function drawFireworks(){
 }
 function showCredits(){
   const box=document.getElementById('credits'),m=Math.max(1,Math.round((S.winT||S.playT||0)/60)),h=Math.floor(m/60),tm=h?`${h} h ${m%60} min`:`${m} min`;
-  box.innerHTML=`<h2>¡DISTRITO DOMO COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina.</p>
+  box.innerHTML=`<h2>¡${DNAME.toUpperCase()} COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina.</p>
     <p class="ctime">Lo lograste en <b>${tm}</b> de juego</p>
     <p><b>${Math.round(S.maxV).toLocaleString('es-MX')}</b> vecinos · <b>${S.lots||0}</b> terrenos comprados</p>
-    <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><div class="cbtns"><button id="crtl" type="button">▶ Ver cómo creció</button><button id="crok" type="button">Seguir jugando</button></div>`;
-  box.hidden=false;document.getElementById('crok').onclick=()=>{box.hidden=true};document.getElementById('crtl').onclick=()=>{box.hidden=true;tlStart({})};
+    <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><div class="cbtns"><button id="crtl" type="button">▶ Ver cómo creció</button>${DIST==='domo'?'<button id="crrib" type="button">Ir al Distrito Ribera</button>':''}<button id="crok" type="button">Seguir jugando</button></div>`;
+  box.hidden=false;document.getElementById('crok').onclick=()=>{box.hidden=true};document.getElementById('crtl').onclick=()=>{box.hidden=true;tlStart({})};{const b=document.getElementById('crrib');if(b)b.onclick=()=>{try{localStorage.setItem('distritoDomo.riberaUnl','1')}catch(e){}goDist('ribera')}}
 }

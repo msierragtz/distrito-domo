@@ -1,7 +1,7 @@
 
 /* ---------- arranque ---------- */
 function prep(d){
-  S=d;fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
+  S=d;S.dist=DIST;fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
   // hitos retirados: se devuelven como terreno y se reembolsa la mitad
   {let ref=0;const old={tim:15000,mercado:60000,grandomo:200000};const live=i=>{const a=S.g[i];return a&&MULTI(a.k)&&!old[a.k]};for(let i=0;i<S.g.length;i++){const t=S.g[i];if(t.k==='reserva'||(t.k==='part'&&!live(t.a))||old[t.k]){if(old[t.k])ref+=old[t.k]/2;S.g[i]={k:'lote',s:t.s||1,b:0}}}if(ref)S.$+=ref}
   if(!S.g.some(t=>t.k==='lotedomo'||t.k==='domo')){let i=idx(OFF+8,OFF+8);if(!(S.g[i].k==='lote'||S.g[i].k==='arbol'))i=S.g.findIndex((t,j)=>(t.k==='lote'||t.k==='arbol')&&connected(j%N,Math.floor(j/N)));if(i>=0)S.g[i]={k:'lotedomo',s:1,b:0}}
@@ -9,7 +9,7 @@ function prep(d){
   if(S.migG){const mx=stats.mix,t=mx.fam+mx.pro+mx.est;if(t>0){const v=S.v;for(const g of G3)S.pop[g]=v*mx[g]/t;fixPop()}delete S.migG;recompute()}
 }
 function start(data){
-  prep((data&&data.g)?data:(load()||newGame()));pruneDamaged();
+  distBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
   buildTools();resize();
   refreshUI(true);
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
@@ -29,7 +29,7 @@ function start(data){
   const unlockTitle=()=>{$('tcont').disabled=false;$('tnew').disabled=false};
   (async()=>{let res=null;await 0;
     if(framed)try{res=await Promise.race([(async()=>{const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return null;
-        const id=await user.id();if(!id)return null;const ref=db.doc('data/users/'+id+'/partida'),pref=db.doc('data/users/'+id+'/anterior');const [snap,ps]=await Promise.all([ref.get(),pref.get().catch(()=>null)]);return {ref,pref,d:snap.exists?snap.data():null,p:ps&&ps.exists?ps.data():null}})(),
+        const id=await user.id();if(!id)return null;const sf=DIST==='ribera'?'-ribera':'',ref=db.doc('data/users/'+id+'/partida'+sf),pref=db.doc('data/users/'+id+'/anterior'+sf);const [snap,ps]=await Promise.all([ref.get(),pref.get().catch(()=>null)]);return {ref,pref,d:snap.exists?snap.data():null,p:ps&&ps.exists?ps.data():null}})(),
       new Promise(r=>setTimeout(()=>r(null),12000))])}catch(e){res=null}
     if(!res){unlockTitle();showPrev();status(framed?'No pude conectar con tu cuenta: tu partida se guarda solo en este navegador. Descarga una copia de vez en cuando.':'Tu partida se guarda en este navegador. Descarga una copia de vez en cuando.',framed?'warn':'');return}
     CLOUD.ref=res.ref;CLOUD.prevRef=res.pref;if(res.p&&typeof res.p.s==='string'){const pc=parseSave(res.p.s);if(pc&&(!prevD||(pc.t||0)>(prevD.t||0)))prevD=pc}let msg='Tu partida se guarda en tu cuenta de Claude.';
@@ -52,6 +52,7 @@ function start(data){
   $('timp').onclick=()=>{if(impD&&Date.now()-impT<8000){adopt(impD);impD=null;$('timp').textContent='Cargar copia';status(`Listo: cargué la copia (${vec(S)}).`,'ok');CLOUD.push(JSON.stringify(S),true);return}$('tfile').value='';$('tfile').click()};
   $('tfile').onchange=async()=>{const f=$('tfile').files&&$('tfile').files[0];if(!f)return;let d=null;try{d=parseSave(await f.text())}catch(e){}
     if(!d){status('Ese archivo no es una copia de Distrito Domo.','warn');return}
+    if((d.dist||'domo')!==DIST){status(`Esa copia es del ${(d.dist||'domo')==='ribera'?'Distrito Ribera':'Distrito Domo'}: cámbiate a ese distrito y cárgala ahí.`,'warn');return}
     const dmsg=d.demo?' Es una partida de demostración: al terminar, toca «Recuperar anterior» para volver a la tuya.':'';
     if(!hasSave){adopt(d);status(`Listo: cargué la copia (${vec(S)}).${dmsg}`,'ok');CLOUD.push(JSON.stringify(S),true);return}
     if(d.demo){adopt(d);status(`Listo: cargué la demo (${vec(S)}).${dmsg}`,'ok');CLOUD.push(JSON.stringify(S),true);try{prevD=parseSave(localStorage.getItem(KEY+'.anterior'))}catch(e){}showPrev();return}
@@ -109,7 +110,7 @@ function start(data){
     const rdt=(now-last)/1000,dt=(PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt)))*TS;last=now;T+=dt;camStep(Math.min(.1,Math.max(0,rdt)));fotoStep(Math.min(.1,Math.max(0,rdt)));
     if(rdt<1&&!document.hidden){FTA=FTA*.96+rdt*.04;if(!AUTOLOW&&FTA>1/24)AUTOLOW=true;else if(AUTOLOW&&FTA<1/45)AUTOLOW=false}
     if(!TITLE&&!OPT.low&&!S.slowTip&&rdt<1&&!document.hidden){slowA=slowA*.97+rdt*.03;slowT+=dt;if(slowT>12&&slowA>1/26){S.slowTip=1;say('¿El juego va lento en este aparato? En el botón ⚙ puedes activar "Calidad baja".')}}
-    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt)}if(!TL)updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();
+    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt);distStep()}if(!TL)updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();
     loanT+=dt;if(loanT>1){loanT=0;renderLoan();renderMoney();renderMis()}
     musT+=dt;if(musT>.5){musT=0;JAZZ.update({night:NIGHT,sat:stats.sat,ev:S.ev?S.ev.id:null,red:S.$<0,phase:S.phase||1,kiosk:!!S.g.find(t=>t.k==='kiosco'&&!(t.b>0)),vec:S.maxV||0})}
     saveT+=dt;if(saveT>5&&!TITLE){saveT=0;save()}

@@ -7,10 +7,12 @@ function recompute(){
     if(t.k==='calle'&&!t.hw)streets.push([x,y]);
     if(!d)continue;
     counts[t.k]=(counts[t.k]||0)+1;if(t.k==='torreagua'&&!(t.b>0))wcap+=1000;if(t.k==='rasca'&&!(t.b>0))wcap-=300;if(t.k==='metro'&&t.b>0)metroB=true;
+    if(t.k==='rio'){t.ok=true;if(t.rc&&y%2===0)A.push({x,y,d:{val:[.035+.06*Math.min(1,rioW()/.6),2]},k:'rio',sz:1});continue}
     if(d.fixed){t.ok=true;bonus+=d.bonus||0;if(d.val)A.push({x,y,d,k:t.k,sz:1});continue}
     if(t.hw){t.ok=true;continue}
     t.ok=t.k==='calle'||(MULTI(t.k)?footConnected(foot(idx(x,y),...DIMT(t))||[idx(x,y)]):connected(x,y));
     const L=lvOf(t);upk+=(d.upk||0)*(d.per?(t.f||1):1)*(1+.4*(L-1));
+    if(t.lecho&&(t.dmg||rioWet())){t.ok=false;continue}
     if(!t.ok||t.b>0||(t.lu>0&&!d.per))continue;
     if(t.k==='teleferico')tour+=15;
     if(t.k==='museo'){t.mok=obraTouch(idx(x,y),['parque','plaza','golf','bosque']);if(!t.mok)continue;tour+=10}
@@ -155,6 +157,7 @@ function tick(dt,quiet){
   if(stats.ob&&stats.ob.beis){const Bs=S.beis=S.beis||{t:90,on:0};
     if(Bs.on>0){Bs.on-=dt;if(Bs.on<=0){Bs.on=0;Bs.t=BEIS_GAP;recompute();if(!quiet)say(Math.random()<.5?'Se acabó el juego en el Estadio: ganamos en la novena. La afición se va contenta.':'Terminó el juego en el Estadio. Mañana hay revancha.')}}
     else{Bs.t-=dt;if(Bs.t<=0){Bs.on=BEIS_DUR;recompute();if(!quiet){sfx('event');say(`¡Hay juego en el Estadio de Béisbol! Por 2 minutos entran $${BEIS_INC}/s y familias y estudiantes andan felices, pero cerca del estadio falta estacionamiento y hay ruido.`,true)}}}}
+  rioStep(dt,quiet);
   if(S.v>S.maxV)S.maxV=S.v;
   {const bm=bootMul();if(bm!==S.bootM){const had=S.bootM!=null;S.bootM=bm;if(had){recompute();if(!quiet&&bm===1)say('Tu Distrito ya creció: se acabó el impulso de arranque y los negocios ganan su precio normal.')}}}
   S.phase=S.phase||1;
