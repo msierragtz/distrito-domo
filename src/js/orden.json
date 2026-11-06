@@ -30,6 +30,7 @@
  "objetos.js",
  "vehiculos.js",
  "transeuntes.js",
+ "vida.js",
  "cielo.js",
  "huella.js",
  "fuegos.js",

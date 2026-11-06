@@ -36,7 +36,9 @@ legacy/             (ya no existe en main; está en el historial: versiones v53�
 | `dibujo.js` | Primitivas de pixel art: cajas, caras, ventanas, árboles, gente |
 | `arte/*.js` | Un archivo por familia de edificios |
 | `objetos.js` | `drawObj`: qué dibujo le toca a cada casilla |
-| `vehiculos.js`, `transeuntes.js`, `cielo.js` | Coches, camión, tráiler, gente caminando, cielo y sierra |
+| `vehiculos.js`, `cielo.js` | Coches, camión, tráiler, cielo y sierra |
+| `transeuntes.js` | Cómo se ve la gente: cuerpo con caminado de 6 cuadros, poses, accesorios, carritos y balón |
+| `vida.js` | A dónde va la gente y qué hace en la calle; «La voz de la calle» y seguir con la cámara |
 | `temporadas.js` | Día de Muertos, Navidad y Fiestas Patrias: adornos en vivo, ofrendas, pinos, puestos, el Grito frente a El Domo |
 | `huella.js` | Edificios de varias casillas (2×1, 2×2, 3×3) |
 | `fuegos.js`, `juice.js` | Fuegos, polvo, destello, confeti, obra piso por piso, momentos de cámara, zoom suave |
@@ -66,7 +68,7 @@ Para una versión nueva:
 1. Cambiar lo que haga falta en `src/`.
 2. `npm run build` y abrir `dist/distrito-domo.html` en el navegador.
 3. `npm test`.
-4. Subir `version` en `package.json` (0.66 → 0.67 = v67), hacer commit con lo que cambió.
+4. Subir `version` en `package.json` (0.67 → 0.68 = v68), hacer commit con lo que cambió.
 5. Publicar `dist/distrito-domo.html` en el artifact y, si toca, `npm run itch` para itch.io.
 
 `dist/distrito-domo.html` sí se guarda en git, para que siempre esté a la mano la última versión jugable.
@@ -86,6 +88,7 @@ Todas abren el juego en Chromium con ganchos de prueba (`build/arnes.html`, se a
 | `tests/detalle.py` | Acercamientos en la escena de muestra (`tests/datos/escena-muestra.js`) |
 | `tests/foto.py` | Modo foto: hora, clima, temporada, filtro, guardar foto, grabar video, paseo y time-lapse; revisa que la partida no cambie |
 | `tests/ribera.py` | Distrito Ribera de punta a punta: tarjeta de los 3,000, viaje y llegada, río, puentes, lecho, crecida, reparación, malecón, landmark, panel de distritos, guardado separado, ir y volver, partidas de v66 |
+| `tests/transeuntes.py` | Transeúntes: destinos, banquetas, paradas, reacciones a eventos, carritos, obras, fuegos, la tarjeta de «La voz de la calle», seguir con la cámara, rendimiento y la vida en Ribera; guarda la hoja de poses |
 | `tests/timelapse.py` | Time-lapse desde una partida sin historia y regreso a la partida real |
 | `tests/bots/correr.py` | Bots novato, intermedio, experto, muy experto y descuidado (`SEEDS=1,2,3`, `NOSTOP=1`) |
 

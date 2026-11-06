@@ -20,7 +20,7 @@ function start(data){
   const status=(txt,cls)=>{const el=$('tsave');el.textContent=txt;el.className='tsave'+(cls?' '+cls:'')};
   // cambia la partida en pantalla por otra (de la nube o de una copia); la de antes se aparta, no se pierde
   const adopt=d=>{stashPrev();
-    prep(d);walkers=[];GKEY='';GC=null;SPR.clear();LASTSPR.clear();buildTools();refreshUI(true);
+    prep(d);walkers=[];EXTRA=[];FUT=null;vozClose();GKEY='';GC=null;SPR.clear();LASTSPR.clear();buildTools();refreshUI(true);
     hasSave=!!S.seen;$('pname').value=S.name||$('pname').value;showTitle();
     try{localStorage.setItem(KEY,JSON.stringify(serialize()))}catch(e){}};
   // buscar la partida guardada en la cuenta antes de dejar jugar, para no empezar encima de ella
@@ -64,7 +64,7 @@ function start(data){
   const play=fresh=>{
     const nm=$('pname').value.trim().slice(0,20);
     if($('tmusic').checked){JAZZ.pref.on=false;JAZZ.toggle()}else{JAZZ.pref.on=false;JAZZ.setVol(JAZZ.pref.vol)}
-    if(fresh){stashPrev();S=newGame();walkers=[];recompute();GKEY='';SPR.clear();LASTSPR.clear()}
+    if(fresh){stashPrev();S=newGame();walkers=[];EXTRA=[];FUT=null;vozClose();recompute();GKEY='';SPR.clear();LASTSPR.clear()}
     S.name=nm;try{localStorage.setItem('distritoDomo.nombre',nm)}catch(e){}
     TITLE=false;$('title').hidden=true;panX=0;panY=0;showMus();
     const who=nm?`, ${nm}`:'';
@@ -109,7 +109,7 @@ function start(data){
   let musT=0;
   let last=performance.now(),saveT=0,slowA=1/60,slowT=0;
   function loop(now){
-    const rdt=(now-last)/1000,dt=(PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt)))*TS;last=now;T+=dt;camStep(Math.min(.1,Math.max(0,rdt)));fotoStep(Math.min(.1,Math.max(0,rdt)));
+    const rdt=(now-last)/1000,dt=(PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt)))*TS;last=now;T+=dt;camStep(Math.min(.1,Math.max(0,rdt)));fotoStep(Math.min(.1,Math.max(0,rdt)));followStep(Math.min(.1,Math.max(0,rdt)));
     if(rdt<1&&!document.hidden){FTA=FTA*.96+rdt*.04;if(!AUTOLOW&&FTA>1/24)AUTOLOW=true;else if(AUTOLOW&&FTA<1/45)AUTOLOW=false}
     if(!TITLE&&!OPT.low&&!S.slowTip&&rdt<1&&!document.hidden){slowA=slowA*.97+rdt*.03;slowT+=dt;if(slowT>12&&slowA>1/26){S.slowTip=1;say('¿El juego va lento en este aparato? En el botón ⚙ puedes activar "Calidad baja".')}}
     if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt);distStep()}if(!TL)updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();

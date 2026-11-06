@@ -45,7 +45,7 @@ function visitorsOf(t,i){const ph=S.clock/DAY,k=t.k;let w=0;
   if(k==='cafe')w=ph<.22?1:ph<.45?.45:ph>.88?.4:0;else if(k==='resto')w=(ph>.24&&ph<.37)||(ph>.5&&ph<.68)?1:.15;else if(k==='bar')w=ph>.52&&ph<.92?1:0;else if(k==='tomates')w=ph<.92&&ph>.0?.45:0;
   if(!w||t.b>0||t.lu>0)return 0;const e=EARN.get(i),cu=e?e.cust||0:0;return Math.min(OPT.low||AUTOLOW?2:4,Math.round(w*(1.6+Math.min(2.4,cu/30))))}
 function visitor(i,k,kind){const key=i*8+k;let v=VIS.get(key);if(v)return v;const h=n=>((Math.sin((key+1)*(n+3)*12.9898)*43758.5453)%1+1)%1;
-  v={wid:'v'+key,ph:h(1)*9,c:SHIRTS[Math.floor(h(2)*SHIRTS.length)],skin:SKIN[Math.floor(h(3)*4)],kind,noisy:kind==='est'&&h(4)<.3,dog:h(5)<.15&&kind!=='est'?(h(6)<.5?'#8a5a2b':'#e8c07a'):null};
+  v={wid:'v'+key,id:'v'+key,ph:h(1)*9,noisy:kind==='est'&&h(4)<.3,st:'visit',ks:[],L:{g:kind,s:1,fem:h(7)<.5,shirt:kind==='pro'?['#2b3a55','#3a3a3a','#5a4a3a'][Math.floor(h(2)*3)]:SHIRTS[Math.floor(h(2)*SHIRTS.length)],vest:kind==='pro'?1:0,pants:PANTS[Math.floor(h(8)*PANTS.length)],skin:SKIN[Math.floor(h(3)*SKIN.length)],hair:HAIR[Math.floor(h(9)*HAIR.length)],long:h(7)<.3,back:kind==='est'?['#d62828','#2a9d8f','#f2c94c'][Math.floor(h(10)*3)]:null,coffee:kind==='pro'&&h(11)<.5,dog:h(5)<.15&&kind!=='est'?(h(6)<.5?'#8a5a2b':'#e8c07a'):null,umb:true}};
   if(VIS.size>800)VIS.clear();VIS.set(key,v);return v}
 // dónde se paran: en la banqueta si la calle queda del lado que se ve; si no, en el frente del local
 const VSIDE={a:[[.64,-.24,-1,true],[.64,-.06,1,false],[.64,.14,-1,true],[.64,.3,1,false]],b:[[-.24,.64,1,true],[-.06,.64,-1,false],[.14,.64,1,true],[.3,.64,-1,false]],
@@ -56,8 +56,8 @@ function drawVisitors(t,gx,gy){const i=idx(gx,gy),n=visitorsOf(t,i);if(!n)return
   const SL=vslots(gx,gy);for(let k=0;k<n;k++){const sl=SL[k],v=visitor(i,k,G[k%G.length]),wp=rot(a+sl[0],b+sl[1],(4-ROT)%4),[X,Y]=P(wp[0],wp[1]),bob=lowMo()?0:(Math.floor(T*1.3+v.ph)%5===0?.5:0);
     ellipse(X+.5,Y+.2,2.4,.8,'rgba(0,0,0,.2)',true);
     const keyS=v.wid+'|s|'+sl[2]+'|'+sl[3]+'|'+nbv+'|'+(rain?1:0)+'|'+RES;let sp=WSPR.get(keyS);
-    if(!sp){if(WBUD<=0)continue;WBUD--;if(WSPR.size>1200)WSPR.clear();const CW=30,CH=30,c=mkCanvas(CW,CH),pc=ctx,pn=NIGHT,pnc=NCOL,pg=GLOWS;ctx=hdctx(c);NIGHT=nbv;NCOL=ncol(nbv);GLOWS=[];
-      try{drawPerson(v,15,CH-3,sl[2],sl[3],0,rain);outline(ctx,1)}catch(e){}finally{GLOWS=pg;ctx=pc;NIGHT=pn;NCOL=pnc}sp={c,ax:15,ay:CH-3};WSPR.set(keyS,sp)}
+    if(!sp){if(WBUD<=0)continue;WBUD--;const CW=36,CH=36,c=mkCanvas(CW,CH),pc=ctx,pn=NIGHT,pnc=NCOL,pg=GLOWS;ctx=hdctx(c);NIGHT=nbv;NCOL=ncol(nbv);GLOWS=[];
+      try{drawLook(v,18,CH-3,'stand',0,sl[2],sl[3],rain);fastOutline(ctx)}catch(e){}finally{GLOWS=pg;ctx=pc;NIGHT=pn;NCOL=pnc}sp={c,ax:18,ay:CH-3};WSPR.set(keyS,sp)}
     ctx.drawImage(sp.c,Math.round((X-sp.ax)*RES)/RES,Math.round((Y-bob-sp.ay)*RES)/RES,sp.c.width/RES,sp.c.height/RES)}}
 /* partes animadas: se dibujan en vivo encima de la imagen guardada */
 function drawDyn(t,gx,gy){
@@ -219,7 +219,7 @@ function render(){
     else{ctx.globalAlpha=.45;ctx.fillStyle=ok?'#ffffff':'#ff4d4d';tileFill([P(hx,hy),P(hx+1,hy),P(hx+1,hy+1),P(hx,hy+1)]);ctx.globalAlpha=1}}
   const buckets=Array.from({length:2*N},()=>[]);
   const vb=(x,y)=>{const [a,b]=rot(x,y);return Math.max(0,Math.min(2*N-1,Math.floor(a)+Math.floor(b)))};
-  if(!TL)for(const w of walkers)buckets[vb(w.x,w.y)].push(w);
+  if(!TL){for(const w of walkers)buckets[vb(w.X,w.Y)].push(w);for(const w of EXTRA)buckets[vb(w.X,w.Y)].push(w)}
   trafficStep();const cars=[];for(const c of CARS){cars.push({car:1,fx:c.x,fy:c.row+c.lane+(c.lo||0),c:c.c,dir:c.dir,type:c.type,sp:c.sp})}
   for(const c of cars)buckets[vb(c.fx,c.fy)].push(c);
   // transparencia: lo que está entre el jugador y el terreno bajo el cursor se vuelve vidrio
@@ -245,7 +245,7 @@ function render(){
       if(i===hover&&tool!=='demoler'&&tool!=='mejorar'&&tool!=='ver'&&hsz===1&&canBuild(t)){const dd=DEFS[tool],g={k:tool,s:t.s,f:dd.f0};drawSprN(g,x,y,i,1,.7,true);ctx.globalAlpha=1}
       else if(t.b>0)buildAnim(t,x,y,i,[1,1]);
       else{if(hasObj(t,x,y)){const bo=bounceOf(i);if(bo)lifted(bo,()=>drawSprN(t,x,y,i,1,HEAT?.16:fade(t,x,y)));else drawSprN(t,x,y,i,1,HEAT?.16:fade(t,x,y))}ctx.globalAlpha=1;if(FLASH.size&&!HEAT&&hasObj(t,x,y)){const bo=bounceOf(i);if(bo)lifted(bo,()=>flashDraw(t,x,y,i,1));else flashDraw(t,x,y,i,1)}drawDyn(t,x,y);if(DEFS[t.k]&&!t.ok&&!REAL)drawNeed(x,y)}}
-    for(const w of buckets[d]){const q=w.car?P(w.fx,w.fy):P(w.x,w.y);if(q[0]<-40||q[0]>bw+40||q[1]<-6||q[1]-40>bh)continue;w.car?drawCar(w):drawWalker(w)}
+    for(const w of buckets[d]){const q=w.car?P(w.fx,w.fy):P(w.X,w.Y);if(q[0]<-40||q[0]>bw+40||q[1]<-6||q[1]-40>bh)continue;w.car?drawCar(w):drawWalker(w)}
   }
   if(hover>=0&&!HEAT&&!TITLE){const hx=hover%N,hy=Math.floor(hover/N),[hw,hh]=tool==='demoler'||!MULTI(tool)?[1,1]:htf?[htf.w,htf.h]:DIM(tool,0),pts=[P(hx,hy),P(hx+hw,hy),P(hx+hw,hy+hh),P(hx,hy+hh)];
     ctx.save();ctx.beginPath();pts.forEach((q,k)=>k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.closePath();
@@ -334,21 +334,5 @@ function placeTag(){const el=document.getElementById('ptag');if(!el)return;if(!T
   const k=TAGW.l1+'|'+TAGW.l2+'|'+TAGW.cls;if(k!==TAGK){TAGK=k;el.className='box '+TAGW.cls;el.innerHTML=`<b></b><span></span>`;el.firstChild.textContent=TAGW.l1;el.lastChild.textContent=TAGW.l2||''}
   el.hidden=false;el.style.transform=`translate(${Math.round(TAGW.x)}px,${Math.round(TAGW.y)}px) translate(-50%,-100%)`}
 
-/* vecinos caminando por las avenidas */
-const SHIRTS=['#e63946','#457b9d','#f26a21','#2a9d8f','#9b5de5','#ffbe0b','#f4f4f4','#2b2b2b'],SKIN=['#f1c27d','#c68642','#8d5524','#e0ac69'];
-function updWalkers(dt){
-  const want=streets.length<2?0:Math.min(OPT.low?18:50,Math.floor(S.v/6));
-  while(walkers.length<want){const [x,y]=streets[Math.floor(Math.random()*streets.length)];
-    {const r=Math.random()*S.v;walkers.push({dog:r<S.v*(stats.petSh||.3)?(Math.random()<.5?'#8a5a2b':'#e8c07a'):null,noisy:r>S.v-S.pop.est*.5,x:x+.5,y:y+.5,tx:x,ty:y,px:x,py:y,lane:Math.round((Math.random()-.5)*10),ph:Math.random()*9,c:SHIRTS[Math.floor(Math.random()*SHIRTS.length)],skin:SKIN[Math.floor(Math.random()*4)],sp:.5+Math.random()*.4})}}
-  if(walkers.length>want)walkers.length=want;
-  walkers=walkers.filter(w=>S.g[idx(w.tx,w.ty)].k==='calle'&&!S.g[idx(w.tx,w.ty)].hw);
-  for(const w of walkers){
-    const gx=w.tx+.5,gy=w.ty+.5,dx=gx-w.x,dy=gy-w.y,dd=Math.hypot(dx,dy),st=w.sp*dt;
-    if(dd<=Math.max(st,1e-4)){w.x=gx;w.y=gy;
-      const opts=NB.map(([a,b])=>[w.tx+a,w.ty+b]).filter(([a,b])=>inb(a,b)&&S.g[idx(a,b)].k==='calle'&&!S.g[idx(a,b)].hw);
-      let ch=opts.filter(([a,b])=>a!==w.px||b!==w.py);if(!ch.length)ch=opts;
-      if(ch.length){const n=ch[Math.floor(Math.random()*ch.length)];w.px=w.tx;w.py=w.ty;w.tx=n[0];w.ty=n[1]}
-    }else{w.x+=dx/dd*st;w.y+=dy/dd*st}
-  }
-}
+/* los transeúntes viven en transeuntes.js (cómo se ven) y vida.js (a dónde van) */
 

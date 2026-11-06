@@ -13,10 +13,10 @@ cv.addEventListener('pointermove',e=>{if(PTRS.has(e.pointerId))PTRS.set(e.pointe
   if(PINCH){if(PTRS.size>=2){const [p,q]=[...PTRS.values()],d=Math.hypot(p.x-q.x,p.y-q.y)||1,r=cv.getBoundingClientRect(),mx=(p.x+q.x)/2-r.left,my=(p.y+q.y)/2-r.top;
     if(!ZA&&d/PINCH.d>1.35){zoomAt(zoom+1,mx,my);PINCH.d=d}else if(!ZA&&d/PINCH.d<.74){zoomAt(zoom-1,mx,my);PINCH.d=d}}return}
   if(down){const dx=e.clientX-down.x,dy=e.clientY-down.y;if(Math.hypot(dx,dy)>7)down.drag=true;
-    if(down.drag){panX=down.px+dx;panY=down.py+dy;clampPan();hover=-1;const now=performance.now();if(now-down.lt>12){const s=(now-down.lt)/1000,vx=(panX-down.lx)/s,vy=(panY-down.ly)/s;down.vx=down.vx*.35+vx*.65;down.vy=down.vy*.35+vy*.65;down.lt=now;down.lx=panX;down.ly=panY}return}}
+    if(down.drag){if(FOLLOW){FOLLOW=null;if(VOZ)vozSync()}panX=down.px+dx;panY=down.py+dy;clampPan();hover=-1;const now=performance.now();if(now-down.lt>12){const s=(now-down.lt)/1000,vx=(panX-down.lx)/s,vy=(panY-down.ly)/s;down.vx=down.vx*.35+vx*.65;down.vy=down.vy*.35+vy*.65;down.lt=now;down.lx=panX;down.ly=panY}return}}
   hover=tileAt(e)});
 cv.addEventListener('pointerup',e=>{PTRS.delete(e.pointerId);if(PINCH){if(PTRS.size<2)PINCH=null;down=null;if(e.pointerType!=='mouse')hover=-1;return}
-  if(down&&!down.drag){const i=tileAt(e);if(i>=0&&!REAL)act(i)}
+  if(down&&!down.drag){const i=tileAt(e),w=walkerAt(e,i);if(w)vozOpen(w);else if(i>=0&&!REAL)act(i)}
   else if(down&&down.drag&&!lowMo()&&performance.now()-down.lt<100){const sp=Math.hypot(down.vx,down.vy);if(sp>90){const k=Math.min(1,1600/sp);INER={vx:down.vx*k,vy:down.vy*k}}}
   down=null;if(e.pointerType!=='mouse')hover=-1});
 cv.addEventListener('pointercancel',e=>{PTRS.delete(e.pointerId);if(PTRS.size<2)PINCH=null;down=null});
@@ -35,7 +35,7 @@ $('rl').onclick=()=>turn(-1);$('rr').onclick=()=>turn(1);
 try{ROT=(+localStorage.getItem(KEY+'.rot')||0)%4}catch(e){}
 let resetArm=0;
 $('reset').onclick=()=>{
-  if(Date.now()-resetArm>600&&Date.now()-resetArm<4000){stashPrev();S=newGame();recompute();walkers=[];save();say('Distrito nuevo. ¡A construir! Si fue sin querer, tu partida anterior quedó guardada: recarga la página y toca "Recuperar anterior".',true);$('reset').textContent='Reiniciar';resetArm=0;return}
+  if(Date.now()-resetArm>600&&Date.now()-resetArm<4000){stashPrev();S=newGame();recompute();walkers=[];EXTRA=[];FUT=null;vozClose();save();say('Distrito nuevo. ¡A construir! Si fue sin querer, tu partida anterior quedó guardada: recarga la página y toca "Recuperar anterior".',true);$('reset').textContent='Reiniciar';resetArm=0;return}
   if(Date.now()-resetArm<=600)return;resetArm=Date.now();$('reset').textContent='¿Seguro? Toca otra vez';setTimeout(()=>{$('reset').textContent='Reiniciar'},4000)};
 let lastInfo=-1;setInterval(()=>{if(hover<0||hover===lastInfo)return;
   if(HEAT){lastInfo=hover;say(tileInfo(hover),true);return}

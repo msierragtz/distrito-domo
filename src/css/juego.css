@@ -300,3 +300,15 @@ body.rm #distb.new{animation:none}
 @keyframes vdot{40%{opacity:1}}
 body.rm #viaje .dots i{animation:none;opacity:.7}
 @media (max-width:560px),(max-height:620px){#ribnew{font-size:16px;line-height:1.2;padding:10px 12px 12px}#ribnew .rill{height:92px;margin-bottom:6px}#ribnew li{margin-bottom:3px}#ribnew ul{margin-bottom:8px}}
+
+/* v68: la voz de la calle */
+#vozbox{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(340px,calc(100% - 32px));padding:10px 14px 12px;font-size:17px;line-height:1.2;z-index:6}
+#vozbox[hidden]{display:none}
+#vozbox h2{font-family:var(--f-pixel);font-size:11px;margin:0 0 2px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+#vozbox .x{font:inherit;font-size:14px;border:0;background:none;cursor:pointer;color:var(--ink)}
+#vozbox .vr{margin:0 0 6px;color:var(--muted);font-size:15px}
+#vozbox .vq{margin:0 0 8px;padding:6px 10px;background:#f4f7ff;border-left:4px solid var(--domo);border-radius:4px;font-size:18px}
+body.ribera #vozbox .vq{border-left-color:#2f7fb8}
+#vozbox dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0 0 8px;font-size:16px}#vozbox dt{color:var(--muted)}#vozbox dd{margin:0}
+#vozbox .vb{display:flex;justify-content:flex-end}#vozbox .vb:empty{display:none}
+#vozbox .vb button{font:inherit;font-size:15px;padding:4px 12px;border-radius:6px;border:2px solid var(--ink);background:#fff;cursor:pointer}#vozbox .vb button.on{background:var(--domo)}

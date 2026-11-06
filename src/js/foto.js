@@ -72,7 +72,7 @@ function tlStart(o){if(TL||TITLE)return false;o=o||{};const fr=tlFrames();if(fr.
   PASEO=null;CAMG=null;INER=null;hover=-1;document.body.classList.add('tl');
   requestAnimationFrame(()=>{resize();zoom=innerWidth<700?1:2;resize();const r=rot(N/2,N/2+1);panX=-(r[0]-r[1])*TW/2*zoom;panY=(N*TH/2-30-(r[0]+r[1])*TH/2+40)*zoom;clampPan()});
   if(TL.rec)recStart();else if(REC)TL.rec=true;fotoSync();return true}
-function tlStop(){if(!TL)return;const t=TL;TL=null;S.g=t.sv.g;S.clock=t.sv.clock;S.ev=t.sv.ev;if(t.own)REAL=null;GV++;recompute();walkers=[];
+function tlStop(){if(!TL)return;const t=TL;TL=null;S.g=t.sv.g;S.clock=t.sv.clock;S.ev=t.sv.ev;if(t.own)REAL=null;GV++;recompute();walkers=[];EXTRA=[];FUT=null;
   document.body.classList.remove('tl');zoom=t.pan[2];panX=t.pan[0];panY=t.pan[1];requestAnimationFrame(()=>{resize();clampPan()});
   if(REC&&t.rec)recStop();fotoSync()}
 function tlStep(rdt){if(!TL)return;TL.t+=rdt;const p=Math.min(1,TL.t/TL.dur),n=TL.fr.length,k=Math.min(n-1,Math.floor(p*n));
