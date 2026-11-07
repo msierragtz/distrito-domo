@@ -56,6 +56,15 @@ const DEFS={
   beis:{R:6,val:[.15,5],name:'Estadio de Béisbol',cost:120000,unlock:Infinity,bt:150,sz:3,max:1,obra:1,com:12,upk:6,desc:'Ocupa 3×3 terrenos. Cada 8 minutos hay juego: 2 minutos de $90/s con familias y estudiantes felices, pero a 6 cuadras se necesita más del doble de estacionamiento y a 3 cuadras el ruido molesta a las familias. Fuera de juego da comercio para familias y estudiantes.'},
   plazacom:{R:7,val:[.18,5],name:'Plaza comercial',cost:100000,unlock:Infinity,bt:150,sz:3,max:1,obra:1,com:30,inc:60,park:10,upk:5,desc:'Ocupa 3×3 terrenos. Comercio para los tres grupos a 7 cuadras, estacionamiento y $60/s, pero los negocios a 4 cuadras ganan 15% menos.'},
   metro:{R:6,val:[.2,6],name:'Estación del Metro',cost:200000,unlock:Infinity,bt:240,sz:2,max:1,obra:1,park:20,upk:8,desc:'Ocupa 2×2 terrenos. Baja 30% la necesidad de estacionamiento en todo el Distrito y los vecinos llegan 30% más rápido. Es la obra más tardada (4 minutos) y hace ruido mientras se construye.'},
+  // v72 (propuesta: aún no se construyen; solo para la hoja de aprobación)
+  casaf:{name:'Casa de fraccionamiento',cost:0,unlock:Infinity,hidden:true,bt:10,f0:1,fmax:3,per:5,desc:''},
+  mixto:{name:'Usos mixtos',cost:0,unlock:Infinity,hidden:true,bt:20,f0:3,fmax:7,per:5,desc:''},
+  ciclo:{name:'Cicloestación',cost:0,unlock:Infinity,hidden:true,bt:6,desc:''},
+  banco:{name:'Banco',cost:0,unlock:Infinity,hidden:true,bt:12,desc:''},
+  gas:{name:'Gasolinera',cost:0,unlock:Infinity,hidden:true,bt:12,desc:''},
+  parroquia:{name:'Parroquia',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
+  hotel:{name:'Hotel boutique',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
+  alberca:{name:'Alberca pública',cost:0,unlock:Infinity,hidden:true,sz:2,bt:40,desc:''},
   mejorar:{name:'Mejorar',cost:0,unlock:40,desc:'Sube de nivel lo que toques si su zona tiene plusvalía 46, 58 o 70. Negocios: +50% de ganancia. Servicios: cubren 30% más. Vivienda: le cabe un piso más y paga 25% más de renta. La obra tarda un rato.'},
   demoler:{name:'Demoler',cost:0,unlock:0,desc:'Quita lo construido y recupera la mitad de lo que costó.'},
   ver:{name:'¿Qué es?',cost:0,unlock:0,desc:'La manita solo mira: pasa sobre cualquier cosa para ver qué es y tócala para saber más. No construye ni gasta. Tecla Esc para tomarla.'}

@@ -86,7 +86,7 @@ function drawDyn(t,gx,gy){
     for(const [a,c] of ic)px(x+a,y+c+bob,1,1,col,true)}
 }
 const CHIM_H=58,chimney=(gx,gy)=>gy===OFF+15&&gx%7===3;
-const SPH={_pino:48,_ofrenda:36,_puesto:34,beis:150,museo:120,rasca:190,bosque:120,plazacom:130,metro:110,gym:88,unas:76,barber:72,paleteria:76,boliche:80,cine:110,golf:84,escuela:84,clinica:92,cancha:72,mirador:104,teleferico:110,torre:200,edificio:116,ladrillo:116,oficinas:112,tanque:120,torreagua:120,domo:70,fabrica:40,calle:40,arbol:40,ajeno:44,lotedomo:44};
+const SPH={casaf:64,mixto:96,banco:90,parroquia:122,hotel:122,alberca:72,_pino:48,_ofrenda:36,_puesto:34,beis:150,museo:120,rasca:190,bosque:120,plazacom:130,metro:110,gym:88,unas:76,barber:72,paleteria:76,boliche:80,cine:110,golf:84,escuela:84,clinica:92,cancha:72,mirador:104,teleferico:110,torre:200,edificio:116,ladrillo:116,oficinas:112,tanque:120,torreagua:120,domo:70,fabrica:40,calle:40,arbol:40,ajeno:44,lotedomo:44};
 // caché por nivel de noche: solo 4 niveles (día, tarde, anochecer, noche) y se funden dos a la vez
 let WLATE=0,WLPH=-1;
 // de noche las ventanas se apagan por pasos y cada edificio va a su ritmo: así se ven apagarse de a poco y no todas a la vez.
