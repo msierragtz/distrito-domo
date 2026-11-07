@@ -59,9 +59,9 @@ async def main():
       else:filas.append((tt,[(f'N{L}|{NV[k][L-1]} · Domo',i) for L,i in zip((1,2,3,4),d)]+[(f'N{L}|Ribera',i) for L,i in zip((1,2,3,4),r)],4))
     hoja('hoja-v72-negocios.png','Servicios y negocios nuevos','Cicloestación y gasolinera llevan el color de cada distrito (naranja en el Domo, verde agua en la Ribera); el banco es igual en los dos.',filas)
     E=[]
-    for k,tt in (('parroquia','Parroquia'),('hotel','Hotel boutique'),('alberca','Alberca pública')):
+    for k,tt in (('hotel','Hotel boutique · opción A: casona-hacienda'),('hotel2','Hotel boutique · opción B: art déco junto al río')):
       dd=await get([[k,1,0,5]],True,0);nn=await get([[k,1,0,5]],True,1);E.append((tt,[('|de día',dd[0]),('|de noche',nn[0])],0))
-    hoja('hoja-v72-especiales.png','Especiales de la Ribera (2×2)','Se desbloquean en la Ribera; uno de cada uno.',E,sc=2)
+    hoja('hoja-v72-hotel.png','Hotel boutique: dos opciones','A: casona de dos pisos con patio y teja · B: torre art déco con letrero.',E,sc=2.3)
     # de noche: todo lo de 4 niveles en su nivel más alto
     nd=await get([[k,4,FLOORS.get(k,[0]*4)[3],3] for k in ('casaf','mixto','ciclo','banco','gas')],False,1);nr=await get([[k,4,FLOORS.get(k,[0]*4)[3],4] for k in ('casaf','mixto','ciclo','banco','gas')],True,1)
     hoja('hoja-v72-noche.png','De noche','Nivel 4 de cada uno, en el Domo y en la Ribera.',[('Domo',[(f'|{n}',i) for n,i in zip(['casa','usos mixtos','cicloestación','banco','gasolinera'],nd)],0),('Ribera',[(f'|{n}',i) for n,i in zip(['casa','usos mixtos','cicloestación','banco','gasolinera'],nr)],0)],noche=True)

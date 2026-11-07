@@ -64,6 +64,7 @@ const DEFS={
   gas:{name:'Gasolinera',cost:0,unlock:Infinity,hidden:true,bt:12,desc:''},
   parroquia:{name:'Parroquia',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
   hotel:{name:'Hotel boutique',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
+  hotel2:{name:'Hotel art déco (opción B)',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
   alberca:{name:'Alberca pública',cost:0,unlock:Infinity,hidden:true,sz:2,bt:40,desc:''},
   mejorar:{name:'Mejorar',cost:0,unlock:40,desc:'Sube de nivel lo que toques si su zona tiene plusvalía 46, 58 o 70. Negocios: +50% de ganancia. Servicios: cubren 30% más. Vivienda: le cabe un piso más y paga 25% más de renta. La obra tarda un rato.'},
   demoler:{name:'Demoler',cost:0,unlock:0,desc:'Quita lo construido y recupera la mitad de lo que costó.'},
