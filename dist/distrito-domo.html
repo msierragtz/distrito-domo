@@ -2783,29 +2783,29 @@ function tanqueMadera(fx,fy,lift){const [x,y]=P(fx,fy),b=y-lift;for(const dx of 
   const t=b-4;px(x-3,t-6.5,6,6.5,'#9a6a3c');px(x-3,t-6.5,1.6,6.5,'#b9844f');px(x+1.7,t-6.5,1.3,6.5,'#7a5230');for(const v of [1.4,3.5,5.6])px(x-3,t-v,6,.5,'#3a2a1e');
   poly([[x-3.6,t-6.4],[x+3.6,t-6.4],[x,t-10]],'#6a5a48');poly([[x,t-10],[x+3.6,t-6.4],[x+.6,t-6.4]],'#54473a');px(x-.25,t-11,.5,1.2,'#3a2a1e')}
 
-// Casas de la Ribera: una cuadra de casas pintadas apiladas — cada fachada su color (no cada piso), zócalo, molduras blancas,
-// postigos y balconcitos de herrería; arriba tinacos, tendedero y el remate de la casa de en medio
-const CASAS=[['#e8a33d','#d8664a','#f1dcae','#2f6f5e'],['#e57d8e','#f1c45a','#5aa9a0','#2f5d8a'],['#5aa9a0','#f0b84a','#e57d8e','#7a3b2a'],['#7f9fd6','#f1dcae','#d8664a','#2f6f5e']];
+// Casas de la Ribera: cada edificio de un solo color (seis colores en el barrio, uno por edificio), zócalo, molduras blancas,
+// postigos y balconcitos de herrería; arriba tinacos, tendedero y un remate
+const CASAS=[['#e8a33d','#2f6f5e'],['#d8664a','#2f5d8a'],['#e57d8e','#2f6f5e'],['#5aa9a0','#7a3b2a'],['#7f9fd6','#7a3b2a'],['#a3c77c','#7a3b2a']];
 function ribCasas(t,gx,gy,f,LVL,s){const FH=7,ins=.15,x0=gx+ins,y0=gy+ins,x1=gx+1-ins,y1=gy+1-ins,H=f*FH+1,SD=sidesOf(x0,y0,x1,y1);SD.L.__s='L';SD.R.__s='R';
-  const pal=CASAS[s%CASAS.length],fade=c=>LVL===1?hexShade(c,.3):c,A=fade(pal[0]),B=fade(pal[1]),C=hexShade(fade(pal[2]),-.15),sh=pal[3],W='#f7f1e3',WR='#ddd6c6',can='#e2cfa8',canR='#c8b38c';
-  const g=box(x0,y0,x1,y1,0,H,'#bdb7ab',A,C);face(g,'L',.5,0,.5,H,B);
+  const pal=CASAS[s%CASAS.length],fade=c=>LVL===1?hexShade(c,.3):c,A=fade(pal[0]),C=hexShade(A,-.15),sh=pal[1],W='#f7f1e3',WR='#ddd6c6',can='#e2cfa8',canR='#c8b38c';
+  const g=box(x0,y0,x1,y1,0,H,'#bdb7ab',A,C);
   // planta baja
   if(LVL===4){face(g,'L',0,0,1,FH,can);face(g,'R',0,0,1,FH,canR);for(const u of [.05,.29,.53,.77])arcoW(g,'L',u,0,.18,FH-2,'#d6c19a',u<.5?'#6a4a32':'#3d5f7a',null);
     for(const u of [.12,.56])arcoW(g,'R',u,0,.3,FH-2,'#bda67f','#5a3f2a',null);face(g,'L',0,FH-.6,1,.6,'#cdb88f');face(g,'R',0,FH-.6,1,.6,'#b39e78')}
-  else{for(const [sd,u0,c] of [['L',0,A],['L',.5,B],['R',0,C]])face(g,sd,u0,0,sd==='R'?1:.5,1.3,hexShade(c,-.32));
-    // casa A: tiendita (cortina en N1; abierta con toldo después)
+  else{for(const [sd,c] of [['L',A],['R',C]])face(g,sd,0,0,1,1.3,hexShade(c,-.32));
+    // tiendita (cortina en N1; abierta con toldo después)
     if(LVL===1){face(g,'L',.05,0,.36,FH-2.2,'#9ea3aa');for(let v=.6;v<FH-2.4;v+=.7)face(g,'L',.05,v,.36,.2,'#7f848c')}
     else{face(g,'L',.05,0,.36,FH-2.2,'#3a2a1e');win(g,'L',.07,.5,.32,FH-3,'#9fc4dc');const ga=prot(SD.L,.04,.42,.07,FH-2.6,.9,sh,sh);for(let q=1;q<7;q+=2)face(ga,'L',q/7,0,1/7,.9,W,NIGHT>.3)}
     face(g,'L',.05,FH-1.7,.36,1.3,W);for(let k=0;k<5;k++)face(g,'L',.09+k*.065,FH-1.4,.04,.7,sh);
-    // casa B: puerta de madera y ventana con reja
+    // puerta de madera y ventana con reja
     face(g,'L',.56,0,.13,FH-2.4,'#6b4226');face(g,'L',.565,FH-2.4,.12,.4,W);winF(g,'L',.76,1.6,.16,FH-4,W,'#2f5079',W);rejas(g,'L',.76,1.6,.16,FH-4,'#2b2b2b');
-    // casa C (derecha): zaguán y ventana
+    // derecha: zaguán y ventana
     face(g,'R',.1,0,.34,FH-1.9,'#5a3a24');face(g,'R',.27,0,.012,FH-1.9,'#3a2414');face(g,'R',.08,FH-1.9,.38,.5,WR);winF(g,'R',.6,1.6,.22,FH-4,WR,'#2b4b75',WR);if(LVL===1)rejas(g,'R',.6,1.6,.22,FH-4,'#2b2b2b')}
   // pisos
   const fr=LVL===4?can:W;
   for(let fl=1;fl<f;fl++){const v=fl*FH,wv=v+1.6,wh=FH-3.3;
     if(LVL>=2){face(g,'L',0,v-.35,1,.7,LVL===4?can:W);face(g,'R',0,v-.35,1,.7,LVL===4?canR:WR)}else{face(g,'L',0,v-.2,1,.4,hexShade(A,-.12));face(g,'R',0,v-.2,1,.4,hexShade(C,-.12))}
-    const wins=[['L',.14,A],['L',.64,B],['R',.16,C],['R',.6,C]];
+    const wins=[['L',.14,A],['L',.64,A],['R',.16,C],['R',.6,C]];
     wins.forEach(([sd,u,c],ci)=>{const w=sd==='L'?.2:.22,frc=LVL===1?hexShade(c,.25):sd==='R'?(LVL===4?canR:WR):fr;
       const door=LVL>=2&&sd==='R'&&ci===3&&fl%2===1;
       if(door){winF(g,sd,u,v+.5,w,FH-2.2,frc,'#2b4b75',frc)}else winF(g,sd,u,wv,w,wh,frc,'#2f5079',frc);
@@ -2814,12 +2814,11 @@ function ribCasas(t,gx,gy,f,LVL,s){const FH=7,ins=.15,x0=gx+ins,y0=gy+ins,x1=gx+
       if(door||(LVL>=3&&(fl+ci)%2===0)||(LVL===4&&sd==='L')){const S=SD[sd],y0b=door?v+.2:wv-1.1;prot(S,u-.05,u+w+.05,.07,y0b,.4,sd==='L'?(LVL===4?can:W):(LVL===4?canR:WR));rail(S,u-.05,u+w+.05,.07,y0b+.4,'bars','#2b2b2b');
         const gg=protGeo(S,u-.05,u+w+.05,.07,y0b+.45);for(const q of [.12,.62]){face(gg,sd,q,1.9,.26,.9,'#3f8f4a');face(gg,sd,q+.08,2.6,.1,.6,['#e04f9a','#f2c45a','#e85d4a'][(fl+ci)%3])}}
       else if(LVL>=2&&hR(s,fl*7+ci)<.45){face(g,sd,u+.05,wv-.5,.1,.8,'#b5653a');face(g,sd,u+.04,wv+.3,.12,.7,'#3f8f4a');face(g,sd,u+.08,wv+.8,.04,.4,'#e04f9a')}
-      if(LVL===1&&ci===2&&hR(s,fl)<.4)minisplit(g,'R',u+.02,wv-2.4)});
-    if(LVL>=2)face(g,'L',.485,v+.35,.03,FH-.7,LVL===4?can:W)}
+      if(LVL===1&&ci===2&&hR(s,fl)<.4)minisplit(g,'R',u+.02,wv-2.4)});}
   // pretil con remate y azotea
-  const PH=1.4,gp=box(x0,y0,x1,y1,H,PH,'#bdb7ab',A,C);face(gp,'L',.5,0,.5,PH,B);
+  const PH=1.4,gp=box(x0,y0,x1,y1,H,PH,'#bdb7ab',A,C);
   if(LVL>=2){face(gp,'L',0,PH-.6,1,.6,LVL===4?can:W);face(gp,'R',0,PH-.6,1,.6,LVL===4?canR:WR);
-    fpoly(g,'L',[[.56,H+PH],[.94,H+PH],[.94,H+PH+1.2],[.82,H+PH+2.1],[.75,H+PH+2.6],[.68,H+PH+2.1],[.56,H+PH+1.2]],B);fpoly(g,'L',[[.56,H+PH+1],[.94,H+PH+1],[.94,H+PH+1.4],[.82,H+PH+2.3],[.75,H+PH+2.9],[.68,H+PH+2.3],[.56,H+PH+1.4]],LVL===4?can:W)}
+    fpoly(g,'L',[[.3,H+PH],[.7,H+PH],[.7,H+PH+1.2],[.58,H+PH+2.1],[.5,H+PH+2.6],[.42,H+PH+2.1],[.3,H+PH+1.2]],A);fpoly(g,'L',[[.3,H+PH+1],[.7,H+PH+1],[.7,H+PH+1.4],[.58,H+PH+2.3],[.5,H+PH+2.9],[.42,H+PH+2.3],[.3,H+PH+1.4]],LVL===4?can:W)}
   const R=H+PH;topFace(x0+.04,y0+.04,x1-.04,y1-.04,R,'#aaa396');
   if(LVL===1){for(const [a,b] of [[.19,.19],[.81,.19],[.19,.81],[.81,.81],[.5,.81]]){const [x,y]=P(gx+a,gy+b);px(x-.25,y-R-3.5,.5,3.5,'#6a5a4a');px(x+.4,y-R-3,.4,3,'#6a5a4a')}
     tinaco(gx+.58,gy+.34,R,'#1f1f1f');tendedero(gx,gy,R,[.27,.62],[.52,.78],5,['#f4f4f4','#d62828','#3a6ea5','#f2c94c'])}
