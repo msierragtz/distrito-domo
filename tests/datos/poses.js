@@ -15,3 +15,4 @@ poseSheet:()=>{const looks=[{g:'fam',s:1,shirt:'#e63946',pants:'#3b5a8a',skin:'#
     for(let i=0;i<n;i++)for(let c=0;c<2;c++)dv.setInt16(44+i*4+c*2,Math.max(-32768,Math.min(32767,Math.round(ch[c][i]*g*32767))),true);
     let t='';for(let i=0;i<bytes.length;i+=32768)t+=String.fromCharCode.apply(null,bytes.subarray(i,i+32768));out.wav=btoa(t)}
   return out},
+ tickQ:(dt)=>tick(dt,true),earnOf:i=>{const a=EARN.get(i);return a?a.earn:null},get ORDER(){return ORDER},fmaxT:t=>fmaxT(t),

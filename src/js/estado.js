@@ -111,12 +111,12 @@ const NB=[[1,0],[-1,0],[0,1],[0,-1]];
 function connected(x,y){return NB.some(([dx,dy])=>inb(x+dx,y+dy)&&S.g[idx(x+dx,y+dy)].k==='calle')}
 /* tipos de vecinos y la mezcla que atrae cada vivienda */
 const GROUPS=[['fam','Familias'],['pro','Profesionistas'],['est','Estudiantes']],G3=['fam','pro','est'];
-const HMIX={edificio:{est:.45,fam:.35,pro:.20},ladrillo:{fam:.60,est:.20,pro:.20},torre:{pro:.60,est:.25,fam:.15}};
+const HMIX={casaf:{fam:.70,pro:.20,est:.10},mixto:{est:.40,pro:.40,fam:.20},edificio:{est:.45,fam:.35,pro:.20},ladrillo:{fam:.60,est:.20,pro:.20},torre:{pro:.60,est:.25,fam:.15}};
 const PET={fam:.4,pro:.2,est:.1},SPD={fam:1,pro:.8,est:1.3};
 /* a quién le sirve cada comercio, y a quién le molesta tenerlo cerca */
 // escuela y cancha: su comercio es para familias (sin ganancia propia, así que no son negocios)
-const LIKE={museo:['fam','pro'],rasca:['pro','est'],beis:['fam','est'],plazacom:['pro','fam','est'],barber:['pro','est'],unas:['fam','pro'],paleteria:['fam','est'],boliche:['fam','est'],gym:['pro'],cine:['pro','fam','est'],golf:['pro'],escuela:['fam'],cancha:['fam'],cultura:['pro','fam','est'],tomates:['pro','fam','est'],cafe:['pro','est'],resto:['pro','fam'],padel:['pro','fam'],oficinas:['pro','est'],bar:['pro','est'],plaza:['fam','est']};
-const DISLIKE={oficinas:'fam',bar:'fam',caseta:'est'},COMG={plaza:3};
+const LIKE={mixto:['fam','pro','est'],banco:['pro','fam'],gas:['pro','fam'],alberca:['fam','est'],museo:['fam','pro'],rasca:['pro','est'],beis:['fam','est'],plazacom:['pro','fam','est'],barber:['pro','est'],unas:['fam','pro'],paleteria:['fam','est'],boliche:['fam','est'],gym:['pro'],cine:['pro','fam','est'],golf:['pro'],escuela:['fam'],cancha:['fam'],cultura:['pro','fam','est'],tomates:['pro','fam','est'],cafe:['pro','est'],resto:['pro','fam'],padel:['pro','fam'],oficinas:['pro','est'],bar:['pro','est'],plaza:['fam','est']};
+const DISLIKE={oficinas:'fam',bar:'fam',caseta:'est',gas:'fam'},COMG={plaza:3};
 const GNAME={fam:'familias',pro:'profesionistas',est:'estudiantes'};
 const RENT={fam:.065,pro:.1,est:.045};
 const EARN=new Map(); // lo que gana cada negocio (para mostrarlo)

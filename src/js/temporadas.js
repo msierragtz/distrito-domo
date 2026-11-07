@@ -66,6 +66,10 @@ function domoSeason(gx,gy,se){const [x,y0]=P(gx+.5,gy+.5),y=y0-2,R=30,on=NIGHT>.
         ctx.fillStyle='#ffffff';ctx.fillText(tx,Math.round(x),Math.round(y-R-17));ctx.restore()}}}}
 
 function seasonDeco(t,gx,gy){const se=SEASON_C;if(!se)return;const k=t.k,on=NIGHT>.3;
+  if(k==='parroquia'&&se==='navidad'&&!(t.b>0)){const a=P(gx+.3,gy+1.5),b=P(gx+1.7,gy+1.5),lift=12;wire(a,b,lift,3,'#2b2f3a');
+    for(let q=0;q<9;q++){const f=(q+.5)/9;bulb(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-lift+3*Math.sin(f*Math.PI)+1,XMAS[q%XMAS.length],blink(q,gx+gy),q%2)}
+    const [x,y]=P(gx+1,gy+1.5),sw=lowMo()?0:Math.sin(T*2)*1.2,cy=y-lift+6;line(x,y-lift+2,x+sw,cy-2,'#555');
+    for(let q=0;q<7;q++){const an=q/7*Math.PI*2;line(x+sw,cy,x+sw+Math.cos(an)*3.4,cy+Math.sin(an)*3.4,['#ff3b3b','#ffd84d','#3fd16a','#4fa8ff','#ff8fd0','#f26a21','#9b5de5'][q])}circ(x+sw,cy,1.6,'#ffd84d');return}
   if(k==='calle'&&!t.hw){
     if((gx+gy)%2===0){const a=P(gx+.08,gy+.5),b=P(gx+.92,gy+.5),lift=17;
       if(se==='navidad'){const sag=f=>3*Math.sin(f*Math.PI);wire(a,b,lift,3,'#2b2f3a');

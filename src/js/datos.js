@@ -15,6 +15,8 @@ const DEFS={
   calle:{name:'Calle',cost:5,grow:1,unlock:0,bt:0,upk:.02,desc:'Todo lo que construyas necesita tocar una calle.'},
   edificio:{name:'Edificio',cost:368,grow:1.22,unlock:0,bt:20,f0:3,fmax:10,per:6,upc:150,upg:1.32,upk:.28,desc:'Concreto claro, 6 vecinos por piso: sobre todo estudiantes, luego familias. Tócalo otra vez para subirle un piso.'},
   ladrillo:{name:'Edificio de ladrillo',cost:414,grow:1.22,unlock:0,bt:20,f0:4,fmax:9,per:6,upc:161,upg:1.32,upk:.28,desc:'Ladrillo rojo: lo prefieren las familias. Tócalo otra vez para subirle un piso.'},
+  casaf:{name:'Casa de fraccionamiento',cost:120,grow:1.18,unlock:30,bt:10,f0:1,fmax:2,per:5,upc:90,upg:1.5,upk:.22,desc:'Casita con cochera, patio y reja: 5 vecinos por piso, casi todos familias. Cada casa trae carro, así que pide el doble de estacionamiento. Tócala otra vez para subirle un piso.'},
+  mixto:{R:3,val:[.05,2],name:'Usos mixtos',cost:450,grow:1.22,unlock:120,bt:20,f0:3,fmax:6,per:5,upc:160,upg:1.32,upk:.28,com:3,inc:2,desc:'Departamentos con un local abajo (farmacia, papelería, lavandería, panadería o tortillería): da comercio a 3 cuadras y deja algo de dinero. Viven estudiantes y profesionistas. Tócalo otra vez para subirle un piso.'},
   parque:{R:4,val:[.16,3],name:'Parque',cost:60,grow:1.12,unlock:0,bt:4,verde:6,upk:0.15,desc:'Área verde, a las familias les encanta. Junto a un café o restaurante, los hace ganar más.'},
   palma:{R:2,val:[.05,1],name:'Palmeras',cost:20,grow:1.05,unlock:0,bt:2,hidden:true,verde:2,upk:0.025,desc:'Un poquito de verde y sombra.'},
   dogpark:{R:5,val:[.12,3],name:'Dog park',cost:140,grow:1.15,unlock:12,bt:6,verde:6,dog:2,upk:0.25,desc:'Indispensable para quienes tienen mascota: cada uno alcanza para unos 18.'},
@@ -23,10 +25,13 @@ const DEFS={
   caseta:{val:[.1,4],name:'Caseta',cost:260,grow:1.2,unlock:25,bt:6,seg:1,upk:.7,desc:'Controla las fiestas de unos 80 estudiantes. A los estudiantes no les gusta tenerla cerca.'},
   tomates:{R:5,val:[.07,3],name:'Tomates Market',cost:260,grow:1.15,unlock:25,bt:8,com:8,inc:4.5,upk:0.4,desc:'Tienda abierta día y noche: le sirve a todos.'},
   estac:{R:4,name:'Estacionamiento',cost:220,grow:1.12,unlock:15,bt:6,park:12.5,inc:1,upk:0.15,desc:'Aquí todo mundo llega en carro. Calma el tráfico.'},
+  ciclo:{R:4,val:[.06,3],name:'Cicloestación',cost:180,grow:1.12,unlock:80,bt:6,park:5,upk:.15,desc:'Bicis compartidas: baja la necesidad de estacionamiento a 4 cuadras y salen ciclistas a las calles. Junto a oficinas, la escuela o el metro cubre 50% más.'},
   padel:{R:5,val:[.1,3],name:'Pádel',cost:350,grow:1.15,unlock:40,bt:8,com:6,verde:2,inc:4,upk:0.4,desc:'Les gusta a profesionistas y familias. Da un poco de verde.'},
   resto:{R:5,val:[.12,4],name:'Restaurante',cost:900,grow:1.12,unlock:55,bt:12,com:10,inc:7,upk:0.6,desc:'Les gusta a profesionistas y familias. Junto a un parque o plaza gana 50% más.'},
   bar:{R:4,val:[.06,3],name:'Bar',cost:320,grow:1.15,unlock:60,bt:8,com:7,inc:5,upk:.45,desc:'Para profesionistas y estudiantes. A las familias les molesta tenerlo cerca, y de noche hace ruido.'},
   oficinas:{R:6,val:[.08,4],name:'Oficinas',cost:5000,grow:1.15,unlock:120,bt:30,com:12,inc:25,upk:2,desc:'Empleo y coworking para profesionistas y estudiantes. A las familias no les gusta tenerlas cerca (tráfico).'},
+  banco:{R:4,val:[.08,3],name:'Banco',cost:1200,grow:1.15,unlock:250,bt:14,com:4,inc:8,upk:.8,desc:'Les sirve a profesionistas y familias. Los negocios a 4 cuadras ganan 10% más.'},
+  gas:{R:4,val:[.03,2],name:'Gasolinera',cost:600,grow:1.15,unlock:100,bt:12,com:3,inc:6,upk:.5,desc:'Va pegada a una avenida, para que entren los coches. Su tiendita les sirve a profesionistas y familias, pero a las familias no les gusta tenerla cerca.'},
   torre:{name:'Torre Caliza',cost:6000,grow:1.25,unlock:160,bt:60,f0:16,fmax:26,per:6,upc:900,upg:1.15,upk:.22,desc:'16 pisos: aquí viven sobre todo profesionistas, que pagan más renta. Tócala otra vez para crecerla, o tócala sobre un edificio para convertirlo en torre sin perder vecinos.'},
   torreagua:{name:'Torre de agua',cost:50000,grow:1.2,unlock:750,bt:40,upk:.6,val:[.05,3],desc:'El tanque del Distrito alcanza para 1,000 vecinos. Cada Torre de agua surte a 1,000 más (puedes tener todas las que quieras): sin ella, arriba de 1,000 vecinos empiezan los problemas de agua.'},
   kiosco:{name:'Kiosco de la música',cost:0,unlock:500,bt:10,upk:0,max:1,trophy:1,R:4,val:[.08,3],desc:'Trofeo de 500 vecinos, gratis. De noche toca un trío: las familias de alrededor están más contentas y el jazz suma una trompeta.'},
@@ -38,6 +43,9 @@ const DEFS={
   reserva:{name:'Terreno reservado',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   rio:{name:'Río',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   malecon:{R:4,val:[.14,3],name:'Malecón',cost:150,grow:1.12,unlock:30,bt:6,verde:5,upk:.1,desc:'Paseo en la orilla del río, con barandal, faroles y palmas. Da verde a 4 cuadras y sube la plusvalía. Solo va junto al río.'},
+  alberca:{R:5,val:[.15,4],name:'Alberca pública',cost:20000,unlock:800,bt:60,sz:2,max:1,obra:1,verde:6,com:4,upk:1.5,desc:'Ocupa 2×2 terrenos. Verde y comercio para familias y estudiantes a 5 cuadras. En la ola de calor se llena: todo el distrito anda más contento y las entradas dejan $12/s. De noche cierra.'},
+  parroquia:{R:6,val:[.18,5],name:'Parroquia',cost:35000,unlock:1500,bt:90,sz:2,max:1,obra:1,upk:2,desc:'Ocupa 2×2 terrenos. Las familias a 6 cuadras están más contentas. Cada tanto hay boda: cohetes y, por un minuto, los negocios a 4 cuadras ganan 50% más. En Navidad hay posada en el atrio.'},
+  hotel:{R:4,val:[.12,4],name:'Hotel boutique',cost:60000,unlock:2500,bt:120,sz:2,max:1,obra:1,upk:3,desc:'Ocupa 2×2 terrenos. Los turistas dejan $20/s, $2 más por cada café, restaurante o bar a 4 cuadras (hasta 5), y 50% más durante el Clásico.'},
   lotedomo:{name:'Terreno del Domo',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   fabrica:{name:'DeAcero',cost:0,unlock:0,bt:0,hidden:true,fixed:true,desc:''},
   escuela:{R:5,val:[.12,4],name:'Escuela',cost:1500,grow:1.15,unlock:150,bt:20,verde:2,com:3,upk:0.4,max:2,desc:'Primaria y secundaria del Distrito: a las familias les encanta tenerla cerca y ayuda a que sus hijos crezcan aquí.'},
@@ -56,16 +64,6 @@ const DEFS={
   beis:{R:6,val:[.15,5],name:'Estadio de Béisbol',cost:120000,unlock:Infinity,bt:150,sz:3,max:1,obra:1,com:12,upk:6,desc:'Ocupa 3×3 terrenos. Cada 8 minutos hay juego: 2 minutos de $90/s con familias y estudiantes felices, pero a 6 cuadras se necesita más del doble de estacionamiento y a 3 cuadras el ruido molesta a las familias. Fuera de juego da comercio para familias y estudiantes.'},
   plazacom:{R:7,val:[.18,5],name:'Plaza comercial',cost:100000,unlock:Infinity,bt:150,sz:3,max:1,obra:1,com:30,inc:60,park:10,upk:5,desc:'Ocupa 3×3 terrenos. Comercio para los tres grupos a 7 cuadras, estacionamiento y $60/s, pero los negocios a 4 cuadras ganan 15% menos.'},
   metro:{R:6,val:[.2,6],name:'Estación del Metro',cost:200000,unlock:Infinity,bt:240,sz:2,max:1,obra:1,park:20,upk:8,desc:'Ocupa 2×2 terrenos. Baja 30% la necesidad de estacionamiento en todo el Distrito y los vecinos llegan 30% más rápido. Es la obra más tardada (4 minutos) y hace ruido mientras se construye.'},
-  // v72 (propuesta: aún no se construyen; solo para la hoja de aprobación)
-  casaf:{name:'Casa de fraccionamiento',cost:0,unlock:Infinity,hidden:true,bt:10,f0:1,fmax:3,per:5,desc:''},
-  mixto:{name:'Usos mixtos',cost:0,unlock:Infinity,hidden:true,bt:20,f0:3,fmax:7,per:5,desc:''},
-  ciclo:{name:'Cicloestación',cost:0,unlock:Infinity,hidden:true,bt:6,desc:''},
-  banco:{name:'Banco',cost:0,unlock:Infinity,hidden:true,bt:12,desc:''},
-  gas:{name:'Gasolinera',cost:0,unlock:Infinity,hidden:true,bt:12,desc:''},
-  parroquia:{name:'Parroquia',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
-  hotel:{name:'Hotel boutique',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
-  hotel2:{name:'Hotel art déco (opción B)',cost:0,unlock:Infinity,hidden:true,sz:2,bt:60,desc:''},
-  alberca:{name:'Alberca pública',cost:0,unlock:Infinity,hidden:true,sz:2,bt:40,desc:''},
   mejorar:{name:'Mejorar',cost:0,unlock:40,desc:'Sube de nivel lo que toques si su zona tiene plusvalía 46, 58 o 70. Negocios: +50% de ganancia. Servicios: cubren 30% más. Vivienda: le cabe un piso más y paga 25% más de renta. La obra tarda un rato.'},
   demoler:{name:'Demoler',cost:0,unlock:0,desc:'Quita lo construido y recupera la mitad de lo que costó.'},
   ver:{name:'¿Qué es?',cost:0,unlock:0,desc:'La manita solo mira: pasa sobre cualquier cosa para ver qué es y tócala para saber más. No construye ni gasta. Tecla Esc para tomarla.'}
@@ -103,7 +101,12 @@ const LV={
   oficinas:['Oficinas','Coworking','Corporativo','Corporativo verde'],
   edificio:['Departamentos','Departamentos remodelados','Lofts','Residencial de lujo'],
   ladrillo:['Edificio de ladrillo','Ladrillo restaurado','Lofts industriales','Boutique de ladrillo'],
-  torre:['Torre Caliza','Torre Caliza Plus','Torre Caliza Premium','Torre Caliza Sky']};
+  torre:['Torre Caliza','Torre Caliza Plus','Torre Caliza Premium','Torre Caliza Sky'],
+  casaf:['Casa en obra gris','Casa pintada con cochera','Casa con terraza','Casa remodelada'],
+  mixto:['Local con departamentos','Edificio de usos mixtos','Usos mixtos con balcones','Usos mixtos de diseño'],
+  ciclo:['Cicloestación','Cicloestación techada','Bici-taller','Cicloestación solar'],
+  banco:['Cajero automático','Sucursal bancaria','Banco con autobanco','Torre financiera'],
+  gas:['Bomba de gasolina','Gasolinera','Gasolinera con tiendita','Estación de carga']};
 // el estacionamiento no tenía plusvalía propia: alimenta la capa de estacionamiento con este valor
 const PARKVAL=[.12,3];
 const LVTH=[0,0,.55,.68,.84],LVT=[0,0,20,40,60];

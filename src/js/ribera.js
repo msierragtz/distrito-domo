@@ -185,7 +185,7 @@ function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id o
   const lab=d=>{const inf=distInfo(d);return inf&&inf.seen?`${DN[d].replace('Distrito ','')} · ${fmt(inf.v)}`:d==='ribera'?'Ribera · nuevo':'Domo'};
   for(const [id,d] of [['tdDomo','domo'],['tdRib','ribera']]){const b=$(id);if(b){b.setAttribute('aria-pressed',DIST===d);b.disabled=DIST===d;if(S)b.textContent=lab(d)}}}
 // en Ribera: nombres, título y textos propios
-function distBoot(){if(DIST!=='ribera'){DEFS.malecon.hidden=true;DEFS.malecon.unlock=Infinity;const i=ORDER.indexOf('malecon');if(i>=0)ORDER.splice(i,1);return}
+function distBoot(){if(DIST!=='ribera'){for(const k of ['malecon','alberca','parroquia','hotel']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}return}
   Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El emblema de la Ribera: un pilón blanco en A con tirantes, sobre el puente de en medio del río. Sube mucho la satisfacción. Solo hay uno.'});
   DEFS.lotedomo.name='Terreno del Puente';DEFS.cultura.name='Centro Cultural Ribera';DEFS.museo.name='Museo del Río';SPH.domo=110;
   Object.assign(PARCELS.W,{where:'junto a la calle Sauce'});Object.assign(PARCELS.E,{where:'junto a la calle Álamo'});

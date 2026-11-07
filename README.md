@@ -34,7 +34,7 @@ legacy/             (ya no existe en main; está en el historial: versiones v53�
 | `encargos.js` | Los 24 encargos, su motor y su panel |
 | `mensajes.js`, `dia-noche.js` | Mensajes tipo GameBoy, reloj y luz |
 | `dibujo.js` | Primitivas de pixel art: cajas, caras, ventanas, árboles, gente |
-| `arte/*.js` | Un archivo por familia de edificios; `arte/ribera-edificios.js` tiene la vivienda y los negocios propios del Distrito Ribera (solo se usan allá) |
+| `arte/*.js` | Un archivo por familia de edificios; `arte/ribera-edificios.js` tiene la vivienda y los negocios propios del Distrito Ribera (solo se usan allá); `arte/nuevos.js`, los de la v72 (casa de fraccionamiento, usos mixtos, cicloestación, banco, gasolinera y los especiales de la Ribera: alberca, parroquia y hotel) |
 | `objetos.js` | `drawObj`: qué dibujo le toca a cada casilla |
 | `vehiculos.js`, `cielo.js` | Tráfico de las avenidas (dos carriles por sentido, cambios de carril, paradas, freno ante peatones, orden de dibujo), coches, camión, tráiler; cielo y sierra |
 | `transeuntes.js` | Cómo se ve la gente: cuerpo con caminado de 6 cuadros, poses, accesorios, carritos y balón |
@@ -68,7 +68,7 @@ Para una versión nueva:
 1. Cambiar lo que haga falta en `src/`.
 2. `npm run build` y abrir `dist/distrito-domo.html` en el navegador.
 3. `npm test`.
-4. Subir `version` en `package.json` (0.70 → 0.71 = v71), hacer commit con lo que cambió.
+4. Subir `version` en `package.json` (0.71 → 0.72 = v72), hacer commit con lo que cambió.
 5. Publicar `dist/distrito-domo.html` en el artifact y, si toca, `npm run itch` para itch.io.
 
 `dist/distrito-domo.html` sí se guarda en git, para que siempre esté a la mano la última versión jugable.
@@ -92,6 +92,8 @@ Todas abren el juego en Chromium con ganchos de prueba (`build/arnes.html`, se a
 | `tests/trafico.py` | Tráfico: nadie se encima, orden de dibujo en los 4 giros, cambios de carril, paradas, frenos y paso peatonal |
 | `tests/ribera-edificios.py` | Vivienda y negocios de la Ribera: arte y nombres solo allá, todos los tipos y niveles se dibujan, barrio de muestra junto al río |
 | `tests/musica-ribera.py` | Música de la Ribera: cada pieza se toca fuera de línea sin errores, sin saturar y con volumen parecido al del Domo; `MUESTRAS=1` guarda un mp3 de cada una en `build/musica/` |
+| `tests/v72.py` | Reglas de los edificios de la v72 (pisos de la casa, local de usos mixtos, banco, cicloestación, gasolinera junto a avenida, alberca, bodas y hotel) y que todos se dibujen |
+| `tests/hoja-v72.py` | Hojas de aprobación del arte de la v72 |
 | `tests/hoja-ribera.py` | Hojas de aprobación del arte (Domo contra Ribera, de día y de noche, y variedad de colores) |
 | `tests/timelapse.py` | Time-lapse desde una partida sin historia y regreso a la partida real |
 | `tests/bots/correr.py` | Bots novato, intermedio, experto, muy experto y descuidado (`SEEDS=1,2,3`, `NOSTOP=1`) |

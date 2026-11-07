@@ -175,48 +175,8 @@ function artParroquia(t,gx,gy){const on=NIGHT>.2,C='#e6cdaa',CR=hexShade(C,-.16)
   fenceE(E[2],2.4,'#c9b38c',null,3);{const [a,b]=E[3];fenceE([a,P(gx+.62,gy+1.97)],2.4,'#c9b38c',null,3);fenceE([P(gx+1.02,gy+1.97),b],2.4,'#c9b38c',null,3);const A=P(gx+.64,gy+1.97),B=P(gx+1,gy+1.97);px(A[0]-.5,A[1]-6,1,6,'#e6cdaa');px(B[0]-.5,B[1]-6,1,6,'#e6cdaa');line(A[0],A[1]-6,B[0],B[1]-6,'#e6cdaa');line(A[0],A[1]-6.5,(A[0]+B[0])/2,(A[1]+B[1])/2-8,'#e6cdaa');line((A[0]+B[0])/2,(A[1]+B[1])/2-8,B[0],B[1]-6.5,'#e6cdaa')}
   if(on){const [x,y]=fpt(g,'L',.5,8);glow(x,y,14,.45,'#ffd89a')}}
 
-/* ---------- Ribera · Hotel boutique (2×2) — opción A: casona-hacienda de dos pisos en U, techos de teja, patio con fuente y portales ---------- */
-// techo de cuatro aguas de teja sobre un rectángulo (cumbrera a lo largo del lado mayor)
-function techoTeja(x0,y0,x1,y1,H,r,c){const o=.035;x0-=o;y0-=o;x1+=o;y1+=o;const cs=hexShade(c,-.18),cd=hexShade(c,-.32),it=[];
-  if(x1-x0>=y1-y0){const d=(y1-y0)/2,ym=(y0+y1)/2;it.push({p:[[x0,y0,H],[x1,y0,H],[x1-d,ym,H+r],[x0+d,ym,H+r]],c:cd},{p:[[x0,y1,H],[x1,y1,H],[x1-d,ym,H+r],[x0+d,ym,H+r]],c},{p:[[x1,y0,H],[x1,y1,H],[x1-d,ym,H+r]],c:cs},{p:[[x0,y0,H],[x0,y1,H],[x0+d,ym,H+r]],c:cd,z:-.02})}
-  else{const d=(x1-x0)/2,xm=(x0+x1)/2;it.push({p:[[x0,y0,H],[x0,y1,H],[xm,y1-d,H+r],[xm,y0+d,H+r]],c:cd},{p:[[x1,y0,H],[x1,y1,H],[xm,y1-d,H+r],[xm,y0+d,H+r]],c:cs},{p:[[x0,y1,H],[x1,y1,H],[xm,y1-d,H+r]],c},{p:[[x0,y0,H],[x1,y0,H],[xm,y0+d,H+r]],c:cd,z:-.02})}
-  paint3(it);
-  // hileras de teja en las dos caras que se ven
-  if(x1-x0>=y1-y0){const d=(y1-y0)/2,ym=(y0+y1)/2;for(let k=1;k<Math.round((x1-x0)/.07);k++){const x=x0+k*.07;if(x<x0+.02||x>x1-.02)continue;const a=P(x,y1),b=P(Math.min(Math.max(x,x0+d),x1-d),ym);line(a[0],a[1]-H,b[0],b[1]-H-r,hexShade(c,-.1))}}
-  else{const d=(x1-x0)/2,xm=(x0+x1)/2;for(let k=1;k<Math.round((y1-y0)/.07);k++){const y=y0+k*.07;const a=P(x1,y),b=P(xm,Math.min(Math.max(y,y0+d),y1-d));line(a[0],a[1]-H,b[0],b[1]-H-r,hexShade(cs,-.1))}}}
-function artHotel(t,gx,gy){const on=NIGHT>.2,M='#e3a66a',MR=hexShade(M,-.16),CA='#ead8b4',CAR='#cdb98f',TJ='#c0603f',FH=7,H=FH*2+1;
-  quad(gx,gy,.03,.03,1.97,1.97,'#d9cdb4');
-  // patio: losetas de barro, fuente, palmas, mesas y bugambilia
-  quad(gx,gy,.6,.6,1.42,1.84,'#c98a5a');for(let k=1;k<6;k++){const a=P(gx+.6+k*.137,gy+.6),b=P(gx+.6+k*.137,gy+1.84);line(a[0],a[1],b[0],b[1],'#b87a4c')}for(let k=1;k<9;k++){const a=P(gx+.6,gy+.6+k*.138),b=P(gx+1.42,gy+.6+k*.138);line(a[0],a[1],b[0],b[1],'#b87a4c')}
-  const wing=(x0,y0,x1,y1,arcSide)=>{const g=box(gx+x0,gy+y0,gx+x1,gy+y1,0,H,'#b8ad98',M,MR);
-    for(const sd of ['L','R']){face(g,sd,0,0,1,1.2,sd==='L'?CAR:hexShade(CAR,-.12));face(g,sd,0,FH-.4,1,.8,sd==='L'?CA:CAR);face(g,sd,0,H-1,1,1,sd==='L'?CA:CAR)}
-    for(const sd of ['L','R']){const len=sd==='L'?x1-x0:y1-y0,m=Math.max(1,Math.round(len/.3));
-      for(let k=0;k<m;k++){const u=(k+.5)/m;
-        if(sd===arcSide)arcoW(g,sd,u-.32/m,0,.64/m,FH-2.2,CA,'#5a4030',null,sd==='L'?CA:CAR);else{winF(g,sd,u-.16/m,1.6,.32/m,FH-4,sd==='L'?CA:CAR,'#4a3a2a',sd==='L'?CA:CAR);face(g,sd,u-.2/m,1.2,.4/m,.3,'#2b2b2b')}
-        // piso alto: puertas con balcón de herrería y macetas
-        winF(g,sd,u-.14/m,FH+1,.28/m,FH-2.8,sd==='L'?CA:CAR,'#3f5f7a',sd==='L'?CA:CAR);face(g,sd,u-.2/m,FH+.6,.4/m,.4,'#2b2b2b');for(let q=0;q<3;q++)face(g,sd,u-.18/m+q*.13/m,FH+1,.03,1.6,'#2b2b2b')}}
-    return g};
-  // ala del fondo con torre mirador; alas izquierda y derecha (portales hacia el patio)
-  const gB=wing(.1,.1,1.9,.6,'L');
-  const tw=box(gx+.12,gy+.12,gx+.44,gy+.44,H,7,'#b8ad98',CA,CAR);for(const sd of ['L','R'])arcoW(tw,sd,.2,1,.6,4.4,CA,on?'#ffcf8a':'#4a3a2a',null);
-  techoTeja(.1+gx,.1+gy,1.9+gx,.6+gy,H,6,TJ);techoTeja(gx+.12,gy+.12,gx+.44,gy+.44,H+7,5,TJ);
-  const gL=wing(.1,.6,.6,1.6,'R');techoTeja(gx+.1,gy+.6,gx+.6,gy+1.6,H,6,TJ);
-  // patio (entre las alas)
-  dsort(gx,gy,[[1,1.1,()=>{const [x,y]=P(gx+1,gy+1.1);ellipse(x,y-.6,6,3,'#cfc3a8');ellipse(x,y-1.2,4.6,2.3,on?'#7fd0f0':'#5fb4dc',on);px(x-.4,y-5.4,.8,4.2,'#e6d6b8');ellipse(x,y-5.4,2,1,'#e6d6b8');circ(x,y-6.4,1,'#bfe8f8')}],
-    [.8,.8,()=>palm(gx+.8,gy+.8,15)],[1.25,1.45,()=>palm(gx+1.25,gy+1.48,13)],[.78,1.5,()=>{tableH(gx+.78,gy+1.5,'#f4efe4','#555');chairH(gx+.86,gy+1.44,'#2f5d50')}],[1.22,.82,()=>umbH(gx+1.22,gy+.82,'#f4efe4',5,'#e4dccb')]]);
-  {const a=fpt(gB,'L',.3,H-.5),b=fpt(gL,'R',.9,H-.5);bulbsH(a,b,8,2)}
-  const gR=wing(1.42,.6,1.9,1.6,'L');techoTeja(gx+1.42,gy+.6,gx+1.9,gy+1.6,H,6,TJ);
-  bugam(gR,'R',.95,H-.5,10);bugam(gL,'L',.04,H-.5,9);bugam(gB,'R',.05,H-.5,8);
-  // barda del frente con portón de arco, letrero de hierro y faroles
-  {const A=P(gx+.04,gy+1.9),B=P(gx+1.96,gy+1.9),C1=P(gx+.82,gy+1.9),C2=P(gx+1.18,gy+1.9);for(const [a,b] of [[A,C1],[C2,B]]){poly([a,b,up(b,4),up(a,4)],M);line(a[0],a[1]-4,b[0],b[1]-4,CA)}
-    poly([C1,C2,up(C2,7),up(C1,7)],CA);const ar=[];for(let k=0;k<=8;k++){const q=k/8,x=C1[0]+(C2[0]-C1[0])*(.14+.72*q),y=C1[1]+(C2[1]-C1[1])*(.14+.72*q)-5+Math.sin(q*Math.PI)*-1.6;ar.push([x,y])}
-    poly([[C1[0]+(C2[0]-C1[0])*.14,C1[1]+(C2[1]-C1[1])*.14],[C1[0]+(C2[0]-C1[0])*.86,C1[1]+(C2[1]-C1[1])*.86],...ar.reverse()],on?'#ffcf8a':'#5a3a24',on);
-    const m=[(C1[0]+C2[0])/2,(C1[1]+C2[1])/2];px(m[0]-4,m[1]-11,8,2.8,'#2b2b2b');for(let k=0;k<5;k++)px(m[0]-3.3+k*1.4,m[1]-10.4,.9,1.6,on?'#ffd86a':'#c9a227',on);px(m[0]-3,m[1]-8.2,.4,1.2,'#2b2b2b');px(m[0]+2.6,m[1]-8.2,.4,1.2,'#2b2b2b');
-    for(const q of [C1,C2]){px(q[0]-.5,q[1]-9,1.2,2,on?'#ffd89a':'#3a3a3a',on);if(on)glow(q[0],q[1]-8,8,.7,'#ffcf8a')}}
-  dsort(gx,gy,[[.3,1.86,()=>planter(gx+.3,gy+1.84,.34)],[1.7,1.86,()=>planter(gx+1.7,gy+1.84,.34)],[1.0,1.98,()=>guy(gx+.96,gy+1.97,'#2f5d50')]])}
-
-/* opción B: hotel art déco junto al río — torre escalonada con aletas verde agua y coral, ventanas de ojo de buey y letrero en la azotea */
-function artHotelDeco(t,gx,gy){const on=NIGHT>.2,CR='#f3e7d0',CRR='#d9ccb2',TQ='#2bb3a3',CO='#f08a6b',FH=6;
+/* ---------- Ribera · Hotel boutique (2×2): torre art déco junto al río — escalonada con aletas verde agua y coral, ventanas de ojo de buey y letrero en la azotea */
+function artHotel(t,gx,gy){const on=NIGHT>.2,CR='#f3e7d0',CRR='#d9ccb2',TQ='#2bb3a3',CO='#f08a6b',FH=6;
   quad(gx,gy,.03,.03,1.97,1.97,'#d9d4ca');quad(gx,gy,.03,1.36,1.97,1.97,'#cfc8b8');
   const blk=(x0,y0,x1,y1,f,fins)=>{const H=f*FH+2,g=box(gx+x0,gy+y0,gx+x1,gy+y1,0,H,'#c9bfa9',CR,CRR);face(g,'L',0,0,1,FH,TQ);face(g,'R',0,0,1,FH,hexShade(TQ,-.15));
     for(const sd of ['L','R']){const len=sd==='L'?x1-x0:y1-y0,m=Math.max(2,Math.round(len/.16));for(let k=0;k<m;k++){const u=k/m;for(let fl=1;fl<f;fl++)win(g,sd,u+.18/m,fl*FH+.8,.64/m,FH-1.8,sd==='L'?'#3d6a8a':'#355e7c');if(fins&&k>0)face(g,sd,u-.012,FH,.024,H-FH,sd==='L'?'#ffffff':'#ece4d2')}

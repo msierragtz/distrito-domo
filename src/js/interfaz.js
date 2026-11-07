@@ -16,7 +16,7 @@ function makeIcon(k){
 }
 /* barra de abajo agrupada: herramientas fijas + pestañas */
 const FIXED=['ver','calle','mejorar','demoler'];
-const TABS=[['viv','Vivienda',['edificio','ladrillo','torre']],['neg','Negocios',['cafe','tomates','padel','resto','bar','oficinas','barber','unas','paleteria','boliche','gym','cine']],['ser','Servicios',['parque','malecon','plaza','dogpark','cancha','estac','caseta','escuela','clinica','golf','torreagua']],['esp','Especiales',['domo','kiosco','mirador','cultura','teleferico','bosque','museo','rasca','beis','plazacom','metro']]];
+const TABS=[['viv','Vivienda',['casaf','edificio','ladrillo','mixto','torre']],['neg','Negocios',['cafe','tomates','padel','resto','bar','oficinas','gas','banco','barber','unas','paleteria','boliche','gym','cine']],['ser','Servicios',['parque','malecon','plaza','dogpark','cancha','estac','ciclo','caseta','escuela','clinica','golf','torreagua']],['esp','Especiales',['domo','alberca','parroquia','hotel','kiosco','mirador','cultura','teleferico','bosque','museo','rasca','beis','plazacom','metro']]];
 const tabOf=k=>{for(const t of TABS)if(t[2].includes(k))return t[0];return FIXED.includes(k)?null:'ser'};
 let TAB=(()=>{try{const v=localStorage.getItem('distritoDomo.tab');if(TABS.some(t=>t[0]===v))return v}catch(e){}return 'viv'})();
 function setTab(id,quiet){TAB=id;try{localStorage.setItem('distritoDomo.tab',id)}catch(e){}
@@ -31,7 +31,7 @@ function buildTools(){
     if(k===ORDER.filter(q=>!FIXED.includes(q))[0]){const sep=document.createElement('span');sep.className='tsep';sep.setAttribute('aria-hidden','true');toolsEl.appendChild(sep)}
     const b=document.createElement('button');b.type='button';b.className='tool box'+(FIXED.includes(k)?' fx':'');b.id='tool-'+k;
     b.appendChild(makeIcon(k));
-    b.insertAdjacentHTML('beforeend',`<span class="n">${DEFS[k].name.replace('Estacionamiento','Estaciona\u00ADmiento').replace('Restaurante','Restau\u00ADrante').replace('Centro Cultural','Centro\u00A0Cultural')}</span><span class="c"></span>`);
+    b.insertAdjacentHTML('beforeend',`<span class="n">${DEFS[k].name.replace('Estacionamiento','Estaciona\u00ADmiento').replace('Restaurante','Restau\u00ADrante').replace('fraccionamiento','fraccio\u00ADnamiento').replace('Cicloestación','Ciclo\u00ADestación').replace('Centro Cultural','Centro\u00A0Cultural')}</span><span class="c"></span>`);
     b.addEventListener('click',()=>pick(k));toolsEl.appendChild(b);btns[k]=b;
   });
   setTab(TAB,true);
@@ -187,6 +187,7 @@ function act(i){
     recompute();say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);save();refreshUI(true);return}
   if(tool==='domo'&&t.k!=='lotedomo'){say(DIST==='ribera'?'El Puente Atirantado va sobre el puente de en medio del río, el que tiene conos y el letrero azul.':'El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
   if(tool==='malecon'&&!rioSides(i%N,Math.floor(i/N)).length){say('El malecón va en la orilla: pégalo al río.',true);return}
+  if(tool==='gas'&&!NB.some(([dx,dy])=>{const u=i%N+dx,v=Math.floor(i/N)+dy;return inb(u,v)&&S.g[idx(u,v)].hw})){say('La gasolinera va pegada a una avenida, para que entren los coches.',true);return}
   if(t.k==='rio'&&LECHO.includes(tool)&&!canBuild(t)){say(S.rio&&S.rio.cr>0?'¡El río está crecido! Espera a que baje.':'El río trae agua: espera a que baje para construir en el lecho.',true);return}
   if(t.k==='rio'&&!canBuild(t)){say('En el río solo van puentes (con Calle) y, cuando está seco, parques, canchas, dog parks y palmas en el lecho.',true);return}
   if(t.k==='reserva'&&tool!==t.p){say(`Este terreno está reservado para el ${DEFS[t.p].name}.`,true);return}

@@ -19,7 +19,7 @@ function recompute(){
     if(d.obra){const [ow,oh]=DIMT(t);OB[t.k]={x:x+(ow-1)/2,y:y+(oh-1)/2,i:idx(x,y)}}
     if(t.k==='beis'&&S.beis&&S.beis.on>0)tour+=BEIS_INC;
     const nb=NB.map(([dx,dy])=>inb(x+dx,y+dy)?S.g[idx(x+dx,y+dy)]:null);
-    if(d.per){const c=t.f*d.per;cap+=c;const nz=nb.some(n=>n&&n.hw);if(nz)noisy+=c;B.push({i:idx(x,y),x,y,k:t.k,f:t.f,lv:L,cap:c,noisy:nz,got:{verde:0,park:0,dog:0},gotC:{fam:0,pro:0,est:0},dis:{fam:0,pro:0,est:0}})}
+    if(d.per){const c=t.f*d.per;cap+=c;const nz=nb.some(n=>n&&n.hw);if(nz)noisy+=c;B.push({i:idx(x,y),x,y,k:t.k,f:t.f,lv:L,cap:c,noisy:nz,pk:t.k==='casaf'?2:0,got:{verde:0,park:0,dog:0},gotC:{fam:0,pro:0,est:0},dis:{fam:0,pro:0,est:0}})}
     for(const k in pts)pts[k]+=d[k]||0;
     bonus+=(d.bonus||0)*(t.k==='clinica'?1+.3*(L-1):1);
     if(d.R||d.val){const [fw,fh]=DIMT(t);A.push({x:x+(fw-1)/2,y:y+(fh-1)/2,d,k:t.k,sz:Math.max(fw,fh),m:1+.3*(L-1),vm:1+.25*(L-1)})}
@@ -27,8 +27,12 @@ function recompute(){
   }
   // cercanía: cada servicio reparte lo que ofrece entre los edificios a su alcance, según cuántos vecinos tienen
   const dist=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
+  // v72: la cicloestación cubre 50% más junto a oficinas, escuela o metro; el hotel vive de turistas (más con comida y bares cerca)
+  for(const a of A)if(a.k==='ciclo'&&A.some(o=>(o.k==='oficinas'||o.k==='escuela'||o.k==='metro'||o.k==='rasca')&&dist(a,o)<=3))a.m*=1.5;
+  stats.hotelT=0;if(OB.hotel){const n=A.filter(a=>(a.k==='cafe'||a.k==='resto'||a.k==='bar')&&dist(a,OB.hotel)<=4).length;stats.hotelT=(20+2*Math.min(5,n))*(S.ev&&S.ev.id==='clasico'?1.5:1);tour+=stats.hotelT}
+  if(OB.alberca&&S.ev&&S.ev.id==='calor')tour+=12;
   for(const a of A){if(!a.d.R)continue;const inR=B.filter(b=>dist(a,b)<=a.d.R),C=inR.reduce((s,b)=>s+b.cap,0);if(!C)continue;
-    const cal=a.k==='paleteria'&&S.ev&&S.ev.id==='calor';for(const k of ['verde','park','dog']){const am=(a.d[k]||0)+(cal&&k==='verde'?3:0)+(a.k==='bosque'&&k==='verde'&&S.ev&&S.ev.id==='calor'?15:0);if(am)for(const b of inR)b.got[k]+=am*(a.m||1)*b.cap/C}}
+    const cal=a.k==='paleteria'&&S.ev&&S.ev.id==='calor';for(const k of ['verde','park','dog']){const am=(a.d[k]||0)+(cal&&k==='verde'?3:0)+(a.k==='bosque'&&k==='verde'&&S.ev&&S.ev.id==='calor'?15:0)+(a.k==='alberca'&&k==='verde'&&S.ev&&S.ev.id==='calor'?10:0);if(am)for(const b of inR)b.got[k]+=am*(a.m||1)*b.cap/C}}
   // plusvalía de cada terreno
   const VAL=new Float32Array(N*N),neg=new Float32Array(N*N);
   // plusvalía por capas: cada cosa alimenta una sola capa según lo que es; cada capa satura por su cuenta
@@ -50,16 +54,17 @@ function recompute(){
     b.sh={};for(const g of G3){b.sh[g]=w[g]/tw;mix[g]+=b.cap*w[g]/tw}vm+=b.cap*(.6+.9*v)*(1+ECO.rentLv*(b.lv-1))}
   // comercio: cada negocio atiende solo a los grupos a los que les gusta; algunos molestan a un grupo
   // cada negocio cobra según cuántos vecinos a los que les gusta viven en su radio; si hay otro igual cerca, se reparten la clientela
-  {const occ=cap?Math.min(1,S.v/cap):0,cnt=new Map();for(const a of A)if(a.inc0){for(const b of B)if(dist(a,b)<=a.d.R)cnt.set(a.k+'|'+b.i,(cnt.get(a.k+'|'+b.i)||0)+1)}
+  {const occ=cap?Math.min(1,S.v/cap):0,cnt=new Map(),bk=A.filter(o=>o.k==='banco'),boda=S.boda&&S.boda.on>0&&OB.parroquia;for(const a of A)if(a.inc0){for(const b of B)if(dist(a,b)<=a.d.R)cnt.set(a.k+'|'+b.i,(cnt.get(a.k+'|'+b.i)||0)+1)}
     for(const a of A)if(a.inc0){let cu=0;for(const b of B)if(dist(a,b)<=a.d.R){let s2=0;for(const g of LIKE[a.k])s2+=b.sh[g];cu+=b.cap*occ*s2/cnt.get(a.k+'|'+b.i)}
-      a.cust=cu;a.earn=a.inc0*Math.max(ECO.cMin,Math.min(ECO.cMax,Math.pow(cu/ECO.cRef,ECO.cExp)));if(OB.plazacom&&dist(a,OB.plazacom)<=4)a.earn*=.85;inc+=a.earn;if(a.i!=null)EARN.set(a.i,a)}}
+      a.cust=cu;a.earn=a.inc0*Math.max(ECO.cMin,Math.min(ECO.cMax,Math.pow(cu/ECO.cRef,ECO.cExp)));if(OB.plazacom&&dist(a,OB.plazacom)<=4)a.earn*=.85;if(a.k!=='banco'&&bk.some(o=>dist(a,o)<=4))a.earn*=1.1;if(boda&&dist(a,OB.parroquia)<=4)a.earn*=1.5;inc+=a.earn;if(a.i!=null)EARN.set(a.i,a)}}
   for(const a of A){const G=LIKE[a.k],amt=(a.d.com||COMG[a.k]||0)*(a.m||1);
     if(G&&amt&&a.d.R){const inR=B.filter(b=>dist(a,b)<=a.d.R);let C=0;for(const b of inR)for(const g of G)C+=b.cap*b.sh[g];
       if(C>0)for(const b of inR)for(const g of G)b.gotC[g]+=amt*b.cap*b.sh[g]/C}
     const dg=DISLIKE[a.k];if(dg)for(const b of B)if(dist(a,b)<=3)b.dis[dg]++;
-    if(a.k==='kiosco')for(const b of B)if(dist(a,b)<=4)b.dis.fam-=1.5}
+    if(a.k==='kiosco')for(const b of B)if(dist(a,b)<=4)b.dis.fam-=1.5;
+    if(a.k==='parroquia')for(const b of B)if(dist(a,b)<=6)b.dis.fam-=1.5}
   if(OB.bosque)for(const b of B)if(b.noisy&&dist(b,OB.bosque)<=6)noisy-=b.cap*.6;
-  if(OB.beis&&S.beis&&S.beis.on>0)for(const b of B){const d2=dist(b,OB.beis);if(d2<=6)b.pk=2.5;if(d2<=3)b.dis.fam++}
+  if(OB.beis&&S.beis&&S.beis.on>0)for(const b of B){const d2=dist(b,OB.beis);if(d2<=6)b.pk=Math.max(b.pk||0,2.5);if(d2<=3)b.dis.fam++}
   const Bi=new Map(B.map(b=>[b.i,b]));
   Object.assign(stats,{ob:OB,metro:!!OB.metro,metroB,cap,inc,tour,upkBase:upk,upk,counts,wcap,pts,bonus,mix,B,Bi,A,VAL,valMult:cap?vm/cap:1,noise:cap?.12*noisy/cap:0});
   satCalc();
@@ -100,7 +105,7 @@ function satCalc(){
   const evf=ev?(ev.id==='agua'?-Math.max(0,-(ev.flat||0)-stats.wpen):(ev.flat||0)):0;
   // números rojos: el castigo crece con la deuda en proporción al tamaño del Distrito (antes $255 de deuda ya era el castigo máximo aun con 4,000 vecinos)
   const debt=Math.max(0,-S.$),redP=debt?.08*Math.min(1,debt/(300+S.v*5))+Math.min(.17,debt/(1500+S.v*25)):0;
-  const common=stats.bonus-redP+evf-stats.wpen+(S.mis&&S.mis.fx.sat?S.mis.fx.sat.a:0);
+  const common=stats.bonus-redP+evf-stats.wpen+(ev&&ev.id==='calor'&&stats.ob&&stats.ob.alberca?.04:0)+(S.mis&&S.mis.fx.sat?S.mis.fx.sat.a:0);
   const c=x=>Math.max(0,Math.min(1,x));
   const F=scg.fam,Pr=scg.pro,E=scg.est,pet=g=>PET[g]*.35*(scg[g].dog-1);
   const gs={
@@ -157,6 +162,10 @@ function tick(dt,quiet){
   if(stats.ob&&stats.ob.beis){const Bs=S.beis=S.beis||{t:90,on:0};
     if(Bs.on>0){Bs.on-=dt;if(Bs.on<=0){Bs.on=0;Bs.t=BEIS_GAP;recompute();if(!quiet)say(Math.random()<.5?'Se acabó el juego en el Estadio: ganamos en la novena. La afición se va contenta.':'Terminó el juego en el Estadio. Mañana hay revancha.')}}
     else{Bs.t-=dt;if(Bs.t<=0){Bs.on=BEIS_DUR;recompute();if(!quiet){sfx('event');say(`¡Hay juego en el Estadio de Béisbol! Por 2 minutos entran $${BEIS_INC}/s y familias y estudiantes andan felices, pero cerca del estadio falta estacionamiento y hay ruido.`,true)}}}}
+  // v72: bodas en la parroquia de la Ribera
+  if(stats.ob&&stats.ob.parroquia){const Bd=S.boda=S.boda||{t:240,on:0};
+    if(Bd.on>0){Bd.on-=dt;if(Bd.on<=0){Bd.on=0;Bd.t=BODA_GAP;recompute();if(!quiet)say('Se acabó la boda: los novios se fueron de luna de miel.')}}
+    else{Bd.t-=dt;if(Bd.t<=0){Bd.on=BODA_DUR;recompute();if(!quiet){const i=stats.ob.parroquia.i;sfx('event');celebrate(3);confetti(i,60);say('¡Boda en la parroquia! Cohetes, mariachi y los invitados de fiesta: por un minuto los negocios a 4 cuadras ganan 50% más.',true)}}}}
   rioStep(dt,quiet);
   if(S.v>S.maxV)S.maxV=S.v;
   {const bm=bootMul();if(bm!==S.bootM){const had=S.bootM!=null;S.bootM=bm;if(had){recompute();if(!quiet&&bm===1)say('Tu Distrito ya creció: se acabó el impulso de arranque y los negocios ganan su precio normal.')}}}
@@ -196,7 +205,7 @@ function tick(dt,quiet){
 }
 /* la queja más urgente: dice qué falta y cuántos edificios no lo tienen cerca */
 const COMTXT={fam:'Tomates, restaurante, pádel, plaza, escuela o cancha',pro:'café, Tomates, restaurante, pádel, oficinas o bar',est:'café, Tomates, bar, oficinas o plaza'},COMNEW={fam:['unas','paleteria','boliche','cine'],pro:['barber','unas','gym','cine','golf'],est:['barber','paleteria','boliche','cine']};
-const NEEDTXT={verde:['área verde','globito verde','parque, plaza o dog park'],com:['comercio','globito naranja','café, Tomates Market o restaurante'],park:['estacionamiento','globito azul','estacionamiento'],dog:['dog park','globito café','dog park']};
+const NEEDTXT={verde:['área verde','globito verde','parque, plaza o dog park'],com:['comercio','globito naranja','café, Tomates Market o restaurante'],park:['estacionamiento','globito azul','estacionamiento o cicloestación'],dog:['dog park','globito café','dog park']};
 function complaint(g){
   const B=stats.B||[];
   if(S.$<0)return 'Dicen que el Distrito se ve descuidado: sal de números rojos.';

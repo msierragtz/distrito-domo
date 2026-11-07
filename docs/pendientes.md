@@ -1,8 +1,14 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 6 nov 2026 (artifact v71; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 6 nov 2026 (artifact v72; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Ocho edificios nuevos (v72)**, escogidos por Mauricio de una lista de ideas y aprobados con hojas de dibujo (`tests/hoja-v72.py`):
+  - Vivienda (Domo y Ribera, 4 niveles): **Casa de fraccionamiento** ($120, desde 30 vecinos; 1 piso, se sube a 2 y desde el nivel 3 a 3; 5 vecinos por piso, 70% familias; pide el doble de estacionamiento; obra gris → pintada con cochera → con terraza → remodelada con paneles solares; 4 tonos en el Domo y los 6 colores de la Ribera) y **Usos mixtos** ($450, desde 120; 3 a 6 pisos; estudiantes y profesionistas; su local —farmacia, papelería, lavandería, panadería o tortillería, con letrero de bandera que se enciende— da comercio a 3 cuadras y deja $2/s; tinaco solo en el nivel 1).
+  - Servicio: **Cicloestación** ($180, desde 80; estacionamiento a 4 cuadras, 50% más junto a oficinas, escuela o metro; bicis del color del distrito y más ciclistas en la calle).
+  - Negocios: **Banco** ($1,200, desde 250; $8/s; los negocios a 4 cuadras ganan 10% más; cajero → sucursal → autobanco → torre financiera) y **Gasolinera** ($600, desde 100; solo pegada a una avenida; a las familias no les gusta cerca; bomba → gasolinera → con tiendita → con cargadores eléctricos).
+  - Especiales de la Ribera (2×2, uno de cada uno, con obra; ocultos en el Domo): **Alberca pública** (800 vecinos, $20,000; verde y comercio a 5 cuadras; en la ola de calor +$12/s y todo el distrito más contento; de noche cierra), **Parroquia** (1,500, $35,000; las familias a 6 cuadras más contentas; boda cada 7 min: cohetes, confeti y un minuto con los negocios a 4 cuadras +50%; posada con piñata en Navidad) y **Hotel boutique** art déco (2,500, $60,000; turistas: $20/s +$2 por café, restaurante o bar a 4 cuadras, hasta 5; +50% en el Clásico). Se escogió el hotel art déco (opción B) sobre una casona-hacienda.
+  - Pruebas: `tests/v72.py` (reglas y dibujos); toda la batería pasa.
 - **Soundtrack propio del Distrito Ribera (v71)**: mismo motor de jazz en vivo que el Domo (se escribe un arreglo nuevo en cada vuelta: intro, tema, solos, final), pero con repertorio y banda de bossa y latin jazz. Cuatro piezas originales que se abren con la población:
   - «Orilla del Santa Catarina» (bossa nova, 128 bpm, desde el inicio): batida de guitarra, bajo de negra con puntillo, cross-stick en la clave de bossa, escobillas y shaker; melodía en flauta (con vibráfono desde la fase 2 y el tema final en saxofón tenor desde la 3).
   - «Luna sobre el Lecho» (bolero, 72 bpm, desde 150 vecinos; suena más de noche y con lluvia): arpegios de guitarra, requinto con trémolo en las notas largas, bongós en martillo y maracas.

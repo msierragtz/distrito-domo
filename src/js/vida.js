@@ -8,15 +8,15 @@
    falta algo. En Ribera: corredores junto al río, cascarita en el lecho seco y curiosos en el puente cuando crece el río.
    Al tocar a alguien se ve quién es, dónde vive, a dónde va y qué piensa («La voz de la calle»), y se le puede seguir. */
 let EXTRA=[],WID=0,VOZ=null,FOLLOW=null,FUT=null,FWON=false,VTIP=0;
-const OPENK=new Set(['parque','plaza','dogpark','malecon','bosque','kiosco','mirador']),HOMEK=new Set(['edificio','ladrillo','torre']);
-const WSKIP=new Set(['calle','rio','lotedomo','reserva','fabrica','tanque','torreagua','palma','estac','caseta','teleferico']);
-const GUST={fam:{parque:3,plaza:3,escuela:3,tomates:2,resto:1.5,paleteria:2,cine:1.4,boliche:1.4,cancha:2,dogpark:1,clinica:.5,museo:1.2,plazacom:2,kiosco:1.6,domo:1.5,malecon:3,unas:1,cultura:1,bosque:3,mirador:1,beis:.3,padel:.6},
-  pro:{oficinas:4,rasca:4,cafe:3,resto:2.5,gym:2.5,bar:1.4,padel:1.5,golf:1.5,barber:1,cine:1,plazacom:1.5,metro:3,museo:1,parque:1,plaza:1,malecon:1.5,tomates:1,unas:.6,domo:1,bosque:1.5,cultura:.8},
-  est:{cafe:2,bar:3,cine:2,boliche:2,paleteria:2,cancha:1.5,plaza:2,parque:1.5,barber:1,kiosco:2,cultura:2,metro:2,tomates:1,plazacom:2,mirador:1,malecon:2,domo:1.5,beis:.3}};
-const FASE={ma:{oficinas:3,rasca:3,escuela:4,metro:3,cafe:1.6,gym:1.4,bar:.05,cine:.15,boliche:.15,kiosco:.4},
+const OPENK=new Set(['parque','plaza','dogpark','malecon','bosque','kiosco','mirador']),HOMEK=new Set(['edificio','ladrillo','torre','casaf','mixto']);
+const WSKIP=new Set(['ciclo','calle','rio','lotedomo','reserva','fabrica','tanque','torreagua','palma','estac','caseta','teleferico']);
+const GUST={fam:{alberca:2.5,parroquia:2,banco:.6,gas:.3,mixto:.8,parque:3,plaza:3,escuela:3,tomates:2,resto:1.5,paleteria:2,cine:1.4,boliche:1.4,cancha:2,dogpark:1,clinica:.5,museo:1.2,plazacom:2,kiosco:1.6,domo:1.5,malecon:3,unas:1,cultura:1,bosque:3,mirador:1,beis:.3,padel:.6},
+  pro:{banco:2,gas:.6,hotel:.6,mixto:1,oficinas:4,rasca:4,cafe:3,resto:2.5,gym:2.5,bar:1.4,padel:1.5,golf:1.5,barber:1,cine:1,plazacom:1.5,metro:3,museo:1,parque:1,plaza:1,malecon:1.5,tomates:1,unas:.6,domo:1,bosque:1.5,cultura:.8},
+  est:{alberca:2,mixto:1,cafe:2,bar:3,cine:2,boliche:2,paleteria:2,cancha:1.5,plaza:2,parque:1.5,barber:1,kiosco:2,cultura:2,metro:2,tomates:1,plazacom:2,mirador:1,malecon:2,domo:1.5,beis:.3}};
+const FASE={ma:{banco:1.4,parroquia:.8,alberca:.4,oficinas:3,rasca:3,escuela:4,metro:3,cafe:1.6,gym:1.4,bar:.05,cine:.15,boliche:.15,kiosco:.4},
   di:{resto:1.6,parque:1.2,plaza:1.2,escuela:.6,paleteria:1.4,oficinas:.8,rasca:.8,bar:.3},
   ta:{bar:2,cine:2.2,boliche:2,gym:1.6,resto:1.6,parque:1.2,malecon:1.5,oficinas:.25,rasca:.25,escuela:.05,kiosco:1.6},
-  no:{bar:3,kiosco:1.4,cine:1,oficinas:0,rasca:0,escuela:0,parque:.3,plaza:.5,cafe:.3,tomates:.2,dogpark:.3,malecon:.6}};
+  no:{alberca:0,banco:.05,parroquia:.15,bar:3,kiosco:1.4,cine:1,oficinas:0,rasca:0,escuela:0,parque:.3,plaza:.5,cafe:.3,tomates:.2,dogpark:.3,malecon:.6}};
 const FN={f:['María','Lupita','Sofía','Ana','Carmen','Daniela','Fernanda','Paty','Rosa','Valeria','Ximena','Laura','Mónica','Elena'],m:['José','Juan','Luis','Carlos','Diego','Jorge','Memo','Alejandro','Rodrigo','Toño','Beto','Emilio','Héctor','Raúl']};
 const pickA=(a,r)=>a[Math.min(a.length-1,Math.floor(r*a.length))];
 const hora=()=>(S.clock/DAY*24+6)%24,faseH=h=>h>=6&&h<10?'ma':h>=10&&h<17?'di':h>=17&&h<22?'ta':'no';
@@ -81,7 +81,7 @@ function mkLook(w){const R=Math.random,g=w.g,ev=evId(),L={g,s:1};
   else if(g==='pro'&&v<.06){L.old=1;L.hair='#bdbdbd';L.cane=1;L.brief=L.coffee=0}
   if(!L.old&&!L.dog&&!L.kid&&!L.stroller&&R()<.03)L.wheel=1;
   else if(g==='est'&&!L.dog&&R()<.12)L.skate=1;
-  else if((g==='est'||g==='pro')&&!L.dog&&R()<.08)L.bike=pickA(['#e63946','#2a9d8f','#1d3557','#f2c94c'],R());
+  else if((g==='est'||g==='pro')&&!L.dog&&R()<.08+.05*Math.min(3,(stats.counts&&stats.counts.ciclo)||0))L.bike=(stats.counts&&stats.counts.ciclo&&R()<.5)?DCOL():pickA(['#e63946','#2a9d8f','#1d3557','#f2c94c'],R());
   if(L.fem&&g!=='pro'&&!L.old&&R()<.25)L.skirt=pickA(['#7a2a5a','#2a6a8a','#c0392b','#3a3a3a'],R());
   // lo que pasa en el Distrito
   if(ev==='calor'&&R()<.55){if(R()<.6)L.hat=1;else L.cap=pickA(['#d62828','#f4f4f4','#2456a6'],R());if(R()<.45)w.snack='paleta'}
