@@ -1,8 +1,15 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 6 nov 2026 (artifact v70; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 6 nov 2026 (artifact v71; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Soundtrack propio del Distrito Ribera (v71)**: mismo motor de jazz en vivo que el Domo (se escribe un arreglo nuevo en cada vuelta: intro, tema, solos, final), pero con repertorio y banda de bossa y latin jazz. Cuatro piezas originales que se abren con la población:
+  - «Orilla del Santa Catarina» (bossa nova, 128 bpm, desde el inicio): batida de guitarra, bajo de negra con puntillo, cross-stick en la clave de bossa, escobillas y shaker; melodía en flauta (con vibráfono desde la fase 2 y el tema final en saxofón tenor desde la 3).
+  - «Luna sobre el Lecho» (bolero, 72 bpm, desde 150 vecinos; suena más de noche y con lluvia): arpegios de guitarra, requinto con trémolo en las notas largas, bongós en martillo y maracas.
+  - «Samba del Malecón» (samba-jazz, 104 bpm, desde 500; más con el Clásico): partido alto en la guitarra, surdo, tamborim y ganzá en dieciseisavos, bajo de samba; flauta y vibráfono al unísono.
+  - «Descarga en el Puente» (latin jazz, 176 bpm, desde 1,200): clave 2-3, cáscara, congas en tumbao, bajo anticipado, montuno de piano en octavas, vibráfono y flauta; cencerro en el final (fase 3) y metales en la clave (fase 4); repiques de timbal al cerrar cada sección.
+  - Instrumentos nuevos: guitarra de nailon con cuerdas pulsadas (Karplus-Strong afinado con un filtro pasa-todo; a 22 kHz para gastar poca memoria), flauta con soplo y vibrato, congas, bongós, claves, cáscara, cencerro, timbales, surdo, tamborim y shaker. Mismo reverb, eco y compresor; la melodía se apaga con satisfacción baja igual que en el Domo. El Domo suena exactamente igual que antes.
+  - Pruebas: `tests/musica-ribera.py` toca cada pieza en un contexto de audio fuera de línea (sin errores, sin saturar, volumen a menos de 4.5 dB del Domo) y con `MUESTRAS=1` guarda muestras en mp3; las mezclas se nivelaron comparando cada sección (guitarra contra piano del Domo, flauta contra la melodía, percusión contra la batería).
 - **Vivienda y negocios con cara propia en el Distrito Ribera (v70)**, porque los jugadores esperaban edificios distintos en el barrio nuevo. Mismo costo, pisos y niveles; solo cambia el dibujo y el nombre. El Domo no cambia.
   - **Casas de la Ribera** (el edificio): cada edificio de un solo color (ocre, terracota, rosa, turquesa, añil o pistache; uno por edificio, así la calle se ve variada), con zócalo, molduras blancas, postigos, macetas y balcones de herrería. N1 deslavado con rejas, varillas, tinacos negros y tendedero; N2 pintado con toldo en la tiendita y remate; N3 con pérgola, foquitos y bugambilia; N4 con planta baja de cantera con arcos y jardín en la azotea.
   - **Bodegas del río** (el de ladrillo): ladrillo cálido en 3 tonos, ventanales de arco, letrero pintado de la fábrica y tanque de agua de madera. N1 con un anuncio viejo en el muro ciego; desde N2 herrería verde agua y un mural del Cerro de la Silla al atardecer; N3 balcones y tragaluces; N4 tienda negra con dorado, plantas colgantes y jardín.

@@ -45,7 +45,7 @@ legacy/             (ya no existe en main; está en el historial: versiones v53�
 | `render.js` | Imágenes en caché, sombras, suelo, el cuadro completo, la manita |
 | `clima.js` | Reflejos en los charcos y relámpagos con trueno |
 | `interfaz.js`, `entrada.js`, `pantalla.js` | Barra y paneles; mouse, toque, rueda y pellizco; rendimiento y orientación |
-| `musica.js` | Jazz procedural y efectos de sonido |
+| `musica.js` | Jazz procedural y efectos de sonido; en la Ribera, su propio repertorio (bossa, bolero, samba-jazz y latin jazz) con guitarra de nailon, flauta y percusión latina |
 | `foto.js` | Modo foto, paseo de cámara, grabación de video, historia del mapa y time-lapse |
 | `arranque.js` | Cargar la partida y el ciclo principal |
 
@@ -68,7 +68,7 @@ Para una versión nueva:
 1. Cambiar lo que haga falta en `src/`.
 2. `npm run build` y abrir `dist/distrito-domo.html` en el navegador.
 3. `npm test`.
-4. Subir `version` en `package.json` (0.69 → 0.70 = v70), hacer commit con lo que cambió.
+4. Subir `version` en `package.json` (0.70 → 0.71 = v71), hacer commit con lo que cambió.
 5. Publicar `dist/distrito-domo.html` en el artifact y, si toca, `npm run itch` para itch.io.
 
 `dist/distrito-domo.html` sí se guarda en git, para que siempre esté a la mano la última versión jugable.
@@ -91,6 +91,7 @@ Todas abren el juego en Chromium con ganchos de prueba (`build/arnes.html`, se a
 | `tests/transeuntes.py` | Transeúntes: destinos, banquetas, paradas, reacciones a eventos, carritos, obras, fuegos, la tarjeta de «La voz de la calle», seguir con la cámara, rendimiento y la vida en Ribera; guarda la hoja de poses |
 | `tests/trafico.py` | Tráfico: nadie se encima, orden de dibujo en los 4 giros, cambios de carril, paradas, frenos y paso peatonal |
 | `tests/ribera-edificios.py` | Vivienda y negocios de la Ribera: arte y nombres solo allá, todos los tipos y niveles se dibujan, barrio de muestra junto al río |
+| `tests/musica-ribera.py` | Música de la Ribera: cada pieza se toca fuera de línea sin errores, sin saturar y con volumen parecido al del Domo; `MUESTRAS=1` guarda un mp3 de cada una en `build/musica/` |
 | `tests/hoja-ribera.py` | Hojas de aprobación del arte (Domo contra Ribera, de día y de noche, y variedad de colores) |
 | `tests/timelapse.py` | Time-lapse desde una partida sin historia y regreso a la partida real |
 | `tests/bots/correr.py` | Bots novato, intermedio, experto, muy experto y descuidado (`SEEDS=1,2,3`, `NOSTOP=1`) |

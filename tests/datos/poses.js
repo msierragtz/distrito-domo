@@ -9,3 +9,9 @@ poseSheet:()=>{const looks=[{g:'fam',s:1,shirt:'#e63946',pants:'#3b5a8a',skin:'#
   out.push(c.toDataURL())}}finally{RIBV=pr}return out},
  ribNames:()=>RIBLV,
  get RIBV(){return RIBV},nameOf:t=>nameOf(t),spriteInk:(k,L,f,s,nb)=>{const sp=makeSprite({k,s,lv:L,f,b:0},10,10,nb||0),d=sp.c.getContext('2d').getImageData(0,0,sp.c.width,sp.c.height).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>0)n++;return n},
+ musicRender:async(sec,o,wav)=>{const r=await JAZZ.__render(sec,o);if(!r)return null;const b=r.buf,n=b.length,ch=[b.getChannelData(0),b.getChannelData(1)];let pk=0,ss=0;for(const c of ch)for(let i=0;i<n;i++){const v=c[i];ss+=v*v;const a=v<0?-v:v;if(a>pk)pk=a}
+  const out={rms:Math.sqrt(ss/(2*n)),peak:pk,errs:r.errs,name:r.name};
+  if(wav){const g=wav.gain||1,bytes=new Uint8Array(44+n*4),dv=new DataView(bytes.buffer),ws=(o2,t)=>{for(let i=0;i<t.length;i++)dv.setUint8(o2+i,t.charCodeAt(i))};ws(0,'RIFF');dv.setUint32(4,36+n*4,true);ws(8,'WAVE');ws(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,2,true);dv.setUint32(24,44100,true);dv.setUint32(28,176400,true);dv.setUint16(32,4,true);dv.setUint16(34,16,true);ws(36,'data');dv.setUint32(40,n*4,true);
+    for(let i=0;i<n;i++)for(let c=0;c<2;c++)dv.setInt16(44+i*4+c*2,Math.max(-32768,Math.min(32767,Math.round(ch[c][i]*g*32767))),true);
+    let t='';for(let i=0;i<bytes.length;i+=32768)t+=String.fromCharCode.apply(null,bytes.subarray(i,i+32768));out.wav=btoa(t)}
+  return out},
