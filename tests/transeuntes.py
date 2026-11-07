@@ -57,7 +57,7 @@ async def main():
     # La voz de la calle: tocar a alguien con «¿Qué es?»
     r=await caso(pg,.5,None,5000)
     await pg.evaluate("__dd.setTool('ver')")
-    pos=await pg.evaluate("""(()=>{const c=document.querySelector('canvas').getBoundingClientRect();for(const w of __dd.W){if(w.st!=='walk'||w.a<1)continue;const [x,y]=__dd.P(w.X,w.Y),sx=c.left+x*__dd.zoom,sy=c.top+(y-(w.lift||0)-5)*__dd.zoom;
+    pos=await pg.evaluate("""(()=>{const c=document.querySelector('canvas').getBoundingClientRect();for(const w of __dd.W){if(w.st!=='walk'||w.a<1||!w.path||w.path.length-w.pi<7)continue;const [x,y]=__dd.P(w.X,w.Y),sx=c.left+x*__dd.zoom,sy=c.top+(y-(w.lift||0)-5)*__dd.zoom;
       if(sx>200&&sx<1100&&sy>150&&sy<550){__dd.setPause(true);return [sx,sy,w.id]}}return null})()""")
     ok(pos is not None,'hay alguien a la vista para tocar')
     if pos:

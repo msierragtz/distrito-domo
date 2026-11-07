@@ -220,8 +220,8 @@ function render(){
   const buckets=Array.from({length:2*N},()=>[]);
   const vb=(x,y)=>{const [a,b]=rot(x,y);return Math.max(0,Math.min(2*N-1,Math.floor(a)+Math.floor(b)))};
   if(!TL){for(const w of walkers)buckets[vb(w.X,w.Y)].push(w);for(const w of EXTRA)buckets[vb(w.X,w.Y)].push(w)}
-  trafficStep();const cars=[];for(const c of CARS){cars.push({car:1,fx:c.x,fy:c.row+c.lane+(c.lo||0),c:c.c,dir:c.dir,type:c.type,sp:c.sp})}
-  for(const c of cars)buckets[vb(c.fx,c.fy)].push(c);
+  trafficStep();const cars=[];for(const c of CARS){cars.push({car:1,fx:c.x,fy:c.row+c.lat,c:c.c,dir:c.dir,type:c.type,sp:c.sp,m:c.m,brk:c.brk,chg:c.chg,go:c.go,row:c.row})}
+  for(const c of vehOrder(cars,vb))buckets[c.bk].push(c);
   // transparencia: lo que está entre el jugador y el terreno bajo el cursor se vuelve vidrio
   let HV=null;if(hover>=0&&!TITLE){const hx=hover%N,hy=Math.floor(hover/N),tf=MULTI(tool)?toolFoot(hover):null,[hw,hh]=tf?[tf.w,tf.h]:MULTI(tool)?DIM(tool,0):[1,1],r=rot(hx+hw/2,hy+hh/2),p=P(hx+hw/2,hy+hh/2);HV={d:r[0]+r[1],x:p[0],y:p[1],w:TW*(.55+.25*(hw+hh-2))}}
   const fade=(t,x,y,sz=1)=>{if(!HV)return 1;const [fw,fh]=Array.isArray(sz)?sz:[sz,sz],r=rot(x+fw/2,y+fh/2);if(r[0]+r[1]<=HV.d)return 1;const so=shadowOf(t),h=so?so[1]:0;if(h<12)return 1;
