@@ -192,6 +192,12 @@ function distBoot(){if(DIST!=='ribera'){DEFS.malecon.hidden=true;DEFS.malecon.un
   Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
   Object.assign(PARCELS.DA,{name:'Ribera sur',where:'cruzando la avenida sur, junto al río'});
   for(const k in LV)if(Array.isArray(LV[k]))LV[k]=LV[k].map(n=>typeof n==='string'?n.replace(' del Domo',' del Río').replace('Domo','Ribera'):n);
+  // v70: vivienda y negocios con cara propia (arte/ribera-edificios.js): sus nombres por nivel, sin las marcas del Domo
+  for(const k in RIBLV){LV[k]=RIBLV[k].slice();delete VARN[k]}
+  Object.assign(DEFS.edificio,{name:'Casas de la Ribera',desc:'Casas pintadas, cada edificio de su color; 6 vecinos por piso: sobre todo estudiantes, luego familias. Tócalo otra vez para subirle un piso.'});
+  Object.assign(DEFS.ladrillo,{name:'Bodegas del río',desc:'Bodegas de ladrillo convertidas en departamentos, con tanque de agua de madera: las prefieren las familias. Tócalo otra vez para subirle un piso.'});
+  DEFS.torre.name='Torre Malecón';Object.assign(DEFS.tomates,{name:'Mercadito de la Ribera',desc:'Mercadito abierto día y noche: le sirve a todos.'});
+  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Tomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Tomates Market','mercadito');
   document.title='Distrito Ribera';for(const el of document.querySelectorAll('header h1'))el.firstChild.textContent='DISTRITO RIBERA';
   const tt=document.querySelector('#title .tt');if(tt)tt.innerHTML='DISTRITO<br>RIBERA';document.body.classList.add('ribera')}
 

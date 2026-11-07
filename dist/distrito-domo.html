@@ -846,6 +846,12 @@ function distBoot(){if(DIST!=='ribera'){DEFS.malecon.hidden=true;DEFS.malecon.un
   Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
   Object.assign(PARCELS.DA,{name:'Ribera sur',where:'cruzando la avenida sur, junto al río'});
   for(const k in LV)if(Array.isArray(LV[k]))LV[k]=LV[k].map(n=>typeof n==='string'?n.replace(' del Domo',' del Río').replace('Domo','Ribera'):n);
+  // v70: vivienda y negocios con cara propia (arte/ribera-edificios.js): sus nombres por nivel, sin las marcas del Domo
+  for(const k in RIBLV){LV[k]=RIBLV[k].slice();delete VARN[k]}
+  Object.assign(DEFS.edificio,{name:'Casas de la Ribera',desc:'Casas pintadas, cada edificio de su color; 6 vecinos por piso: sobre todo estudiantes, luego familias. Tócalo otra vez para subirle un piso.'});
+  Object.assign(DEFS.ladrillo,{name:'Bodegas del río',desc:'Bodegas de ladrillo convertidas en departamentos, con tanque de agua de madera: las prefieren las familias. Tócalo otra vez para subirle un piso.'});
+  DEFS.torre.name='Torre Malecón';Object.assign(DEFS.tomates,{name:'Mercadito de la Ribera',desc:'Mercadito abierto día y noche: le sirve a todos.'});
+  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Tomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Tomates Market','mercadito');
   document.title='Distrito Ribera';for(const el of document.querySelectorAll('header h1'))el.firstChild.textContent='DISTRITO RIBERA';
   const tt=document.querySelector('#title .tt');if(tt)tt.innerHTML='DISTRITO<br>RIBERA';document.body.classList.add('ribera')}
 
@@ -988,7 +994,7 @@ function tick(dt,quiet){
   for(const t of S.g){
     if(t.b>0){t.b-=dt;if(t.b<=0){t.b=0;changed=true;if(!quiet)landed(S.g.indexOf(t));if(!quiet&&t.bt>=10)sfx('done');if(!quiet&&t.bt>=10)say(`¡Listo! Se terminó de construir: ${DEFS[t.k].name}.`);if(!quiet&&(t.k==='domo'||DEFS[t.k].obra))momento(S.g.indexOf(t));}}
     if(t.lu>0){t.lu-=dt;if(t.lu<=0){t.lu=0;t.lv=lvOf(t)+1;changed=true;if(!quiet){const i=S.g.indexOf(t);sparkle(i);flashAt(i,.9);confetti(i,40);sfx('levelup');say(`¡Listo! Ahora es ${nameOf(t)}, nivel ${t.lv} de 4.`)}}}
-    if(t.ct>0){t.ct-=dt;if(t.ct<=0){const was=DEFS[t.k].name;t.ct=0;if(!quiet)landed(S.g.indexOf(t));t.k='torre';t.f=DEFS.torre.f0;t.lv=1;delete t.lu;changed=true;if(!quiet){sfx('done');say(`¡Listo! El ${was.toLowerCase()} ya es una Torre Caliza de ${t.f} pisos.`)}}}
+    if(t.ct>0){t.ct-=dt;if(t.ct<=0){const was=DEFS[t.k].name;t.ct=0;if(!quiet)landed(S.g.indexOf(t));t.k='torre';t.f=DEFS.torre.f0;t.lv=1;delete t.lu;changed=true;if(!quiet){sfx('done');say(`¡Listo! El ${was.toLowerCase()} ya es una ${DEFS.torre.name} de ${t.f} pisos.`)}}}
     if(t.ub>0){t.ub-=dt;if(t.ub<=0){t.ub=0;t.f++;changed=true;if(!quiet){const i=S.g.indexOf(t);flashAt(i,.5);confetti(i,14)}if(!quiet)say(`${DEFS[t.k].name} terminado: ahora tiene ${t.f} pisos.`)}}
   }
   if(changed)recompute();else satCalc();
@@ -1054,7 +1060,7 @@ function tick(dt,quiet){
       if(S.arr[g]>=5){S.arr[g]=0;if(Math.random()<.6)say({
         fam:Math.random()<.4?`Llegó la familia ${sur()} con su perro. Ya preguntaron por el dog park.`:`Se mudó la familia ${sur()} al Distrito. Ya son ${Math.floor(S.v+1e-6)} vecinos.`,
         pro:`Llegó la Ing. ${sur()}, trabaja en Valle y quería vivir cerca.`,
-        est:Math.random()<.5?`Llegaron estudiantes de la UDEM al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Tec. Preguntaron dónde está el Tomates más cercano.`}[g])}
+        est:Math.random()<.5?`Llegaron estudiantes de la UDEM al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Tec. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Tomates'} más cercano.`}[g])}
       if(S.dep[g]>=3){S.dep[g]=0;say({fam:`Una familia se fue del Distrito. ${complaint('fam')}`,pro:`Un profesionista se mudó a otro lado. ${complaint('pro')}`,
         est:`Unos estudiantes se fueron del Distrito. ${complaint('est')}`}[g])}
     }
@@ -4510,12 +4516,12 @@ function act(i){
   if(tool==='torre'&&(t.k==='edificio'||t.k==='ladrillo')){
     if(t.ct>0){say('Ese edificio ya se está convirtiendo en torre.',true);return}
     if(!canConv(t)){say('Espera a que termine la obra de ese edificio.',true);return}
-    if(!S.unl.includes('torre')){say(`La Torre Caliza se desbloquea con ${DEFS.torre.unlock} vecinos.`,true);return}
+    if(!S.unl.includes('torre')){say(`La ${DEFS.torre.name} se desbloquea con ${DEFS.torre.unlock} vecinos.`,true);return}
     const c=convCost(t);
     if(pendConv===i&&Date.now()-pendConvT<6000){pendConv=null;if(S.$<c){sfx('nope');say(`Convertirlo cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
-      sfx('build');S.$-=c;t.ct=DEFS.torre.bt;t.ctt=t.ct;recompute();say(`Arrancó la obra: el ${DEFS[t.k].name.toLowerCase()} se convierte en Torre Caliza. Tarda ${t.ct} segundos y los vecinos siguen viviendo ahí.`,true);save();refreshUI(true);return}
+      sfx('build');S.$-=c;t.ct=DEFS.torre.bt;t.ctt=t.ct;recompute();say(`Arrancó la obra: el ${DEFS[t.k].name.toLowerCase()} se convierte en ${DEFS.torre.name}. Tarda ${t.ct} segundos y los vecinos siguen viviendo ahí.`,true);save();refreshUI(true);return}
     pendConv=i;pendConvT=Date.now();
-    say(`¿Convertir este ${DEFS[t.k].name.toLowerCase()} de ${t.f} pisos en Torre Caliza de ${DEFS.torre.f0}? Cuesta $${fmt(c)} (ya descuenta la mitad de lo que valía). Toca otra vez para confirmar.`,true);return}
+    say(`¿Convertir este ${DEFS[t.k].name.toLowerCase()} de ${t.f} pisos en ${DEFS.torre.name} de ${DEFS.torre.f0}? Cuesta $${fmt(c)} (ya descuenta la mitad de lo que valía). Toca otra vez para confirmar.`,true);return}
   if(MULTI(tool)){const d=DEFS[tool],tf=toolFoot(i),f=tf&&tf.f,[fw,fh]=DIM(tool,0),dm=d.max||(d.sz>1?1:0);
     if(dm&&(stats.counts[tool]||0)>=dm){say(dm===1?`${d.name} es único y ya está construido.`:`Ya tienes ${dm}: ${d.name} llegó a su límite.`,true);return}
     if(!f){say(fw===fh?`${d.name} necesita ${fw}×${fh} terrenos libres. Toca la esquina de arriba de un espacio vacío.`:`${d.name} ocupa ${Math.max(fw,fh)} terrenos libres seguidos. Toca el primero de dos terrenos vacíos juntos.`,true);return}

@@ -172,12 +172,12 @@ function act(i){
   if(tool==='torre'&&(t.k==='edificio'||t.k==='ladrillo')){
     if(t.ct>0){say('Ese edificio ya se está convirtiendo en torre.',true);return}
     if(!canConv(t)){say('Espera a que termine la obra de ese edificio.',true);return}
-    if(!S.unl.includes('torre')){say(`La Torre Caliza se desbloquea con ${DEFS.torre.unlock} vecinos.`,true);return}
+    if(!S.unl.includes('torre')){say(`La ${DEFS.torre.name} se desbloquea con ${DEFS.torre.unlock} vecinos.`,true);return}
     const c=convCost(t);
     if(pendConv===i&&Date.now()-pendConvT<6000){pendConv=null;if(S.$<c){sfx('nope');say(`Convertirlo cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
-      sfx('build');S.$-=c;t.ct=DEFS.torre.bt;t.ctt=t.ct;recompute();say(`Arrancó la obra: el ${DEFS[t.k].name.toLowerCase()} se convierte en Torre Caliza. Tarda ${t.ct} segundos y los vecinos siguen viviendo ahí.`,true);save();refreshUI(true);return}
+      sfx('build');S.$-=c;t.ct=DEFS.torre.bt;t.ctt=t.ct;recompute();say(`Arrancó la obra: el ${DEFS[t.k].name.toLowerCase()} se convierte en ${DEFS.torre.name}. Tarda ${t.ct} segundos y los vecinos siguen viviendo ahí.`,true);save();refreshUI(true);return}
     pendConv=i;pendConvT=Date.now();
-    say(`¿Convertir este ${DEFS[t.k].name.toLowerCase()} de ${t.f} pisos en Torre Caliza de ${DEFS.torre.f0}? Cuesta $${fmt(c)} (ya descuenta la mitad de lo que valía). Toca otra vez para confirmar.`,true);return}
+    say(`¿Convertir este ${DEFS[t.k].name.toLowerCase()} de ${t.f} pisos en ${DEFS.torre.name} de ${DEFS.torre.f0}? Cuesta $${fmt(c)} (ya descuenta la mitad de lo que valía). Toca otra vez para confirmar.`,true);return}
   if(MULTI(tool)){const d=DEFS[tool],tf=toolFoot(i),f=tf&&tf.f,[fw,fh]=DIM(tool,0),dm=d.max||(d.sz>1?1:0);
     if(dm&&(stats.counts[tool]||0)>=dm){say(dm===1?`${d.name} es único y ya está construido.`:`Ya tienes ${dm}: ${d.name} llegó a su límite.`,true);return}
     if(!f){say(fw===fh?`${d.name} necesita ${fw}×${fh} terrenos libres. Toca la esquina de arriba de un espacio vacío.`:`${d.name} ocupa ${Math.max(fw,fh)} terrenos libres seguidos. Toca el primero de dos terrenos vacíos juntos.`,true);return}

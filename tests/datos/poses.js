@@ -8,3 +8,4 @@ poseSheet:()=>{const looks=[{g:'fam',s:1,shirt:'#e63946',pants:'#3b5a8a',skin:'#
   if(n>.15){x.setTransform(RES,0,0,RES,0,0);x.globalCompositeOperation='lighter';for(const g of sp.glows){x.globalAlpha=Math.min(1,g[3]*n*.85);const r=g[2];x.drawImage(gtex(g[4]||'#ffb86a'),ax+g[0]-r*1.25,ay+g[1]-r*1.25,r*2.5,r*2.5)}x.globalAlpha=1;x.globalCompositeOperation='source-over'}
   out.push(c.toDataURL())}}finally{RIBV=pr}return out},
  ribNames:()=>RIBLV,
+ get RIBV(){return RIBV},nameOf:t=>nameOf(t),spriteInk:(k,L,f,s,nb)=>{const sp=makeSprite({k,s,lv:L,f,b:0},10,10,nb||0),d=sp.c.getContext('2d').getImageData(0,0,sp.c.width,sp.c.height).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>0)n++;return n},

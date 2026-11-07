@@ -121,7 +121,7 @@ function tick(dt,quiet){
   for(const t of S.g){
     if(t.b>0){t.b-=dt;if(t.b<=0){t.b=0;changed=true;if(!quiet)landed(S.g.indexOf(t));if(!quiet&&t.bt>=10)sfx('done');if(!quiet&&t.bt>=10)say(`¡Listo! Se terminó de construir: ${DEFS[t.k].name}.`);if(!quiet&&(t.k==='domo'||DEFS[t.k].obra))momento(S.g.indexOf(t));}}
     if(t.lu>0){t.lu-=dt;if(t.lu<=0){t.lu=0;t.lv=lvOf(t)+1;changed=true;if(!quiet){const i=S.g.indexOf(t);sparkle(i);flashAt(i,.9);confetti(i,40);sfx('levelup');say(`¡Listo! Ahora es ${nameOf(t)}, nivel ${t.lv} de 4.`)}}}
-    if(t.ct>0){t.ct-=dt;if(t.ct<=0){const was=DEFS[t.k].name;t.ct=0;if(!quiet)landed(S.g.indexOf(t));t.k='torre';t.f=DEFS.torre.f0;t.lv=1;delete t.lu;changed=true;if(!quiet){sfx('done');say(`¡Listo! El ${was.toLowerCase()} ya es una Torre Caliza de ${t.f} pisos.`)}}}
+    if(t.ct>0){t.ct-=dt;if(t.ct<=0){const was=DEFS[t.k].name;t.ct=0;if(!quiet)landed(S.g.indexOf(t));t.k='torre';t.f=DEFS.torre.f0;t.lv=1;delete t.lu;changed=true;if(!quiet){sfx('done');say(`¡Listo! El ${was.toLowerCase()} ya es una ${DEFS.torre.name} de ${t.f} pisos.`)}}}
     if(t.ub>0){t.ub-=dt;if(t.ub<=0){t.ub=0;t.f++;changed=true;if(!quiet){const i=S.g.indexOf(t);flashAt(i,.5);confetti(i,14)}if(!quiet)say(`${DEFS[t.k].name} terminado: ahora tiene ${t.f} pisos.`)}}
   }
   if(changed)recompute();else satCalc();
@@ -187,7 +187,7 @@ function tick(dt,quiet){
       if(S.arr[g]>=5){S.arr[g]=0;if(Math.random()<.6)say({
         fam:Math.random()<.4?`Llegó la familia ${sur()} con su perro. Ya preguntaron por el dog park.`:`Se mudó la familia ${sur()} al Distrito. Ya son ${Math.floor(S.v+1e-6)} vecinos.`,
         pro:`Llegó la Ing. ${sur()}, trabaja en Valle y quería vivir cerca.`,
-        est:Math.random()<.5?`Llegaron estudiantes de la UDEM al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Tec. Preguntaron dónde está el Tomates más cercano.`}[g])}
+        est:Math.random()<.5?`Llegaron estudiantes de la UDEM al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Tec. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Tomates'} más cercano.`}[g])}
       if(S.dep[g]>=3){S.dep[g]=0;say({fam:`Una familia se fue del Distrito. ${complaint('fam')}`,pro:`Un profesionista se mudó a otro lado. ${complaint('pro')}`,
         est:`Unos estudiantes se fueron del Distrito. ${complaint('est')}`}[g])}
     }

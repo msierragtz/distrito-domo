@@ -1,8 +1,15 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 6 nov 2026 (artifact v69; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 6 nov 2026 (artifact v70; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Vivienda y negocios con cara propia en el Distrito Ribera (v70)**, porque los jugadores esperaban edificios distintos en el barrio nuevo. Mismo costo, pisos y niveles; solo cambia el dibujo y el nombre. El Domo no cambia.
+  - **Casas de la Ribera** (el edificio): cada edificio de un solo color (ocre, terracota, rosa, turquesa, añil o pistache; uno por edificio, así la calle se ve variada), con zócalo, molduras blancas, postigos, macetas y balcones de herrería. N1 deslavado con rejas, varillas, tinacos negros y tendedero; N2 pintado con toldo en la tiendita y remate; N3 con pérgola, foquitos y bugambilia; N4 con planta baja de cantera con arcos y jardín en la azotea.
+  - **Bodegas del río** (el de ladrillo): ladrillo cálido en 3 tonos, ventanales de arco, letrero pintado de la fábrica y tanque de agua de madera. N1 con un anuncio viejo en el muro ciego; desde N2 herrería verde agua y un mural del Cerro de la Silla al atardecer; N3 balcones y tragaluces; N4 tienda negra con dorado, plantas colgantes y jardín.
+  - **Torre Malecón**: blanca con balcones corridos parejos y muro de vidrio con franja verde agua; en N3–N4 «la vela», una aleta blanca que se ilumina de noche; N4 con alberca y palmera.
+  - Negocios: café (triciclo de pan dulce → café de esquina → tostador en bodega → café terraza al río), restaurante (coctelería → palapa de mariscos → asadero → terraza al río), bar (depósito → cervecería en bodega → salón cumbiero → azotea al río), paletería (aguas frescas con vitroleros → paletería rosa → nevería y raspados → Nevería La Ribereña con cono luminoso), Mercadito de la Ribera (puesto de frutas → mercadito → mercado techado → mercado gourmet) y oficinas (coworking en bodega → corporativo verde). Sin las marcas del Domo.
+  - Proceso: se propusieron con hojas de aprobación (Domo contra Ribera, de día y de noche, `tests/hoja-ribera.py`); la vivienda se rehízo dos veces con lo que dijo Mauricio (primero quedó fea; luego, colores mezclados en una misma fachada).
+  - Pruebas: `tests/ribera-edificios.py` (en el Domo todo sigue igual; en la Ribera su arte y sus nombres; 144 dibujos con tinta de día y de noche; barrio de muestra de 41 edificios con capturas `rib-barrio*.png`); monkey en los dos distritos, opciones, obras, Ribera, transeúntes y tráfico sin errores.
 - **Tráfico de las avenidas sin encimarse (v69)**, tras ver coches montados en los camiones:
   - La causa: los coches «rebasaban» corriéndose apenas 0.13 de casilla, así que pasaban por dentro del camión, y cada vehículo se dibujaba según su centro, así que un coche del carril de atrás podía pintarse encima de un camión del carril de enfrente.
   - Ahora cada avenida tiene dos carriles por sentido (los que ya marcaban las rayas blancas del pavimento) y se circula por la derecha. Camiones y tráileres van por el carril de afuera; los coches, por cualquiera. Nadie entra al espacio de otro: cada quien frena detrás del de enfrente en su carril (y en el de destino si se está cambiando).
