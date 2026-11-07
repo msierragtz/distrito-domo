@@ -1,7 +1,7 @@
 """Hoja de aprobación (v70): vivienda y negocios del Domo contra su versión de la Ribera, niveles 1 a 4, de día y de noche.
 Uso: python3 tests/hoja-ribera.py  → build/capturas/hoja-vivienda.png, hoja-negocios.png, hoja-noche.png"""
 import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from comun import ROOT,BUILD,lanzar
-import asyncio,io,base64
+import asyncio,io,base64,json
 from PIL import Image,ImageDraw,ImageFont,ImageChops
 from playwright.async_api import async_playwright
 CAP=BUILD+'/capturas/'
@@ -57,6 +57,16 @@ async def main():
     for ks,nm,tt in ((V,'hoja-vivienda.png','Vivienda en la Ribera'),(NG,'hoja-negocios.png','Negocios en la Ribera')):
       dd=await get(ks,False);rr=await get(ks,True)
       hoja(nm,[(k,dd[k],rr[k]) for k in ks],DOMO,None,names,tt,'Mismo costo, mismos pisos y niveles; solo cambia cómo se ven y cómo se llaman.')
+    # colores: las cuatro combinaciones de las casas (N2) y los tres ladrillos de las bodegas (N2)
+    u=await pg.evaluate("__dd.ribSheet("+json.dumps([['edificio',2,5,k] for k in (4,5,6,7)]+[['ladrillo',2,5,k] for k in (3,4,5)])+",true,0)")
+    ims=[img(x) for x in u];bx=caja(ims);ims=[i.crop(bx) for i in ims];ims=[i.resize((int(i.width*2),int(i.height*2)),Image.NEAREST) for i in ims]
+    W=sum(i.width for i in ims)+16*8+60;H=max(i.height for i in ims)+110;im=Image.new('RGB',(W,H),(246,242,232));d=ImageDraw.Draw(im)
+    d.text((32,20),'Variedad de color: casas (4 combinaciones) y bodegas (3 ladrillos)',font=F(22,True),fill=(40,36,30))
+    x=32
+    for k,i in enumerate(ims):
+      if k==4:x+=28
+      im.paste(i,(x,H-20-i.height));x+=i.width+16
+    im.save(CAP+'hoja-colores.png');print('ok',CAP+'hoja-colores.png',im.size)
     # noche: solo la Ribera, todo junto
     rr=await get(V+NG,True,1);dd=await get(V+NG,False,1)
     hoja('hoja-noche.png',[(k,dd[k],rr[k]) for k in V+NG],DOMO,None,names,'De noche','Ventanas, foquitos y letreros encendidos.',True)
