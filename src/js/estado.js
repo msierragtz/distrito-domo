@@ -6,8 +6,8 @@ const PARCELS={
   W:{name:'Lote poniente',where:'junto a Celestina',unlock:150},E:{name:'Lote oriente',where:'junto a Ágata',unlock:150},
   NW:{name:'Norte poniente',where:'del otro lado de la carretera',unlock:150},NE:{name:'Norte oriente',where:'del otro lado de la carretera',unlock:150},
   WW:{name:'Poniente lejano',where:'más allá de Celestina',unlock:400},EE:{name:'Oriente lejano',where:'más allá de Ágata',unlock:400},
-  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
-const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21]};
+  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
+const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21],RS:[9,21],RSS:[22,26]};
 const LOANS=[
   {id:'chico',name:'Crédito chico',amt:2000,total:2500,mins:40,req:0},
   {id:'mediano',name:'Crédito mediano',amt:10000,total:13000,mins:40,req:80},

@@ -1,8 +1,9 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 6 nov 2026 (artifact v72; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 6 nov 2026 (artifact v73; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Ajustes de la Ribera (v73)**: los terrenos al sur de la avenida sur ya se pueden comprar (antes no tenían dueño asignado): «Lote sur» (desde 400 vecinos) y «Sur lejano» (desde 1,200), con su letrero de «Se vende»; las partidas guardadas se corrigen solas al cargar. Los trofeos del Domo (Kiosco, Mirador, Centro Cultural y Teleférico) ya no aparecen en el menú de Especiales de la Ribera.
 - **Ocho edificios nuevos (v72)**, escogidos por Mauricio de una lista de ideas y aprobados con hojas de dibujo (`tests/hoja-v72.py`):
   - Vivienda (Domo y Ribera, 4 niveles): **Casa de fraccionamiento** ($120, desde 30 vecinos; 1 piso, se sube a 2 y desde el nivel 3 a 3; 5 vecinos por piso, 70% familias; pide el doble de estacionamiento; obra gris → pintada con cochera → con terraza → remodelada con paneles solares; 4 tonos en el Domo y los 6 colores de la Ribera) y **Usos mixtos** ($450, desde 120; 3 a 6 pisos; estudiantes y profesionistas; su local —farmacia, papelería, lavandería, panadería o tortillería, con letrero de bandera que se enciende— da comercio a 3 cuadras y deja $2/s; tinaco solo en el nivel 1).
   - Servicio: **Cicloestación** ($180, desde 80; estacionamiento a 4 cuadras, 50% más junto a oficinas, escuela o metro; bicis del color del distrito y más ciclistas en la calle).

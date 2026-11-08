@@ -545,8 +545,8 @@ const PARCELS={
   W:{name:'Lote poniente',where:'junto a Celestina',unlock:150},E:{name:'Lote oriente',where:'junto a Ágata',unlock:150},
   NW:{name:'Norte poniente',where:'del otro lado de la carretera',unlock:150},NE:{name:'Norte oriente',where:'del otro lado de la carretera',unlock:150},
   WW:{name:'Poniente lejano',where:'más allá de Celestina',unlock:400},EE:{name:'Oriente lejano',where:'más allá de Ágata',unlock:400},
-  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
-const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21]};
+  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
+const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21],RS:[9,21],RSS:[22,26]};
 const LOANS=[
   {id:'chico',name:'Crédito chico',amt:2000,total:2500,mins:40,req:0},
   {id:'mediano',name:'Crédito mediano',amt:10000,total:13000,mins:40,req:80},
@@ -672,6 +672,8 @@ function bizX(t,x,y,nb){const k=t.k,has=q=>nb.some(n=>n&&n.k===q&&!(n.b>0));
    lo que esté abajo. Las calles lo cruzan con puentes, el malecón luce la orilla y la vista al agua sube la plusvalía. */
 const LECHO=['parque','cancha','dogpark','palma'],PUENTE_MIN=400,LMY=OFF+5;
 // centro del río en cada fila: serpentea de norte a sur
+// en la Ribera, lo que queda al sur de la avenida también se vende (en el Domo ahí está la fábrica)
+const ribParcel=(x,y)=>y>OFF+12?(y<=OFF+15&&x>=3&&x<N-3?'RS':'RSS'):parcelOf(x,y);
 const cxR=y=>15+Math.round(2.4*Math.sin(y/4.6+.6));
 const isRio=t=>!!t&&(t.k==='rio'||t.pu===1||t.lecho===1);
 const rioW=()=>DIST==='ribera'&&S&&S.rio?S.rio.w:0;
@@ -681,7 +683,7 @@ function riberaGame(bono){const r=rng(4242),g=[];
     if(inR){g.push(av?{k:'calle',hw:1,pu:1,rc,s,b:0}:{k:'rio',rc,s,b:0});continue}
     if(av){g.push({k:'calle',hw:1,s,b:0});continue}
     if(y>OFF&&y<OFF+12&&x>=OFF&&x<OFF+16){g.push({k:r()<.07?'arbol':'lote',s,b:0});continue}
-    g.push({k:'ajeno',p:parcelOf(x,y)||undefined,s,b:0})}
+    g.push({k:'ajeno',p:ribParcel(x,y),s,b:0})}
   const at=(x,y)=>g[idx(x,y)],set=(x,y,o)=>{const t=at(x,y);if(t.k==='rio'||t.pu){if(o.k==='calle')g[idx(x,y)]={k:'calle',pu:1,rc:t.rc,s:t.s,b:0};return}g[idx(x,y)]=Object.assign({s:t.s,b:0},o)};
   // calles: una en cada orilla y una que cruza el río con puente
   for(let y=OFF+1;y<OFF+12;y++){set(OFF+3,y,{k:'calle'});set(OFF+13,y,{k:'calle'})}
@@ -782,7 +784,8 @@ function atirDyn(gx,gy){const H=86,Q=(u,v,h)=>{const p=P(gx+u,gy+v);return [p[0]
   ctx.stroke();ctx.restore();
   if(n){for(const u of [-.7,0,1,1.7])for(const v of [.34,.66]){const g=Q(u,v,DKH+2.4);glow(g[0],g[1],6,.4,'#ffd9a0')}const m=Q(.5,.5,H*.5);glow(m[0],m[1],16,.35,'#cfe2ff')}}
 // partidas de v66: el terreno del landmark estaba en la orilla; ahora va sobre el puente de en medio
-function ribFix(){if(DIST!=='ribera'||!S||!S.g)return;const c=idx(cxR(LMY),LMY),t=S.g[c];
+function ribFix(){if(DIST!=='ribera'||!S||!S.g)return;for(let i=0;i<S.g.length;i++){const q=S.g[i];if(q.k==='ajeno')q.p=ribParcel(i%N,Math.floor(i/N))}
+  const c=idx(cxR(LMY),LMY),t=S.g[c];
   if(S.g.some(q=>q.k==='domo')||(t&&t.k==='lotedomo'))return;
   for(let i=0;i<S.g.length;i++)if(S.g[i].k==='lotedomo')S.g[i]={k:'lote',s:S.g[i].s,b:0};
   if(t&&(t.k==='calle'||t.k==='rio'))S.g[c]={k:'lotedomo',pu:1,rc:1,s:1,b:0}}
@@ -854,6 +857,8 @@ function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id o
 // en Ribera: nombres, título y textos propios
 function distBoot(){if(DIST!=='ribera'){for(const k of ['malecon','alberca','parroquia','hotel']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}return}
   Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El emblema de la Ribera: un pilón blanco en A con tirantes, sobre el puente de en medio del río. Sube mucho la satisfacción. Solo hay uno.'});
+  // los trofeos del Domo no van en la Ribera (el menú de especiales se hacía enorme)
+  for(const k of ['kiosco','mirador','cultura','teleferico']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}
   DEFS.lotedomo.name='Terreno del Puente';DEFS.cultura.name='Centro Cultural Ribera';DEFS.museo.name='Museo del Río';SPH.domo=110;
   Object.assign(PARCELS.W,{where:'junto a la calle Sauce'});Object.assign(PARCELS.E,{where:'junto a la calle Álamo'});
   Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
