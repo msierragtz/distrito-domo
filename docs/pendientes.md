@@ -188,6 +188,12 @@ Actualizado el 8 nov 2026 (artifact v74; también hay un .zip para itch.io con e
   - Cafés: Café de carrito → Jim Borbons → Alpha Brew → Dough · Churros Poncho → Starblocks → Prensa Negra → Galería Acero · Pan dulce → Panadería La Espiga → La Pastelería 89 → Éclair · Tamales → Nevería Ordóñez → Té y Matcha → Brunch Domo.
 - **Barra en pestañas y pausa (v40)**, **economía por clientela (v39)**, precios visibles, panel del dinero, monedas, jazz con repertorio, clima y noche viva, temporadas, pulido visual, victoria a los 3,000, guardado seguro, trofeos, Convertir en Torre, Torres de agua, terrenos, grupos de vecinos, efectos de sonido.
 
+## Plan de la auditoría v74 (9 nov 2026)
+Documento completo: «Auditoría Distrito Domo v74» (Claude Docs). Resumen en el proyecto: `claude/distrito-domo-auditoria-v74.md`.
+- H1 (una semana): H1-1 guía de necesidades (el bot que las ignora se queda en 81 vecinos con $450 mil+), H1-2 agua visible (el casual se frena en ~1,400), H1-3 cola de mensajes con prioridad y pestaña explícita (`tabForMsg` manda las quejas a Vivienda), H1-4 `AUTOLOW` con los presupuestos de `OPT.low`, H1-5 caché de sprites (`LASTMAX` 900 < 1,101 al atardecer), H1-6 nube que avisa en vez de apagarse y errores por distrito, H1-7 `#pausebar` tapa `#needs` en celular, H1-8 `misBono` promediado y atajos Shift solo en presentador, H1-9 arranque de la Ribera en 0.48, H1-10 mensajes de llegada variados, H1-11 renombre de marcas reales.
+- H2: registro único de edificios, encargos con obras grandes antes de los 3,000, accesibilidad completa, simulador en Node con umbrales (`tools/sim-node.mjs`), capa fija de edificios, historia en IndexedDB, telemetría con permiso.
+- Herramientas nuevas: `tools/sim-node.mjs` (bot en Node, 4 h de juego en ~10 s), `tests/perf-auditoria.py`, `tests/perf-low.py`, perfil de bot `sinplusvalia` y `DIST=ribera` en `tests/bots/correr.py`.
+
 ## Ruta gráfica (siguientes fases)
 - Fase 0 pendiente: fuente pixel incrustada. En esta sesión no hubo red hacia npm, GitHub ni CDN; hace falta subir los archivos de Press Start 2P y VT323 (woff2 o ttf) para incrustarlos.
 - Fase 3 (juice): hecha en v64.

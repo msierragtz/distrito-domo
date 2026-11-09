@@ -7,14 +7,17 @@ PROF={
  'intermedio':dict(every=9,acts=2,needT=.55,ignore=.15,fill=.92,reserve=100,minLots=3,buy=.3,up=.25,random=.1,water=True,domo=True,smart=False,maxT=4*3600),
  'experto':dict(every=4,acts=3,needT=.7,ignore=0,fill=.88,reserve=150,minLots=4,buy=.7,up=.6,random=0,water=True,domo=True,smart=True,maxT=4*3600,stop=3200),
  'descuidado':dict(every=4,acts=3,needT=.7,ignore=0,fill=.88,reserve=150,minLots=4,buy=.7,up=.6,random=0,water=True,domo=True,smart=True,maxT=7*3600,neglectAt=2500),
+ 'sinplusvalia':dict(every=9,acts=2,needT=.55,ignore=1,fill=.92,reserve=100,minLots=3,buy=.3,up=0,random=.6,water=True,domo=True,smart=False,maxT=4*3600),
  'muy experto':dict(every=2,acts=4,needT=.78,ignore=0,fill=.85,reserve=200,minLots=5,buy=1,up=.9,random=0,water=True,domo=True,smart=True,maxT=9*3600,stop=5000),
 }
 import os
 SEEDS=[int(x) for x in os.environ.get('SEEDS','1,2,3').split(',')]
-JOBS=[('novato',10+s) for s in SEEDS]+[('intermedio',20+s) for s in SEEDS]+[('experto',30+s) for s in SEEDS]+[('muy experto',40+s) for s in SEEDS]+[('descuidado',50+s) for s in SEEDS]
+JOBS=[('novato',10+s) for s in SEEDS]+[('intermedio',20+s) for s in SEEDS]+[('experto',30+s) for s in SEEDS]+[('muy experto',40+s) for s in SEEDS]+[('descuidado',50+s) for s in SEEDS]+[('sinplusvalia',60+s) for s in SEEDS]
 async def one(b,prof,seed):
   pg=await b.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)[:200]))
-  await pg.goto('file://'+BUILD+'/arnes-bots.html');await pg.wait_for_timeout(500);await pg.click('#tcont',force=True);await pg.wait_for_timeout(200)
+  await pg.goto('file://'+BUILD+'/arnes-bots.html');
+  if os.environ.get('DIST'):await pg.evaluate("d=>localStorage.setItem('distritoDomo.distrito',d)",os.environ['DIST']);await pg.reload()
+  await pg.wait_for_timeout(500);await pg.click('#tcont',force=True);await pg.wait_for_timeout(200)
   await pg.evaluate("__dd.setPause(true)")
   cfg=dict(PROF[prof]);
   if os.environ.get('NOSTOP'):cfg.pop('stop',None);cfg['maxT']=max(cfg['maxT'],int(os.environ.get('MAXT','0')))
