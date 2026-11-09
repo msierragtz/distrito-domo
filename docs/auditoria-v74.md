@@ -15,7 +15,7 @@ Documento completo con gráficas y tablas: «Auditoría Distrito Domo v74» en C
 | ID | Mejora | Jugador | Negocio | Esfuerzo (5=bajo) | Riesgo |
 |---|---|---|---|---|---|
 | H1-1 | Guía de 3 pasos de necesidades | 5 | 5 | 3 | 2 |
-| H1-2 | Agua visible (600 vecinos, $25k la primera, aviso que abre Servicios) | 4 | 4 | 4 | 2 |
+| H1-2 | Agua visible (600 vecinos, precio sin cambio en $50,000, aviso que abre Servicios) | 4 | 4 | 4 | 2 |
 | H1-3 | Cola de mensajes con prioridad y pestaña explícita | 4 | 3 | 4 | 2 |
 | H1-4 | AUTOLOW con presupuestos de OPT.low + RES 1 | 4 | 3 | 4 | 2 |
 | H1-5 | Caché de sprites (LASTMAX dinámico, LRU, OUTC por RES) | 3 | 2 | 4 | 2 |
