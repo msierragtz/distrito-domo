@@ -8,7 +8,7 @@ function veladora(x,y,k,ng){px(x-.5,y-1.6,1.2,1.6,'#f2ead8');px(x-.5,y-1.6,1.2,.
   if(NIGHT>.25){px(x-.1,y-2.7,.6,1.1,f>.88?'#fff3b0':'#ffc24a',true);if(!ng)glow(x+.2,y-2.3,4.5+2*f,.6*f,'#ffb347')}else px(x-.1,y-2.4,.5,.7,'#ffb347',true)}
 const XMAS=['#ff3b3b','#ffd84d','#3fd16a','#4fa8ff','#ff8fd0','#ffffff'];
 const blink=(k,s)=>lowMo()||Math.floor(T*1.7+k*.41+s)%3!==0;
-function bulb(x,y,c,on,ng){px(x-.5,y-.5,1.2,1.2,on?c:hexShade(c,-.5),on&&NIGHT>.2);if(on&&!ng&&NIGHT>.3&&!OPT.low&&!AUTOLOW)glow(x+.1,y+.1,3.6,.6,c)}
+function bulb(x,y,c,on,ng){px(x-.5,y-.5,1.2,1.2,on?c:hexShade(c,-.5),on&&NIGHT>.2);if(on&&!ng&&NIGHT>.3&&!lowQ())glow(x+.1,y+.1,3.6,.6,c)}
 // cable colgado entre dos puntos: un trazo (antes, pixel por pixel)
 function wire(a,b,lift,sag,c){ctx.strokeStyle=NIGHT>.3?'#1c2030':c;ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(a[0],a[1]-lift);ctx.quadraticCurveTo((a[0]+b[0])/2,(a[1]+b[1])/2-lift+sag*2,b[0],b[1]-lift);ctx.stroke()}
 // ¿es la noche del Grito? (15 y 16 de septiembre, o mes patrio elegido a mano), de 10 pm a 1 am del juego
@@ -94,7 +94,7 @@ function seasonDeco(t,gx,gy){const se=SEASON_C;if(!se)return;const k=t.k,on=NIGH
     if(se==='patrias'&&(gx+2*gy)%3===0){const so=shadowOf(t),[x,y]=P(gx+.5,gy+.5),top=y-(so?so[1]:60)-2;
       px(x,top-16,.6,16,'#8a8f99');const w=10,h=6,wv=lowMo()?0:Math.sin(T*4+gx)*.5;px(x+.5,top-12+wv,w/3,h,'#1f8a4c',true);px(x+.5+w/3,top-12+wv,w/3,h,'#ffffff',true);px(x+.5+2*w/3,top-12+wv,w/3,h,'#d62828',true);px(x+.5+w/2-1,top-10+wv,2,2,'#8a5a2b',true)}
     else if(se==='muertos'&&sh01(gx,gy,1)<.45){const {F}=footCorners(gx,gy,1,1,.08);for(let q=0;q<3;q++)veladora(F[0]-3+q*2.6,F[1]-.5-(q===1?.8:0),q,q!==1);px(F[0]+4.5,F[1]-2.4,2.2,2.2,'#ff9f1c');px(F[0]+4.9,F[1]-.4,1.4,.8,'#8a5a2b')}
-    else if(se==='navidad'&&(OPT.low?sh01(gx,gy,2)<.35:sh01(gx,gy,2)<.8)){const so=shadowOf(t);if(!so)return;const h=so[1],{L,R,F}=footCorners(gx,gy,1,1,so[0]-.02);
+    else if(se==='navidad'&&(lowQ()?sh01(gx,gy,2)<.35:sh01(gx,gy,2)<.8)){const so=shadowOf(t);if(!so)return;const h=so[1],{L,R,F}=footCorners(gx,gy,1,1,so[0]-.02);
       let q=0;for(const [A,B] of [[L,F],[F,R]])for(let s=(A===F?1:0);s<=3;s++){const f=s/3;bulb(A[0]+(B[0]-A[0])*f,A[1]+(B[1]-A[1])*f-h,XMAS[(q+gx)%XMAS.length],blink(q,gx+gy),q++%2)}}}
 }
 // momentos de temporada: el Grito una vez por noche y año nuevo

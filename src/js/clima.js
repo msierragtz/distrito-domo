@@ -6,7 +6,7 @@ let BOLT=null,BOLTN=6,BOLTT=0;
 function glint(x,y,c,a,s,len){const n=len||7;ctx.globalAlpha=Math.min(1,a*.9);ctx.drawImage(gtex(c),x-9,y-2.5,18,6.5);ctx.fillStyle=c;
   for(let k=0;k<n;k++){const w=(4.2-k*.42)*(.65+.35*Math.sin(T*6+k*1.7+s)),al=a*(1-k/(n+.5));if(al<.01||w<=.2)continue;
     ctx.globalAlpha=al;ctx.fillRect(Math.round((x-w/2+(lowMo()?0:Math.sin(T*3.1+k*.9+s)*.7))*RES)/RES,y+k*1.6,w,.6)}}
-function rainGlints(){if(OPT.low||NIGHT<.25||!WXA)return;const a=WXA*Math.min(1,(NIGHT-.25)*2.2);
+function rainGlints(){if(lowQ()||NIGHT<.25||!WXA)return;const a=WXA*Math.min(1,(NIGHT-.25)*2.2);
   ctx.save();ctx.globalCompositeOperation='lighter';
   for(const [x,y] of streets){if((x*3+y)%4!==0)continue;const [sx,sy]=P(x+.16,y+.5);if(sx<-20||sx>bw+20||sy<-20||sy>bh+30)continue;glint(sx+.5,sy+1.5,'#ffd9a0',a*.85,x*7+y,8)}
   for(const e of EARN.values()){const t=S.g[e.i];if(!t||t.b>0)continue;const [dw,dh]=DIMT(t),[sx,sy]=P(e.i%N+dw/2,Math.floor(e.i/N)+dh/2);if(sx<-30||sx>bw+30||sy<-20||sy>bh+30)continue;

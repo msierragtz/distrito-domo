@@ -25,6 +25,8 @@ function __botRun(cfg){
     if(cfg.mis!==false&&typeof misClaim==='function'&&S.mis&&S.mis.ready.length){for(const id of [...S.mis.ready]){misClaim(id);L.misT=L.misT||{};L.misT[id]=Math.round(L.t0||0)}}
     if(cfg.mis!==false&&typeof misSwap==='function'&&S.mis&&!(S.mis.swapT>0)){for(const tp of ['barrio','vecinos','reto']){const id=S.mis.on[tp],st=id&&S.mis.st[id];if(st&&!S.mis.ready.includes(id)&&(S.mis.clk-(st.t0||0))>900){misSwap(tp);L.swaps=(L.swaps||0)+1;break}}}
     if(cfg.neglectAt&&S.maxV>=cfg.neglectAt){const h=cheapestHome();if(h&&S.$>=(h.nw?costOf(h.k):upCost(S.g[h.i]))){put(h.k,h.i)}return}
+    // v75: el casual que ve la flecha azul del agua le hace caso con probabilidad cfg.hint en cada turno
+    if(cfg.hint&&typeof aguaStep==='function'){aguaStep();if(HINT&&HINT.k==='agua'&&rnd()<cfg.hint&&S.$>=costOf('torreagua')&&put('torreagua',HINT.i)){L.builds++;if(A())return}}
     if(cfg.water&&ok('torreagua')&&(stats.wpen>0||S.v>(stats.wcap||1000)*.9)&&S.$>=costOf('torreagua')+cfg.reserve){const fl=free();if(fl.length&&put('torreagua',fl[Math.floor(rnd()*fl.length)])){L.builds++;if(A())return}}
     // obras grandes: si ya se abrieron y alcanza el dinero, se pone la primera que quepa
     if(cfg.smart&&typeof OBRAS!=='undefined'){for(const k of OBRAS){if(!ok(k)||S.$<costOf(k)*1.15+cfg.reserve)continue;let at=-1;for(let i=0;i<N*N&&at<0;i++){const tf=toolFoot(i,k);if(tf&&footConnected(tf.f))at=i}

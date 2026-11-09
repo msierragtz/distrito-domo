@@ -101,12 +101,17 @@ function save(now){const str=JSON.stringify(serialize());
   try{const cur=localStorage.getItem(KEY);if(cur&&saveN++%12===0)lsPut(KEY+'.respaldo',cur)}catch(e){}
   lsPut(KEY,str,true);CLOUD.push(str,now)}
 /* guardado en la cuenta (claude.ai): la memoria del navegador se puede borrar sola, la cuenta no */
-const CLOUD={ref:null,prevRef:null,ready:false,busy:false,lastT:0,pend:null,fail:0,
-  push(str,now){if(!this.ready)return;this.pend=str;if(now||Date.now()-this.lastT>30000)this.flush()},
+const CLOUD={ref:null,prevRef:null,ready:false,busy:false,lastT:0,pend:null,fail:0,okT:0,down:false,told:false,
+  // v75: si falla, ya no se apaga para toda la sesión: reintenta cada vez más espaciado (5 s, 15 s, 45 s, luego cada 2 min) y avisa una vez
+  wait(){return this.fail?Math.min(120000,5000*Math.pow(3,this.fail-1)):30000},
+  push(str,now){if(!this.ready)return;this.pend=str;if((now&&!this.fail)||Date.now()-this.lastT>this.wait())this.flush()},
   async flush(){if(!this.ready||this.busy||!this.pend)return;const s=this.pend;this.pend=null;this.busy=true;this.lastT=Date.now();
-    try{await this.ref.set({s,t:Date.now(),v:Math.round(S.maxV||0)});this.fail=0}
-    catch(e){const c=e&&e.code;if(c==='unavailable'&&this.fail++<3)this.pend=this.pend||s;else if(c!=='resource_exhausted'&&c!=='unavailable')this.ready=false}
-    finally{this.busy=false}}};
+    try{await this.ref.set({s,t:Date.now(),v:Math.round(S.maxV||0)});this.fail=0;this.okT=Date.now();if(this.down){this.down=false;this.told=false;say('Listo: tu partida ya se guarda otra vez en tu cuenta de Claude.')}}
+    catch(e){this.pend=this.pend||s;this.fail++;this.err=(e&&e.code)||'error';
+      if(this.fail>=3&&!this.told){this.down=true;this.told=true;say('No pude guardar tu partida en tu cuenta de Claude. Sigue guardada en este navegador y lo vuelvo a intentar solo. Si vas a cambiar de aparato, usa «Descargar copia» en la pantalla de inicio.',true,{p:2})}}
+    finally{this.busy=false}},
+  txt(){if(!this.ready)return 'Tu partida se guarda solo en este navegador.';if(this.down)return 'No se ha podido guardar en tu cuenta de Claude; lo sigo intentando.';if(!this.okT)return 'Tu partida se guarda en tu cuenta de Claude.';
+    const m=Math.floor((Date.now()-this.okT)/60000);return `Guardado en tu cuenta de Claude ${m<1?'hace menos de un minuto':m===1?'hace 1 minuto':'hace '+m+' minutos'}.`}};
 // las partidas de demostración nunca pisan la copia «anterior»: ahí queda tu partida real
 function stashPrev(){if(!S||!S.seen||S.demo||(S.maxV||0)<30)return;const str=JSON.stringify(serialize());
   lsPut(KEY+'.anterior',str)

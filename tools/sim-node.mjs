@@ -10,6 +10,7 @@ import vm from 'node:vm';
 const root=join(dirname(fileURLToPath(import.meta.url)),'..');
 const rd=p=>readFileSync(join(root,p),'utf8');
 const PROF={
+  'novato-flecha':{every:22,acts:1,needT:.4,ignore:.5,fill:.97,reserve:60,minLots:2,buy:.05,up:.03,random:.35,water:false,domo:true,smart:false,hint:.5},
   novato:{every:22,acts:1,needT:.4,ignore:.5,fill:.97,reserve:60,minLots:2,buy:.05,up:.03,random:.35,water:false,domo:true,smart:false},
   intermedio:{every:9,acts:2,needT:.55,ignore:.15,fill:.92,reserve:100,minLots:3,buy:.3,up:.25,random:.1,water:true,domo:true,smart:false},
   experto:{every:4,acts:3,needT:.7,ignore:0,fill:.88,reserve:150,minLots:4,buy:.7,up:.6,random:0,water:true,domo:true,smart:true,stop:3200},

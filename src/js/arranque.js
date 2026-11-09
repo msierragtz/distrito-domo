@@ -66,13 +66,15 @@ function start(data){
   const play=fresh=>{
     const nm=$('pname').value.trim().slice(0,20);
     if($('tmusic').checked){JAZZ.pref.on=false;JAZZ.toggle()}else{JAZZ.pref.on=false;JAZZ.setVol(JAZZ.pref.vol)}
+    const veterano=!!((S&&(S.maxV||0)>=300)||riberaUnl());
     if(fresh){stashPrev();S=newGame();walkers=[];EXTRA=[];FUT=null;vozClose();recompute();GKEY='';SPR.clear();LASTSPR.clear()}
     S.name=nm;try{localStorage.setItem('distritoDomo.nombre',nm)}catch(e){}
     TITLE=false;$('title').hidden=true;panX=0;panY=0;showMus();
     const who=nm?`, ${nm}`:'';
-    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`:`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
+    const guia=guiaToca(fresh||!S.seen,veterano);
+    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?(guia?`¡Bienvenido${who}! Te enseño lo básico en 3 pasos: sigue la guía de arriba.`:`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`):`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
+    if(guia||(S.tuto>0&&S.tuto<9))guiaStart(guia?1:S.tuto);
     {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a El Domo.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
-    if(!S.loanTip&&!S.loan){S.loanTip=1;setTimeout(()=>say('Consejo: si te falta dinero para crecer, el botón naranja Crédito, arriba, te presta y lo pagas poco a poco.'),9000)}
     if(S.fromBak){delete S.fromBak;cur+=' Ojo: tu guardada venía dañada y recuperé el respaldo de hace un minuto.'}
     S.seen=1;save();refreshUI(true);
   };
@@ -85,7 +87,7 @@ function start(data){
     if(k==='hc'){SPR.clear();LASTSPR.clear();CARC.clear();RIDGE.length=0;GKEY='';GC=null}applyOpt()};
   $('oLow').onchange=e=>optSet('low',e.target.checked);$('oRm').onchange=e=>optSet('rm',e.target.checked);$('oHc').onchange=e=>optSet('hc',e.target.checked);$('oSe').onchange=e=>{optSet('season',e.target.value);const se=SEASON();say(se==='patrias'?'¡Viva México! El Distrito se viste de verde, blanco y rojo.':se==='muertos'?'Día de Muertos: papel picado y cempasúchil por todo el Distrito.':'Sin decoración de temporada.',true)};
   const optShow=v=>{$('opts').hidden=!v;$('optb').setAttribute('aria-expanded',v);if(v){let L=[];try{L=JSON.parse(localStorage.getItem(KEY+'.errores')||'[]')}catch(e){}
-    $('oErr').textContent=L.length?`Errores registrados en este navegador: ${L.length}. Último: ${L[L.length-1][1]} (línea ${L[L.length-1][2]}, ${new Date(L[L.length-1][0]).toLocaleString('es-MX')}).`:'Sin errores registrados en este navegador.'}};
+    $('oErr').textContent=CLOUD.txt()+' '+(L.length?`Errores registrados en este navegador: ${L.length}. Último: ${L[L.length-1][1]} (línea ${L[L.length-1][2]}, ${new Date(L[L.length-1][0]).toLocaleString('es-MX')}).`:'Sin errores registrados en este navegador.')}};
   $('optb').onclick=e=>{e.stopPropagation();optShow($('opts').hidden)};$('oOk').onclick=()=>optShow(false);
   const renderGuide=()=>{const g=$('guide');const row=k=>{const d=DEFS[k];if(!d||d.hidden)return '';const lk=!S.unl.includes(k);
       return `<div class="it${lk?' lk':''}"><b>${d.name}</b><span class="pr">${lk?(d.unlock===Infinity?'con un encargo':'a los '+d.unlock.toLocaleString('es-MX')+' vecinos'):k==='mejorar'||k==='demoler'||k==='ver'?'':d.cost?'$'+fmt(costOf(k)):'gratis'}</span><p>${infoOf(k)}</p></div>`};
@@ -109,12 +111,13 @@ function start(data){
   if(!JAZZ.pref.on)setTimeout(()=>say('La música está apagada. Tócale al botón ♪ de la derecha o presiona M para encenderla.'),3500);
   addEventListener('keydown',e=>{if(TITLE||e.target&&e.target.tagName==='INPUT')return;if(e.key==='m'||e.key==='M'){JAZZ.toggle();showMus();say(JAZZ.pref.on?'Música encendida.':'Música apagada (tecla M).',true)}if((e.key==='n'||e.key==='N')&&!e.shiftKey){JAZZ.toggleFx();showFx();say(JAZZ.fx.on?'Efectos encendidos.':'Efectos apagados (tecla N).',true)}});
   let musT=0;
-  let last=performance.now(),saveT=0,slowA=1/60,slowT=0;
+  // ahorro automático (v75): se enciende abajo de ~40 cuadros por segundo, dura al menos 15 s y se apaga solo si el aparato ya va casi a 60
+  let last=performance.now(),saveT=0,slowA=1/60,slowT=0,AUTOT=0;
   function loop(now){
     const rdt=(now-last)/1000,dt=(PAUSED&&!TITLE?0:Math.max(0,Math.min(1,rdt)))*TS;last=now;T+=dt;camStep(Math.min(.1,Math.max(0,rdt)));fotoStep(Math.min(.1,Math.max(0,rdt)));followStep(Math.min(.1,Math.max(0,rdt)));
-    if(rdt<1&&!document.hidden){FTA=FTA*.96+rdt*.04;if(!AUTOLOW&&FTA>1/24)AUTOLOW=true;else if(AUTOLOW&&FTA<1/45)AUTOLOW=false}
-    if(!TITLE&&!OPT.low&&!S.slowTip&&rdt<1&&!document.hidden){slowA=slowA*.97+rdt*.03;slowT+=dt;if(slowT>12&&slowA>1/26){S.slowTip=1;say('¿El juego va lento en este aparato? En el botón ⚙ puedes activar "Calidad baja".')}}
-    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt);distStep()}if(!TL)updWalkers(dt);msgStep(dt);refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();
+    if(rdt<1&&!document.hidden){FTA=FTA*.96+rdt*.04;if(!AUTOLOW&&FTA>1/40){AUTOLOW=true;AUTOT=now}else if(AUTOLOW&&FTA<1/58&&now-AUTOT>15000)AUTOLOW=false}
+    if(!TITLE&&!OPT.low&&!S.slowTip&&rdt<1&&!document.hidden){slowA=slowA*.97+rdt*.03;slowT+=dt;if(slowT>12&&slowA>1/26){S.slowTip=1;say(AUTOLOW?'Este aparato va lento: activé el modo ahorro (menos gente en la calle y sin fundidos). Si quieres dejarlo fijo, activa «Calidad baja» en el botón ⚙.':'¿El juego va lento en este aparato? En el botón ⚙ puedes activar «Calidad baja».',false,{p:1})}}
+    if(TITLE){panX=Math.sin(T*.08)*140;panY=Math.cos(T*.06)*50}else if(!PAUSED&&!REAL){tick(dt);histStep(dt);distStep()}if(!TL)updWalkers(dt);msgStep(dt);guiaStep(Math.min(.25,Math.max(0,rdt)));refreshUI();{const r0=performance.now();render();perfStep(performance.now()-r0,rdt)}recFrame();
     loanT+=dt;if(loanT>1){loanT=0;renderLoan();renderMoney();renderMis()}
     musT+=dt;if(musT>.5){musT=0;JAZZ.update({night:NIGHT,sat:stats.sat,ev:S.ev?S.ev.id:null,red:S.$<0,phase:S.phase||1,kiosk:!!S.g.find(t=>t.k==='kiosco'&&!(t.b>0)),vec:S.maxV||0})}
     saveT+=dt;if(saveT>5&&!TITLE){saveT=0;save()}

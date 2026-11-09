@@ -73,7 +73,7 @@ function drawBridge(gx,gy,t){drawRiver(gx,gy,t);const alongX=t.hw||isSt(gx-1,gy)
 function rioDyn(t,gx,gy){const w=rioW();
   if(t.lecho&&w>.5&&!(t.b>0)){ctx.globalAlpha=Math.min(.8,(w-.5)*3);diamond(gx,gy,.02,'#3f84b8');ctx.globalAlpha=1}
   else if(t.dmg){ctx.globalAlpha=.55;diamond(gx,gy,.04,'#7a6440');ctx.globalAlpha=1;const r=rng(t.s+gx);for(let q=0;q<5;q++){const [x,y]=P(gx+.15+r()*.7,gy+.15+r()*.7);px(x,y-1,2,1,'#5a4a30')}}
-  if(w<.12||lowMo()||OPT.low)return;const hw=.1+w*1.45,xa=midR(gy-1,gy),xb=midR(gy,gy+1);
+  if(w<.12||lowMo()||lowQ())return;const hw=.1+w*1.45,xa=midR(gy-1,gy),xb=midR(gy,gy+1);
   for(let q=0;q<3;q++){const f=((T*.28+sh01(gx,gy,q))%1),off=(sh01(gx,gy,q+5)-.5)*1.6*hw,x=xa+(xb-xa)*f+off;if(x<gx||x>gx+1)continue;const [sx,sy]=P(x,gy+f);
     ctx.globalAlpha=.55;px(sx-1,sy,2.5,.7,NIGHT>.4?'#9cc7ea':'#d6ecf9',NIGHT>.4);ctx.globalAlpha=1}}
 

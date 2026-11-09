@@ -8,7 +8,7 @@ function flashDraw(t,gx,gy,i,sz){const f=flashOf(i);if(!f)return;const s=getSpri
 // confeti: papelitos de colores que salen del techo, caen meciéndose y giran
 const CONF_C=['#f26a21','#ffd84d','#ff5d8f','#3fa7d6','#59cd90','#ffffff','#9b5de5'];
 function confetti(i,n){const t=S.g[i];if(!t)return;const [dw,dh]=DIMT(t),[x,y]=P(i%N+dw/2,Math.floor(i/N)+dh/2),so=DEFS[t.k]?shadowOf(t):null,top=y-(so?so[1]:20)-6;
-  n=Math.round(n*(lowMo()?.3:OPT.low||AUTOLOW?.5:1));
+  n=Math.round(n*(lowMo()?.3:lowQ()?.5:1));
   for(let k=0;k<n;k++){const an=-Math.PI/2+(Math.random()-.5)*2.4,sp=24+Math.random()*34;FW.push({x:x+(Math.random()-.5)*8*dw,y:top,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.8+Math.random()*1.4,c:CONF_C[k%CONF_C.length],cf:1,ph:Math.random()*6.3})}}
 
 // obra en construcción: cimientos, luego la imagen terminada sube piso por piso con andamio, malla y columnas; al final se quita el andamio
@@ -42,8 +42,8 @@ function buildAnim(t,gx,gy,i,dm){const d=DEFS[t.k];if(!d)return;const [dw,dh]=dm
 let CINE=null,TS=1,CAMG=null,INER=null,ZA=null;
 const MOMSUB={beis:'Ya hay estadio: cada 8 minutos hay juego.',museo:'El Museo del Domo abre sus puertas.',rasca:'El edificio más alto del Distrito ya se ve desde la sierra.',bosque:'Sombra y aire fresco para todo el Distrito.',plazacom:'Abrió la Plaza comercial: todo el Distrito va de compras.',metro:'Llegó el Metro: menos coches y más vecinos.'};
 function camGlide(x1,y1,dur){if(lowMo())return;CAMG={x0:panX,y0:panY,x1,y1,t:0,dur}}
-function camTo(i,dur){const t=S.g[i],[dw,dh]=DIMT(t),[a,b]=rot(i%N+dw/2,Math.floor(i/N)+dh/2),so=shadowOf(t),hh=so?so[1]:30;
-  const x1=-(a-b)*TW/2*zoom,y1=(N*TH/2-30-(a+b)*TH/2+hh*.45)*zoom;camGlide(x1,y1,dur)}
+function camTo(i,dur,dy){const t=S.g[i],[dw,dh]=DIMT(t),[a,b]=rot(i%N+dw/2,Math.floor(i/N)+dh/2),so=shadowOf(t),hh=so?so[1]:30;
+  const x1=-(a-b)*TW/2*zoom,y1=(N*TH/2-30-(a+b)*TH/2+hh*.45)*zoom+(dy||0);camGlide(x1,y1,dur)}
 function momento(i){const t=S.g[i];if(TITLE||!t||!DEFS[t.k])return;const dom=t.k==='domo',el=$('cine');
   camTo(i,1.4);flashAt(i,1.6);confetti(i,dom?90:60);celebrate(dom?6:4);sfx('phase');
   CINE={t:0,dur:dom?5.4:4.2,slow:dom&&!lowMo()};
@@ -74,15 +74,15 @@ function drawFireworks(){
   const dt=Math.min(.05,T-FWlast);FWlast=T;
   // noche del Grito: cohetes verde, blanco y rojo de vez en cuando
   // año nuevo: cohetes de todos colores
-  if(ANYO()&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*.45){const cx=bw*(.1+Math.random()*.8),cy=bh*(.06+Math.random()*.3),col=CONF_C[Math.floor(Math.random()*CONF_C.length)],np=OPT.low?14:30;
+  if(ANYO()&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*.45){const cx=bw*(.1+Math.random()*.8),cy=bh*(.06+Math.random()*.3),col=CONF_C[Math.floor(Math.random()*CONF_C.length)],np=lowQ()?14:30;
     for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=18+Math.random()*24;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.2+Math.random()*.5,c:col})}}
   // el Grito: los cohetes salen sobre El Domo
-  if(GRITO_XY&&!TITLE&&!lowMo()&&Math.random()<dt*2.2){const cx=GRITO_XY[0]+(Math.random()-.5)*90,cy=GRITO_XY[1]-20-Math.random()*60,col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=OPT.low?16:36;
+  if(GRITO_XY&&!TITLE&&!lowMo()&&Math.random()<dt*2.2){const cx=GRITO_XY[0]+(Math.random()-.5)*90,cy=GRITO_XY[1]-20-Math.random()*60,col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=lowQ()?16:36;
     for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=22+Math.random()*28;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.4+Math.random()*.6,c:col})}}
-  if(SEASON_C==='patrias'&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*(GRITO()?.5:.08)){const cx=bw*(.15+Math.random()*.7),cy=bh*(.08+Math.random()*.25),col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=OPT.low?14:28;
+  if(SEASON_C==='patrias'&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*(GRITO()?.5:.08)){const cx=bw*(.15+Math.random()*.7),cy=bh*(.08+Math.random()*.25),col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=lowQ()?14:28;
     for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=20+Math.random()*22;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.2+Math.random()*.5,c:col})}}
   if(FWQ>0){FWQ-=dt;if(Math.random()<dt*2.2){const cx=bw*(.15+Math.random()*.7),cy=bh*(.1+Math.random()*.3),col=['#f26a21','#ffd84d','#ff5d8f','#3fa7d6','#59cd90','#ffffff'][Math.floor(Math.random()*6)];
-    const np=lowMo()?10:OPT.low?16:34;for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=22+Math.random()*26;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.3+Math.random()*.5,c:col})}}}
+    const np=lowMo()?10:lowQ()?16:34;for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=22+Math.random()*26;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.3+Math.random()*.5,c:col})}}}
   FW=FW.filter(p=>(p.l-=dt)>0);
   for(const p of FW){if(p.cf){p.vy=Math.min(16,p.vy+26*dt);p.vx*=.96;p.x+=(p.vx+Math.sin(T*6+p.ph)*9)*dt;p.y+=p.vy*dt;ctx.globalAlpha=Math.min(1,p.l*1.5);ctx.fillStyle=p.c;const w=Math.sin(T*9+p.ph)>0;ctx.fillRect(Math.round(p.x),Math.round(p.y),w?2:1,w?1:2);continue}p.vy+=(p.dust?4:30)*dt;p.vx*=.985;p.x+=p.vx*dt;p.y+=p.vy*dt;ctx.globalAlpha=Math.min(1,p.l);ctx.fillStyle=p.c;ctx.fillRect(Math.round(p.x),Math.round(p.y),p.l>.6?2:1,p.l>.6?2:1)}
   ctx.globalAlpha=1;

@@ -2,7 +2,7 @@
 const cv=document.getElementById('cv');let ctx=cv.getContext('2d');
 let zoom=window.innerWidth<600?2:3,panX=0,panY=0,bw=0,bh=0,cam={ox:0,oy:0},T=0,hover=-1,tool='edificio',WC=0,SEED=0;
 let ROT=0,GV=0,HEAT=false,TITLE=true,PAUSED=false;
-function setPause(v){PAUSED=v;const b=document.getElementById('pauseb');if(b){b.setAttribute('aria-pressed',v);b.textContent=v?'▶':'❚❚';b.setAttribute('aria-label',v?'Seguir (barra espaciadora o P)':'Pausa (barra espaciadora o P)')}const pb=document.getElementById('pausebar');if(pb)pb.hidden=!v;if(v&&S)save()}
+function setPause(v){PAUSED=v;const b=document.getElementById('pauseb');if(b){b.setAttribute('aria-pressed',v);b.textContent=v?'▶':'❚❚';b.setAttribute('aria-label',v?'Seguir (barra espaciadora o P)':'Pausa (barra espaciadora o P)')}const pb=document.getElementById('pausebar');if(pb){pb.hidden=!v;let tc=false;try{tc=matchMedia('(pointer:coarse)').matches}catch(e){}pb.textContent=tc?'EN PAUSA · toca ▶ para seguir':'EN PAUSA · toca ▶ o la barra espaciadora para seguir'}if(v&&S)save()}
 /* rotación de 90° en 90°: mundo -> vista */
 const rot=(x,y,r=ROT)=>r===0?[x,y]:r===1?[N-y,x]:r===2?[N-x,N-y]:[y,N-x];
 const Q=(vx,vy)=>[cam.ox+(vx-vy)*TW/2,cam.oy+(vx+vy)*TH/2];

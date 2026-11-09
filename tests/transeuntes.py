@@ -31,7 +31,8 @@ async def main():
     await pg.evaluate("for(const s of ['#dialog','#needs','#pausebar'])document.querySelectorAll(s).forEach(e=>e.style.visibility='hidden')")
     await pg.evaluate("__dd.zoomAt(3,640,400)");await pg.wait_for_timeout(700);await pg.evaluate("__dd.camTo(__dd.idx(14,12),.01)")
     r=await caso(pg,.5,None);print('tarde',r)
-    ok(r['n']>=40,f"hay gente en la calle ({r['n']})")
+    lw=await pg.evaluate("__dd.lowQ()")  # v75: si el aparato va lento entra el ahorro automático y el tope baja a 18
+    ok(r['n']>=(18 if lw else 40),f"hay gente en la calle ({r['n']}{', ahorro automático' if lw else ''})")
     ok(r['dest']>=r['n']*.4,'la mayoría va a algún lado')
     ok(any(k in r['c'] for k in ('enter','exit','in','stay')),'entran y salen de los edificios')
     ok(sum(1 for e in r['ex'] if e.startswith('cart'))>=1,'carritos de elotes o raspados de día')

@@ -55,7 +55,7 @@ function bfs(a,b){if(a===b)return [a];BP.fill(-1);BP[a]=a;let h=0,t=0;BQ[t++]=a;
 
 /* ===== quién sale, de dónde y a dónde ===== */
 function wantN(){const h=hora();let f=h<5||h>=23?.3:h<7?.6:h<17?1:h<22?1.15:.6;const ev=evId();if(ev==='lluvia')f*=.65;if(ev==='calor')f*=.75;if(ev==='bazar'||ev==='clasico')f*=1.15;if(beisOn())f*=1.2;
-  const cap=OPT.low?18:innerWidth<700?55:80;return Math.max(0,Math.min(cap,Math.floor(Math.min(S.v/6,streets.length*1.3)*f)))}
+  const cap=lowQ()?18:innerWidth<700?55:80;return Math.max(0,Math.min(cap,Math.floor(Math.min(S.v/6,streets.length*1.3)*f)))}
 function homeOf(){const H=WK.H;if(!H.length)return null;let r=Math.random()*WK.Htot;for(const e of H){r-=e.cap;if(r<=0)return e}return H[H.length-1]}
 function grpOf(e){const b=stats.Bi&&stats.Bi.get(e.i),v=Math.max(1,S.v),sh=(b&&b.sh)||{fam:S.pop.fam/v,pro:S.pop.pro/v,est:S.pop.est/v};let r=Math.random();for(const g of G3){r-=sh[g]||0;if(r<=0)return g}return 'fam'}
 function pickDest(g,home,w){const fz=FASE[faseH(hora())],ev=evId(),G=GUST[g]||GUST.fam;let tot=0;const c=[];
@@ -210,7 +210,7 @@ function futStep(dt){const h=hora(),on=DIST==='ribera'&&!TITLE&&S.v>=20&&rioW()<
 
 /* ===== el ciclo ===== */
 let SPAWNT=0,SCHT=0;
-function updWalkers(dt){if(!S||!streets)return;wkBuild();WBUD=OPT.low?2:innerWidth<700?5:8;
+function updWalkers(dt){if(!S||!streets)return;wkBuild();WBUD=lowQ()?2:innerWidth<700?5:8;
   const want=wantN();
   if(walkers.length<want*.5&&want>4){for(let k=0;k<want*2&&walkers.length<want;k++){const w=spawn(true);if(w)walkers.push(w)}}
   SPAWNT-=dt;if(walkers.length<want&&SPAWNT<=0){const w=spawn(false);if(w)walkers.push(w);SPAWNT=.35}

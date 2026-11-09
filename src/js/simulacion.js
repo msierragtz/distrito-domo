@@ -154,7 +154,7 @@ function tick(dt,quiet){
   const wasPos=S.$>=0;S.$+=stats.income*dt;if(!quiet&&!wasPos&&S.$>=0)sfx('recover');S.redT=S.$<0?(S.redT||0)+dt:0;
   if(!quiet&&S.loan&&!S.loan.re&&S.redT>180&&!S.reMsg){S.reMsg=1;say('Llevas 3 minutos en números rojos. Banregio te ofrece reestructurar tu crédito: abre Crédito y paga menos por segundo.',true)}
   if(S.redT===0)S.reMsg=0;
-  if(!quiet&&wasPos&&S.$<0)say('¡Números rojos! El mantenimiento cuesta más de lo que entra. Los vecinos ya lo notaron.',true);
+  if(!quiet&&wasPos&&S.$<0)say('¡Números rojos! El mantenimiento cuesta más de lo que entra. Los vecinos ya lo notaron.',true,{p:2});
   S.clock=(S.clock+dt)%DAY;
   if(S.ev){S.ev.t-=dt;if(S.ev.t<=0){const e=EVENTS.find(e=>e.id===S.ev.id);S.ev=null;S.evNext=Math.max(90,150+Math.random()*90-6*(S.lots||0));if(e.id==='clasico'&&S.mis&&S.mis.fx.clas&&!S.mis.st.clasico){delete S.mis.fx.clas;if(!quiet)say('El Clásico dejó 50% más en los negocios. ¡Buen negocio!')}recompute();if(!quiet)say(`Terminó: ${e.name}. Todo vuelve a la normalidad.`)}}
   else if(S.maxV>=20){S.evNext=(S.evNext??120)-dt;if(S.evNext<=0){const fe=S.evForce&&EVENTS.find(q=>q.id===S.evForce),e=fe||(stats.wpen>0&&Math.random()<.6?EVENTS.find(q=>q.id==='agua'):EVENTS[Math.floor(Math.random()*EVENTS.length)]);S.evForce=null;S.ev={id:e.id,t:e.dur};recompute();if(!quiet){sfx('event');say(e.msg,true)}}}
@@ -175,16 +175,16 @@ function tick(dt,quiet){
   if(!quiet)S.playT=(S.playT||0)+dt;
   // aviso antes de que falte el agua: a 250 vecinos del límite y otra vez a 80; cada torre nueva sube el límite y rearma el aviso
   if(!quiet&&S.unl.includes('torreagua')){const wc=stats.wcap||1000,left=wc-S.v;
-    if(left<=250&&left>80&&(S.wWarn||0)<wc){S.wWarn=wc;sfx('event');markNew('torreagua');say(`El agua del Distrito alcanza para ${wc.toLocaleString('es-MX')} vecinos y ya van ${Math.floor(S.v).toLocaleString('es-MX')}. Construye una Torre de agua (pestaña Servicios) antes de que sea demasiado tarde: sin agua la gente se enoja y empieza a irse.`,true)}
-    else if(left<=80&&left>0&&(S.wWarn2||0)<wc){S.wWarn2=wc;sfx('event');markNew('torreagua');say(`¡Ya casi no hay agua! Faltan ${Math.max(1,Math.ceil(left))} vecinos para llegar al límite de ${wc.toLocaleString('es-MX')}. Construye una Torre de agua ya.`,true)}}
-  if(!quiet&&stats.wpen>0&&!S.wMsg){S.wMsg=1;say(`Ya no alcanza el agua: con más de ${(stats.wcap||1000).toLocaleString('es-MX')} vecinos baja la presión y hay más cortes de agua. Construye otra Torre de agua para surtir a 1,000 vecinos más.`,true)}
-  else if(!quiet&&stats.wpen>0&&S.wMsg===2&&S.v>(stats.wcap||1000)+50){S.wMsg=1;say(`Ya son más vecinos que agua: tus torres surten a ${(stats.wcap||1000).toLocaleString('es-MX')}. Construye otra Torre de agua para 1,000 más.`,true)}
+    if(left<=250&&left>80&&(S.wWarn||0)<wc){S.wWarn=wc;sfx('event');markNew('torreagua');say(`El agua del Distrito alcanza para ${wc.toLocaleString('es-MX')} vecinos y ya van ${Math.floor(S.v).toLocaleString('es-MX')}. Construye una Torre de agua antes de que sea demasiado tarde: sin agua la gente se enoja y empieza a irse. La flecha azul del mapa te marca dónde cabe; toca este mensaje para elegirla.`,true,AGUA_O)}
+    else if(left<=80&&left>0&&(S.wWarn2||0)<wc){S.wWarn2=wc;sfx('event');markNew('torreagua');say(`¡Ya casi no hay agua! Faltan ${Math.max(1,Math.ceil(left))} vecinos para llegar al límite de ${wc.toLocaleString('es-MX')}. Construye una Torre de agua ya: toca este mensaje y ponla donde marca la flecha azul.`,true,AGUA_O)}}
+  if(!quiet&&stats.wpen>0&&!S.wMsg){S.wMsg=1;say(`Ya no alcanza el agua: con más de ${(stats.wcap||1000).toLocaleString('es-MX')} vecinos baja la presión y hay más cortes de agua. Construye otra Torre de agua para surtir a 1,000 vecinos más (toca este mensaje).`,true,AGUA_O)}
+  else if(!quiet&&stats.wpen>0&&S.wMsg===2&&S.v>(stats.wcap||1000)+50){S.wMsg=1;say(`Ya son más vecinos que agua: tus torres surten a ${(stats.wcap||1000).toLocaleString('es-MX')}. Construye otra Torre de agua para 1,000 más (toca este mensaje).`,true,AGUA_O)}
   if(stats.wpen===0&&S.wMsg===1&&(stats.wcap||1000)>1000){S.wMsg=2;if(!quiet)say('¡La nueva Torre de agua ya surte al Distrito! Regresó la presión.',true)}
   if(S.pvMsg&&!quiet){S.pvMsg=0;say('Cambió la plusvalía: ahora cada barrio se mide por cuatro cosas a la vez (verde, comercio, estacionamiento y dog park). Tus mejoras se quedan; para el nivel 4 hace falta un barrio completo.',true)}
   if(!S.lotMsg&&S.maxV>=LOT_UNLOCK){S.lotMsg=1;if(!quiet)say(`¡Ya puedes expandir el Distrito! Toca un terreno gris con letrero de SE VENDE. El primero cuesta $${fmt(lotPrice())}.`)}
   S.parMsg=S.parMsg||[];for(const p in PARCELS){const P_=PARCELS[p];if(P_.unlock>LOT_UNLOCK&&S.maxV>=P_.unlock&&!S.parMsg.includes(p)&&S.g.some(t=>isParcel(t)&&t.p===p)){S.parMsg.push(p);if(!quiet){sfx('unlock');say(`¡Nuevo terreno a la venta: ${P_.name}, ${P_.where}! Busca su letrero de SE VENDE.`)}}}
   for(const k of ORDER){
-    if(!S.unl.includes(k)&&S.maxV>=DEFS[k].unlock&&DEFS[k].unlock<Infinity){S.unl.push(k);if(!quiet){if(DEFS[k].trophy){celebrate(7);sfx('phase');say(`¡TROFEO! Con ${DEFS[k].unlock.toLocaleString('es-MX')} vecinos te ganaste el ${DEFS[k].name}. Es gratis: búscalo en la barra y ponlo donde quieras.`,true)}else{sfx('unlock');say(`¡Nuevo! Ya puedes construir: ${DEFS[k].name}.`)}markNew(k)}}
+    if(!S.unl.includes(k)&&S.maxV>=DEFS[k].unlock&&DEFS[k].unlock<Infinity){S.unl.push(k);if(!quiet){if(DEFS[k].trophy){celebrate(7);sfx('phase');say(`¡TROFEO! Con ${DEFS[k].unlock.toLocaleString('es-MX')} vecinos te ganaste el ${DEFS[k].name}. Es gratis: búscalo en la barra y ponlo donde quieras.`,true)}else if(k==='torreagua'){sfx('unlock');say(`¡Nuevo! Torre de agua (pestaña Servicios). El agua del Distrito alcanza para ${(stats.wcap||1000).toLocaleString('es-MX')} vecinos y cada torre surte a 1,000 más: ponla antes de llegar al límite. Toca este mensaje para elegirla.`,false,AGUA_O)}else{sfx('unlock');say(`¡Nuevo! Ya puedes construir: ${DEFS[k].name}.`,false,{tool:k})}markNew(k)}}
   }
   misStep(dt,quiet);
   // mensajes de quién llega y quién se va
@@ -196,24 +196,26 @@ function tick(dt,quiet){
       if(S.arr[g]>=5){S.arr[g]=0;if(Math.random()<.6)say({
         fam:Math.random()<.4?`Llegó la familia ${sur()} con su perro. Ya preguntaron por el dog park.`:`Se mudó la familia ${sur()} al Distrito. Ya son ${Math.floor(S.v+1e-6)} vecinos.`,
         pro:`Llegó la Ing. ${sur()}, trabaja en Valle y quería vivir cerca.`,
-        est:Math.random()<.5?`Llegaron estudiantes de la UDEM al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Tec. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Tomates'} más cercano.`}[g])}
-      if(S.dep[g]>=3){S.dep[g]=0;say({fam:`Una familia se fue del Distrito. ${complaint('fam')}`,pro:`Un profesionista se mudó a otro lado. ${complaint('pro')}`,
-        est:`Unos estudiantes se fueron del Distrito. ${complaint('est')}`}[g])}
+        est:Math.random()<.5?`Llegaron estudiantes de la UDEM al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Tec. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Tomates'} más cercano.`}[g],false,{p:0})}
+      if(S.dep[g]>=3){S.dep[g]=0;const q=complaint(g);say({fam:`Una familia se fue del Distrito. ${q}`,pro:`Un profesionista se mudó a otro lado. ${q}`,est:`Unos estudiantes se fueron del Distrito. ${q}`}[g],false,{p:0,tab:CTAB})}
     }
-    S.hintT=(S.hintT||0)+dt;if(S.hintT>25){S.hintT=0;if(sat<.75&&S.v>3)say(complaint())}
+    S.hintT=(S.hintT||0)+dt;if(S.hintT>25){S.hintT=0;if(sat<.75&&S.v>3){const q=complaint();say(q,false,{p:1,tab:CTAB})}}
   }
 }
 /* la queja más urgente: dice qué falta y cuántos edificios no lo tienen cerca */
 const COMTXT={fam:'Tomates, restaurante, pádel, plaza, escuela o cancha',pro:'café, Tomates, restaurante, pádel, oficinas o bar',est:'café, Tomates, bar, oficinas o plaza'},COMNEW={fam:['unas','paleteria','boliche','cine'],pro:['barber','unas','gym','cine','golf'],est:['barber','paleteria','boliche','cine']};
 const NEEDTXT={verde:['área verde','globito verde','parque, plaza o dog park'],com:['comercio','globito naranja','café, Tomates Market o restaurante'],park:['estacionamiento','globito azul','estacionamiento o cicloestación'],dog:['dog park','globito café','dog park']};
+// v75: CTAB = la pestaña donde está lo que falta (al tocar la queja se abre esa y no la que adivine el texto)
+let CTAB=null;const AGUA_O={p:2,tool:'torreagua',hint:1};
 function complaint(g){
-  const B=stats.B||[];
-  if(S.$<0)return 'Dicen que el Distrito se ve descuidado: sal de números rojos.';
+  const B=stats.B||[];CTAB=null;
+  if(S.$<0)return 'Dicen que el Distrito se ve descuidado: sal de números rojos.';CTAB='ser';
   if(stats.nuis>.08&&g!=='est')return 'Hay quejas por las fiestas de los estudiantes. Una caseta las controla, aunque a los estudiantes no les gusta tenerla cerca.';
   if(g&&stats.dis&&stats.dis[g]>.05)return `A las ${GNAME[g]} no les gusta vivir junto a ${g==='fam'?'bares y oficinas':'casetas'}.`;
   const cnt={verde:0,com:0,park:0,dog:0};for(const b of B)if(b.worst<.55&&b.wk)cnt[b.wk]++;
   const k=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];
   const who={fam:'Las familias',pro:'Los profesionistas',est:'Los estudiantes'}[g]||'Los vecinos';
+  if(cnt[k]>0)CTAB=k==='com'?'neg':'ser';
   if(cnt[k]>0&&k==='com'){const gc={fam:0,pro:0,est:0};for(const b of B)if(b.worst<.55&&b.wk==='com'&&b.wg)gc[b.wg]++;const gg=g&&gc[g]?g:Object.keys(gc).sort((a,b)=>gc[b]-gc[a])[0];
     const ex=COMNEW[gg].filter(q=>S.unl.includes(q)).map(q=>DEFS[q].name.toLowerCase());return `A los ${GNAME[gg]==='familias'?'papás':GNAME[gg]} de ${cnt[k]===1?'un edificio':cnt[k]+' edificios'} les falta su comercio: pon ${COMTXT[gg]}${ex.length?', '+ex.join(', '):''} a unas cuadras (globito naranja).`}
   if(cnt[k]>0){const T=NEEDTXT[k];return `${who} se quejan: ${cnt[k]===1?'hay un edificio':'hay '+cnt[k]+' edificios'} sin ${T[0]} cerca. Búscalos por el ${T[1]} y pon ${T[2]} a unas cuadras.`}

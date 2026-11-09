@@ -111,11 +111,11 @@ function drawBig(c){const [cx,cy]=P(c.fx,c.fy),V=VEH[c.type];
   const half=V.L/2,fxF=c.fx+c.dir*half;
   if(NIGHT>.3&&c.type==='bus'){const [sx,sy]=P(fxF,c.fy);glow(sx,sy-8,4,.6,'#ffb43a')}
   // humo del tráiler
-  if(c.type==='trailer'&&!lowMo()&&!OPT.low){const sg=c.dir,[x,y]=P(c.fx+sg*(half-.34)-sg*.02,c.fy+.15),col=mx('#8a8a8a','#4a4e66',NIGHT*.8);
+  if(c.type==='trailer'&&!lowMo()&&!lowQ()){const sg=c.dir,[x,y]=P(c.fx+sg*(half-.34)-sg*.02,c.fy+.15),col=mx('#8a8a8a','#4a4e66',NIGHT*.8);
     for(let k=0;k<4;k++){const p=((T*.9+k/4+c.sp*7)%1),a=(1-p)*.42;ctx.globalAlpha=a;ctx.fillStyle=col;ctx.beginPath();ctx.arc(x-sg*p*9,y-13-p*7,1+p*2.6,0,7);ctx.fill()}ctx.globalAlpha=1}}
 // luces: faros y calaveras; freno (más rojo), direccional (ámbar parpadeando) del lado al que se cambia
 function carLights(c,L,hw){const fx=c.fx+c.dir*L/2,bxv=c.fx-c.dir*L/2,[x,y]=P(fx,c.fy),[bx,by]=P(bxv,c.fy),n=NIGHT>.3;
-  if(n){const [ax,ay]=P(fx+c.dir*(c.type?.7:.55),c.fy);glow(x,y-2,c.type?6:5,.7,'#fff1c8');if(!OPT.low){const ga=ctx.globalAlpha;ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=Math.min(1,.5*NIGHT)*ga;ctx.translate((x+ax)/2,(y+ay)/2);ctx.rotate(Math.atan2(ay-y,ax-x));ctx.drawImage(gtex('#ffe3a6'),c.type?-14:-11,c.type?-4.5:-3.5,c.type?28:22,c.type?9:7);ctx.restore()}}
+  if(n){const [ax,ay]=P(fx+c.dir*(c.type?.7:.55),c.fy);glow(x,y-2,c.type?6:5,.7,'#fff1c8');if(!lowQ()){const ga=ctx.globalAlpha;ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=Math.min(1,.5*NIGHT)*ga;ctx.translate((x+ax)/2,(y+ay)/2);ctx.rotate(Math.atan2(ay-y,ax-x));ctx.drawImage(gtex('#ffe3a6'),c.type?-14:-11,c.type?-4.5:-3.5,c.type?28:22,c.type?9:7);ctx.restore()}}
   for(const s of [-1,1]){const [rx,ry]=P(bxv,c.fy+s*hw);if(c.brk||n){px(rx-.5,ry-(c.type?3:2.4),1,.8,c.brk?'#ff2a1f':'#b3261e',true);if(c.brk||n)glow(rx,ry-2,c.brk?(n?4:2.6):2.2,c.brk?.8:.5,'#ff3b2f')}}
   const bl=c.chg?Math.sign(LANEY[c.dir][c.chg.to]-LANEY[c.dir][c.chg.from]):c.go>0?Math.sign(LANEY[c.dir][1]-LANEY[c.dir][0]):0;
   if(bl&&(T*3.2)%1<.55)for(const xe of [fx,bxv]){const [qx,qy]=P(xe,c.fy+bl*hw);px(qx-.5,qy-(c.type?3.6:2.6),1,.9,'#ffb020',true);glow(qx,qy-2.4,2.6,.8,'#ffb020')}}
