@@ -68,7 +68,7 @@ Para una versión nueva:
 1. Cambiar lo que haga falta en `src/`.
 2. `npm run build` y abrir `dist/distrito-domo.html` en el navegador.
 3. `npm test`.
-4. Subir `version` en `package.json` (0.72 → 0.73 = v73), hacer commit con lo que cambió.
+4. Subir `version` en `package.json` (0.73 → 0.74 = v74), hacer commit con lo que cambió.
 5. Publicar `dist/distrito-domo.html` en el artifact y, si toca, `npm run itch` para itch.io.
 
 `dist/distrito-domo.html` sí se guarda en git, para que siempre esté a la mano la última versión jugable.

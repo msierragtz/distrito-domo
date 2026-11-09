@@ -1,7 +1,7 @@
 
 /* ---------- arranque ---------- */
 function prep(d){
-  S=d;S.dist=DIST;ribFix();fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
+  S=d;S.dist=DIST;ribFix();parFix();fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
   // hitos retirados: se devuelven como terreno y se reembolsa la mitad
   {let ref=0;const old={tim:15000,mercado:60000,grandomo:200000};const live=i=>{const a=S.g[i];return a&&MULTI(a.k)&&!old[a.k]};for(let i=0;i<S.g.length;i++){const t=S.g[i];if(t.k==='reserva'||(t.k==='part'&&!live(t.a))||old[t.k]){if(old[t.k])ref+=old[t.k]/2;S.g[i]={k:'lote',s:t.s||1,b:0}}}if(ref)S.$+=ref}
   if(!S.g.some(t=>t.k==='lotedomo'||t.k==='domo')){let i=idx(OFF+8,OFF+8);if(!(S.g[i].k==='lote'||S.g[i].k==='arbol'))i=S.g.findIndex((t,j)=>(t.k==='lote'||t.k==='arbol')&&connected(j%N,Math.floor(j/N)));if(i>=0)S.g[i]={k:'lotedomo',s:1,b:0}}
@@ -9,7 +9,9 @@ function prep(d){
   if(S.migG){const mx=stats.mix,t=mx.fam+mx.pro+mx.est;if(t>0){const v=S.v;for(const g of G3)S.pop[g]=v*mx[g]/t;fixPop()}delete S.migG;recompute()}
 }
 function start(data){
-  distBoot();const viajando=viajeBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
+  distBoot();const viajando=viajeBoot();
+  // la copia más reciente gana: la que dejó una recarga en caliente puede ser vieja (de antes de un viaje entre distritos)
+  {const loc=load(),hot=data&&data.g&&data.g.length===N*N&&(data.dist||'domo')===DIST?data:null;prep(hot&&(!loc||(hot.t||0)>(loc.t||0))?hot:(loc||newGame()))}pruneDamaged();distUI();
   buildTools();resize();
   refreshUI(true);
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
@@ -22,7 +24,7 @@ function start(data){
   const adopt=d=>{stashPrev();
     prep(d);walkers=[];EXTRA=[];FUT=null;vozClose();GKEY='';GC=null;SPR.clear();LASTSPR.clear();buildTools();refreshUI(true);
     hasSave=!!S.seen;$('pname').value=S.name||$('pname').value;showTitle();
-    try{localStorage.setItem(KEY,JSON.stringify(serialize()))}catch(e){}};
+    lsPut(KEY,JSON.stringify(serialize()),true)};
   // buscar la partida guardada en la cuenta antes de dejar jugar, para no empezar encima de ella
   const framed=!!(window.claude&&window.claude.use);
   if(framed){$('tcont').disabled=true;$('tnew').disabled=true;status('Buscando tu partida en tu cuenta…')}

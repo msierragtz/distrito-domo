@@ -139,7 +139,7 @@ function viajeHide(){const v=$('viaje');if(!v)return;v.classList.remove('on');se
 async function goDist(to){if(to===DIST||goDist.on)return;if(to==='ribera'&&!riberaUnl()){say('El Distrito Ribera se abre cuando el Distrito Domo llega a 3,000 vecinos.',true);return}
   goDist.on=1;for(const b of ['distbox','ribnew','credits','opts','misbox'])if($(b))$(b).hidden=true;sfx('phase');
   viajeShow(to,true,`Viajando al ${DN[to]}`,TITLE?'':`Guardando tu ${DN[DIST]}…`);const t0=performance.now();
-  if(!TITLE)try{const str=JSON.stringify(serialize());localStorage.setItem(KEY,str);if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
+  if(!TITLE)try{const str=JSON.stringify(serialize());if(!lsPut(KEY,str,true)&&!CLOUD.ready){goDist.on=0;viajeHide();say(`No pude guardar tu ${DN[DIST]}: la memoria del navegador está llena. Descarga una copia antes de cambiar de distrito.`,true);return}if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
   try{if(to==='ribera'&&DIST==='domo')localStorage.setItem('distritoDomo.riberaBono',String(bonoDe(S.maxV)));localStorage.setItem(DKEY,to);localStorage.setItem(VKEY,JSON.stringify({to,t:Date.now()}))}catch(e){}
   if(!TITLE)$('viaje').querySelector('small').textContent=`Tu ${DN[DIST]} quedó guardado, tal como está.`;
   await new Promise(r=>setTimeout(r,Math.max(250,1500-(performance.now()-t0))));location.reload()}

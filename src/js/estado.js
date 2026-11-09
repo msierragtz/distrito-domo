@@ -6,8 +6,8 @@ const PARCELS={
   W:{name:'Lote poniente',where:'junto a Celestina',unlock:150},E:{name:'Lote oriente',where:'junto a Ágata',unlock:150},
   NW:{name:'Norte poniente',where:'del otro lado de la carretera',unlock:150},NE:{name:'Norte oriente',where:'del otro lado de la carretera',unlock:150},
   WW:{name:'Poniente lejano',where:'más allá de Celestina',unlock:400},EE:{name:'Oriente lejano',where:'más allá de Ágata',unlock:400},
-  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
-const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21],RS:[9,21],RSS:[22,26]};
+  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},DS:{name:'Planta DeAcero',where:'la fábrica, al sur del Distrito',unlock:1500},DL:{name:'Patios DeAcero',where:'al fondo de la fábrica',unlock:2500},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
+const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21],DS:[15,24],DL:[6,27],RS:[9,21],RSS:[22,26]};
 const LOANS=[
   {id:'chico',name:'Crédito chico',amt:2000,total:2500,mins:40,req:0},
   {id:'mediano',name:'Crédito mediano',amt:10000,total:13000,mins:40,req:80},
@@ -23,7 +23,7 @@ function payoffLoan(){if(!S.loan)return false;const c=Math.ceil(S.loan.left);if(
   sfx('money');S.$-=c;S.loan=null;save();say('¡Liquidaste tu crédito con Banregio!',true);return true}
 const LOT_PRICE=[12000,22000,35000,50000,70000,90000,120000],DA_PRICE=150000,LOT_UNLOCK=150;
 function parcelOf(x,y){
-  if(y>OFF+12)return y<=OFF+15&&x>=3&&x<N-3?'DA':null;
+  if(y>OFF+12){const mid=x>=3&&x<N-3;return y<=OFF+15&&mid?'DA':y<=OFF+19&&mid?'DS':'DL'}
   if(y<OFF){if(y<3||x<3||x>=N-3)return 'NN';return x<N/2?'NW':'NE'}
   if(y>OFF&&y<OFF+12){if(x<3)return 'WW';if(x>=N-3)return 'EE';if(x<OFF)return 'W';if(x>=OFF+16)return 'E'}
   return null}
@@ -74,6 +74,8 @@ function newGame(){
 }
 /* el precio depende de cuántos terrenos llevas y del tamaño del terreno (44 lotes = precio base) */
 const PSIZE={};const lotPrice=p=>{if(p==='DA')return DA_PRICE;const base=LOT_PRICE[Math.min(Math.max(0,(S.lots||0)-(S.da?1:0)),LOT_PRICE.length-1)];if(!p)return base;if(PSIZE[p]==null)PSIZE[p]=S.g.filter(t=>isParcel(t)&&t.p===p).length||44;return Math.round(base*Math.max(1,PSIZE[p]/44)/1000)*1000};
+// partidas de antes: todo terreno ajeno o de la fábrica queda en algún lote a la venta
+function parFix(){if(DIST==='ribera')return;for(let i=0;i<S.g.length;i++){const t=S.g[i];if((t.k==='ajeno'||t.k==='fabrica')&&!t.p){const p=parcelOf(i%N,Math.floor(i/N));if(p)t.p=p}}}
 const isParcel=t=>t.k==='ajeno'||(t.k==='fabrica'&&!!t.p);
 function buyParcel(p){
   const P_=PARCELS[p];if(!P_||S.maxV<P_.unlock)return false;const cost=lotPrice(p);if(S.$<cost)return false;
@@ -84,9 +86,20 @@ function buyParcel(p){
 }
 function serialize(){S.t=Date.now();return withReal(()=>JSON.parse(JSON.stringify(S)))}
 let saveN=0;
+/* la partida nunca se queda sin guardar por falta de espacio: si la memoria del navegador se llena (dos distritos, sus
+   historias del time-lapse y sus copias), se libera en este orden —copias dañadas, historias, respaldos— y se vuelve a intentar */
+function lsFree(step){try{const ks=[];for(let i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));
+  const del=f=>{let n=0;for(const k of ks)if(k&&f(k)){localStorage.removeItem(k);n++}return n};
+  if(step===0)return del(k=>k.includes('.dañada.'));
+  if(step===1)return del(k=>k.endsWith('.historia')&&k!==KEY+'.historia');
+  if(step===2)return del(k=>k===KEY+'.historia');
+  if(step===3)return del(k=>k.endsWith('.respaldo'));
+  if(step===4)return del(k=>k.endsWith('.anterior')&&k!==KEY+'.anterior')}catch(e){}return 0}
+function lsPut(k,str,crit){const max=crit?5:1;for(let step=0;;step++){try{localStorage.setItem(k,str);return true}catch(e){}
+    let n=0;while(step<max&&!(n=lsFree(step)))step++;if(!n)return false}}
 function save(now){const str=JSON.stringify(serialize());
-  try{const cur=localStorage.getItem(KEY);if(cur&&saveN++%12===0)localStorage.setItem(KEY+'.respaldo',cur);localStorage.setItem(KEY,str)}catch(e){}
-  CLOUD.push(str,now)}
+  try{const cur=localStorage.getItem(KEY);if(cur&&saveN++%12===0)lsPut(KEY+'.respaldo',cur)}catch(e){}
+  lsPut(KEY,str,true);CLOUD.push(str,now)}
 /* guardado en la cuenta (claude.ai): la memoria del navegador se puede borrar sola, la cuenta no */
 const CLOUD={ref:null,prevRef:null,ready:false,busy:false,lastT:0,pend:null,fail:0,
   push(str,now){if(!this.ready)return;this.pend=str;if(now||Date.now()-this.lastT>30000)this.flush()},
@@ -96,7 +109,7 @@ const CLOUD={ref:null,prevRef:null,ready:false,busy:false,lastT:0,pend:null,fail
     finally{this.busy=false}}};
 // las partidas de demostración nunca pisan la copia «anterior»: ahí queda tu partida real
 function stashPrev(){if(!S||!S.seen||S.demo||(S.maxV||0)<30)return;const str=JSON.stringify(serialize());
-  try{localStorage.setItem(KEY+'.anterior',str)}catch(e){}
+  lsPut(KEY+'.anterior',str)
   if(CLOUD.ready&&CLOUD.prevRef)CLOUD.prevRef.set({s:str,t:Date.now(),v:Math.round(S.maxV||0)}).catch(()=>{})}
 function pruneDamaged(){try{const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(KEY+'.dañada.'))ks.push(k)}ks.sort();while(ks.length>2)localStorage.removeItem(ks.shift())}catch(e){}}
 function parseSave(raw){try{const d=JSON.parse(raw);if(d&&d.g){if(d.g.length===256){d.g=embed(d.g);d.lots=0}if(d.g.length===576)d.g=grow24(d.g);if(d.g.length===N*N)return d}}catch(e){}return null}

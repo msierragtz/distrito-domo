@@ -140,6 +140,13 @@ function sfx(n){try{JAZZ.sfx(n)}catch(e){}}
 function act(i){
   let t=S.g[i];
   if(HEAT){say(tileInfo(i),true);return}
+  // los terrenos a la venta se compran con cualquier herramienta: un toque muestra el precio, otro lo compra
+  if(isParcel(t)&&PARCELS[t.p]){
+    const P=PARCELS[t.p],cost=lotPrice(t.p),nt=S.g.filter(x=>isParcel(x)&&x.p===t.p).length;
+    if(S.maxV<P.unlock){say(`${P.name} todavía no está a la venta. Con ${fmt(P.unlock)} vecinos podrás comprarlo.`,true);return}
+    if(pendLot===t.p&&Date.now()-pendT<6000){pendLot=null;if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para el ${P.name}.`,true);return}sfx('buy');buyParcel(t.p);return}
+    pendLot=t.p;pendT=Date.now();
+    say(t.p==='DA'?`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. La fábrica se achica y deja de bajar la plusvalía. Toca otra vez para comprarlo.`:`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. Más mantenimiento y vecinos un poco más exigentes. Toca otra vez para comprarlo.`,true);return}
   if(tool==='ver'){say(whatIs(i),true);return}
   if(tool==='mejorar'){if(t.k==='part'){i=t.a;t=S.g[i]}
     if(t.dmg){if(rioWet()){say('Espera a que baje el agua para repararlo.',true);return}const c=Math.round(costOf(t.k)*.4)+20;if(S.$<c){sfx('nope');say(`Repararlo cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
@@ -151,12 +158,6 @@ function act(i){
     if(v<need){say(`Para convertirlo en ${nx}, la zona necesita plusvalía ${Math.round(need*100)} y hoy tiene ${Math.round(v*100)}. Súbela con parques, plazas y comercio cerca.`,true);return}
     const c=lvCost(t,i);if(S.$<c){sfx('nope');say(`Convertirlo en ${nx} cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
     sfx('build');S.$-=c;S.lvN=(S.lvN||0)+1;t.lu=LVT[L+1];t.lt=t.lu;recompute();say(`Pagaste $${fmt(c)}. Arrancó la obra: ${nameOf(t)} se convertirá en ${nx}. Tarda ${t.lu} segundos${DEFS[t.k].per?'':' y mientras tanto no atiende a nadie'}.`,true);save();refreshUI(true);return}
-  if(isParcel(t)&&PARCELS[t.p]){
-    const P=PARCELS[t.p],cost=lotPrice(t.p),nt=S.g.filter(x=>isParcel(x)&&x.p===t.p).length;
-    if(S.maxV<P.unlock){say(`${P.name} todavía no está a la venta. Con ${fmt(P.unlock)} vecinos podrás comprarlo.`,true);return}
-    if(pendLot===t.p&&Date.now()-pendT<6000){pendLot=null;if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para el ${P.name}.`,true);return}sfx('buy');buyParcel(t.p);return}
-    pendLot=t.p;pendT=Date.now();
-    say(t.p==='DA'?`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. La fábrica se achica y deja de bajar la plusvalía. Toca otra vez para comprarlo.`:`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. Más mantenimiento y vecinos un poco más exigentes. Toca otra vez para comprarlo.`,true);return}
   if(tool==='demoler'){
     if(t.k==='part'){i=t.a;t=S.g[i]}
     if(!DEFS[t.k]){say('Aquí no hay nada que demoler.',true);return}

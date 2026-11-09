@@ -317,7 +317,7 @@ function whatShort(i){const t=S.g[i],d=DEFS[t.k],n=whatName(t);
   const f=(infoOf(t.k)||'').split('.')[0];return [n,f.length&&f.length<46?f[0].toLowerCase()+f.slice(1):'']}
 function whatIs(i){let t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}const [n,l2]=whatShort(i),d=DEFS[t.k];
   if(t.b>0)return `${n}: en obra, faltan ${Math.ceil(t.b)} segundos.`;
-  if(isParcel(t)&&PARCELS[t.p]){const P_=PARCELS[t.p];return `${P_.name}, ${P_.where}. ${S.maxV<P_.unlock?`Se pone a la venta con ${fmt(P_.unlock)} vecinos.`:`Cuesta $${fmt(lotPrice(t.p))}: elige otra herramienta y tócalo dos veces para comprarlo.`}`}
+  if(isParcel(t)&&PARCELS[t.p]){const P_=PARCELS[t.p];return `${P_.name}, ${P_.where}. ${S.maxV<P_.unlock?`Se pone a la venta con ${fmt(P_.unlock)} vecinos.`:`Cuesta $${fmt(lotPrice(t.p))}: tócalo otra vez para comprarlo.`}`}
   if(t.k==='ajeno')return 'Terreno vecino: no es del Distrito y no se puede construir.';
   if(t.k==='lote'||t.k==='arbol'){const r=tileInfo(i).split(' · ').slice(1).join(' · ');return `${t.k==='arbol'?'Árbol en terreno libre':n}. ${connected(i%N,Math.floor(i/N))?'Tiene calle cerca: aquí se puede construir.':'Todavía no le llega una calle; pon una junto para poder construir.'} ${r[0].toUpperCase()+r.slice(1)}`}
   if(t.k==='rio')return `Río: ${whatShort(i)[1]}. Se cruza con puentes (herramienta Calle, $${fmt(Math.max(PUENTE_MIN,costOf('calle')*80))}). Cuando está seco se pueden poner parques, canchas, dog parks y palmas en el lecho, pero en la temporada de lluvias quedan bajo el agua y una crecida los daña.`;

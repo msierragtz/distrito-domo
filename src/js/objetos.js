@@ -41,7 +41,7 @@ function drawObj(t,gx,gy,ic){
     const g=box(gx,gy,gx+1,gy+1,0,9,'#c9cdd2','#a9adb3','#8e9298');
     for(const f of [.2,.45,.7,.95]){const a=up(P(gx+f,gy),9),b=up(P(gx+f,gy+1),9);line(a[0],a[1],b[0],b[1],'#b6bbc1')}
     if(gy===OFF+13)face(g,'L',.1,2,.8,4,'#7d8288');
-    if(t.p==='DA'){const sg=SIGNS.DA;if(sg[0]===gx&&sg[1]===gy)forSale(gx,gy,9)}
+    if(t.p&&SIGNS[t.p]){const sg=SIGNS[t.p];if(sg[0]===gx&&sg[1]===gy)forSale(gx,gy,9)}
     if(chimney(gx,gy)){const c=cb(gx+.38,gy+.38,gx+.62,gy+.62,9,CHIM_H,'#b9b4ad');for(const v of [CHIM_H-10,CHIM_H-6])face(c,'L',0,v,1,2,'#c8452f'),face(c,'B',0,v,1,2,'#a5381f')}
     break}
   case 'tanque':case 'torreagua':{

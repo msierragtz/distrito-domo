@@ -29,7 +29,7 @@ function histLoad(){if(!S.hid)S.hid=Math.random().toString(36).slice(2,9);if(HIS
   try{HIST=JSON.parse(localStorage.getItem(HKEY)||'null')}catch(e){HIST=null}
   if(!HIST||HIST.v!==1||HIST.id!==S.hid||!Array.isArray(HIST.f))HIST={v:1,id:S.hid,iv:30,f:[]};
   HLAST=null;for(const f of HIST.f){if(f.a)HLAST=f.a.slice();else if(HLAST)for(const i in f.d)HLAST[i]=f.d[i]}}
-function histSave(){try{let s=JSON.stringify(HIST);while(s.length>1.2e6&&HIST.f.length>8){histThin();s=JSON.stringify(HIST)}localStorage.setItem(HKEY,s)}catch(e){}}
+function histSave(){try{let s=JSON.stringify(HIST);while(s.length>6e5&&HIST.f.length>8){histThin();s=JSON.stringify(HIST)}if(!lsPut(HKEY,s)&&HIST.f.length>8){histThin();lsPut(HKEY,JSON.stringify(HIST))}}catch(e){}}
 // con muchas fotos, se juntan de dos en dos (la primera, con el mapa completo, se queda)
 function histThin(){const F=HIST.f,out=[F[0]];for(let k=1;k<F.length;k+=2){const a=F[k],b=F[k+1];out.push(b?{t:b.t,v:b.v,d:Object.assign({},a.d,b.d)}:a)}HIST.f=out;HIST.iv*=2}
 function histSnap(){const codes=S.g.map(tcode),v=Math.round(S.v),t=Math.round(S.playT||0);

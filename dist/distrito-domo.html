@@ -545,8 +545,8 @@ const PARCELS={
   W:{name:'Lote poniente',where:'junto a Celestina',unlock:150},E:{name:'Lote oriente',where:'junto a Ágata',unlock:150},
   NW:{name:'Norte poniente',where:'del otro lado de la carretera',unlock:150},NE:{name:'Norte oriente',where:'del otro lado de la carretera',unlock:150},
   WW:{name:'Poniente lejano',where:'más allá de Celestina',unlock:400},EE:{name:'Oriente lejano',where:'más allá de Ágata',unlock:400},
-  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
-const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21],RS:[9,21],RSS:[22,26]};
+  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},DS:{name:'Planta DeAcero',where:'la fábrica, al sur del Distrito',unlock:1500},DL:{name:'Patios DeAcero',where:'al fondo de la fábrica',unlock:2500},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
+const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21],DS:[15,24],DL:[6,27],RS:[9,21],RSS:[22,26]};
 const LOANS=[
   {id:'chico',name:'Crédito chico',amt:2000,total:2500,mins:40,req:0},
   {id:'mediano',name:'Crédito mediano',amt:10000,total:13000,mins:40,req:80},
@@ -562,7 +562,7 @@ function payoffLoan(){if(!S.loan)return false;const c=Math.ceil(S.loan.left);if(
   sfx('money');S.$-=c;S.loan=null;save();say('¡Liquidaste tu crédito con Banregio!',true);return true}
 const LOT_PRICE=[12000,22000,35000,50000,70000,90000,120000],DA_PRICE=150000,LOT_UNLOCK=150;
 function parcelOf(x,y){
-  if(y>OFF+12)return y<=OFF+15&&x>=3&&x<N-3?'DA':null;
+  if(y>OFF+12){const mid=x>=3&&x<N-3;return y<=OFF+15&&mid?'DA':y<=OFF+19&&mid?'DS':'DL'}
   if(y<OFF){if(y<3||x<3||x>=N-3)return 'NN';return x<N/2?'NW':'NE'}
   if(y>OFF&&y<OFF+12){if(x<3)return 'WW';if(x>=N-3)return 'EE';if(x<OFF)return 'W';if(x>=OFF+16)return 'E'}
   return null}
@@ -613,6 +613,8 @@ function newGame(){
 }
 /* el precio depende de cuántos terrenos llevas y del tamaño del terreno (44 lotes = precio base) */
 const PSIZE={};const lotPrice=p=>{if(p==='DA')return DA_PRICE;const base=LOT_PRICE[Math.min(Math.max(0,(S.lots||0)-(S.da?1:0)),LOT_PRICE.length-1)];if(!p)return base;if(PSIZE[p]==null)PSIZE[p]=S.g.filter(t=>isParcel(t)&&t.p===p).length||44;return Math.round(base*Math.max(1,PSIZE[p]/44)/1000)*1000};
+// partidas de antes: todo terreno ajeno o de la fábrica queda en algún lote a la venta
+function parFix(){if(DIST==='ribera')return;for(let i=0;i<S.g.length;i++){const t=S.g[i];if((t.k==='ajeno'||t.k==='fabrica')&&!t.p){const p=parcelOf(i%N,Math.floor(i/N));if(p)t.p=p}}}
 const isParcel=t=>t.k==='ajeno'||(t.k==='fabrica'&&!!t.p);
 function buyParcel(p){
   const P_=PARCELS[p];if(!P_||S.maxV<P_.unlock)return false;const cost=lotPrice(p);if(S.$<cost)return false;
@@ -623,9 +625,20 @@ function buyParcel(p){
 }
 function serialize(){S.t=Date.now();return withReal(()=>JSON.parse(JSON.stringify(S)))}
 let saveN=0;
+/* la partida nunca se queda sin guardar por falta de espacio: si la memoria del navegador se llena (dos distritos, sus
+   historias del time-lapse y sus copias), se libera en este orden —copias dañadas, historias, respaldos— y se vuelve a intentar */
+function lsFree(step){try{const ks=[];for(let i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));
+  const del=f=>{let n=0;for(const k of ks)if(k&&f(k)){localStorage.removeItem(k);n++}return n};
+  if(step===0)return del(k=>k.includes('.dañada.'));
+  if(step===1)return del(k=>k.endsWith('.historia')&&k!==KEY+'.historia');
+  if(step===2)return del(k=>k===KEY+'.historia');
+  if(step===3)return del(k=>k.endsWith('.respaldo'));
+  if(step===4)return del(k=>k.endsWith('.anterior')&&k!==KEY+'.anterior')}catch(e){}return 0}
+function lsPut(k,str,crit){const max=crit?5:1;for(let step=0;;step++){try{localStorage.setItem(k,str);return true}catch(e){}
+    let n=0;while(step<max&&!(n=lsFree(step)))step++;if(!n)return false}}
 function save(now){const str=JSON.stringify(serialize());
-  try{const cur=localStorage.getItem(KEY);if(cur&&saveN++%12===0)localStorage.setItem(KEY+'.respaldo',cur);localStorage.setItem(KEY,str)}catch(e){}
-  CLOUD.push(str,now)}
+  try{const cur=localStorage.getItem(KEY);if(cur&&saveN++%12===0)lsPut(KEY+'.respaldo',cur)}catch(e){}
+  lsPut(KEY,str,true);CLOUD.push(str,now)}
 /* guardado en la cuenta (claude.ai): la memoria del navegador se puede borrar sola, la cuenta no */
 const CLOUD={ref:null,prevRef:null,ready:false,busy:false,lastT:0,pend:null,fail:0,
   push(str,now){if(!this.ready)return;this.pend=str;if(now||Date.now()-this.lastT>30000)this.flush()},
@@ -635,7 +648,7 @@ const CLOUD={ref:null,prevRef:null,ready:false,busy:false,lastT:0,pend:null,fail
     finally{this.busy=false}}};
 // las partidas de demostración nunca pisan la copia «anterior»: ahí queda tu partida real
 function stashPrev(){if(!S||!S.seen||S.demo||(S.maxV||0)<30)return;const str=JSON.stringify(serialize());
-  try{localStorage.setItem(KEY+'.anterior',str)}catch(e){}
+  lsPut(KEY+'.anterior',str)
   if(CLOUD.ready&&CLOUD.prevRef)CLOUD.prevRef.set({s:str,t:Date.now(),v:Math.round(S.maxV||0)}).catch(()=>{})}
 function pruneDamaged(){try{const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(KEY+'.dañada.'))ks.push(k)}ks.sort();while(ks.length>2)localStorage.removeItem(ks.shift())}catch(e){}}
 function parseSave(raw){try{const d=JSON.parse(raw);if(d&&d.g){if(d.g.length===256){d.g=embed(d.g);d.lots=0}if(d.g.length===576)d.g=grow24(d.g);if(d.g.length===N*N)return d}}catch(e){}return null}
@@ -806,7 +819,7 @@ function viajeHide(){const v=$('viaje');if(!v)return;v.classList.remove('on');se
 async function goDist(to){if(to===DIST||goDist.on)return;if(to==='ribera'&&!riberaUnl()){say('El Distrito Ribera se abre cuando el Distrito Domo llega a 3,000 vecinos.',true);return}
   goDist.on=1;for(const b of ['distbox','ribnew','credits','opts','misbox'])if($(b))$(b).hidden=true;sfx('phase');
   viajeShow(to,true,`Viajando al ${DN[to]}`,TITLE?'':`Guardando tu ${DN[DIST]}…`);const t0=performance.now();
-  if(!TITLE)try{const str=JSON.stringify(serialize());localStorage.setItem(KEY,str);if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
+  if(!TITLE)try{const str=JSON.stringify(serialize());if(!lsPut(KEY,str,true)&&!CLOUD.ready){goDist.on=0;viajeHide();say(`No pude guardar tu ${DN[DIST]}: la memoria del navegador está llena. Descarga una copia antes de cambiar de distrito.`,true);return}if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
   try{if(to==='ribera'&&DIST==='domo')localStorage.setItem('distritoDomo.riberaBono',String(bonoDe(S.maxV)));localStorage.setItem(DKEY,to);localStorage.setItem(VKEY,JSON.stringify({to,t:Date.now()}))}catch(e){}
   if(!TITLE)$('viaje').querySelector('small').textContent=`Tu ${DN[DIST]} quedó guardado, tal como está.`;
   await new Promise(r=>setTimeout(r,Math.max(250,1500-(performance.now()-t0))));location.reload()}
@@ -3438,7 +3451,7 @@ function drawObj(t,gx,gy,ic){
     const g=box(gx,gy,gx+1,gy+1,0,9,'#c9cdd2','#a9adb3','#8e9298');
     for(const f of [.2,.45,.7,.95]){const a=up(P(gx+f,gy),9),b=up(P(gx+f,gy+1),9);line(a[0],a[1],b[0],b[1],'#b6bbc1')}
     if(gy===OFF+13)face(g,'L',.1,2,.8,4,'#7d8288');
-    if(t.p==='DA'){const sg=SIGNS.DA;if(sg[0]===gx&&sg[1]===gy)forSale(gx,gy,9)}
+    if(t.p&&SIGNS[t.p]){const sg=SIGNS[t.p];if(sg[0]===gx&&sg[1]===gy)forSale(gx,gy,9)}
     if(chimney(gx,gy)){const c=cb(gx+.38,gy+.38,gx+.62,gy+.62,9,CHIM_H,'#b9b4ad');for(const v of [CHIM_H-10,CHIM_H-6])face(c,'L',0,v,1,2,'#c8452f'),face(c,'B',0,v,1,2,'#a5381f')}
     break}
   case 'tanque':case 'torreagua':{
@@ -4546,7 +4559,7 @@ function whatShort(i){const t=S.g[i],d=DEFS[t.k],n=whatName(t);
   const f=(infoOf(t.k)||'').split('.')[0];return [n,f.length&&f.length<46?f[0].toLowerCase()+f.slice(1):'']}
 function whatIs(i){let t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}const [n,l2]=whatShort(i),d=DEFS[t.k];
   if(t.b>0)return `${n}: en obra, faltan ${Math.ceil(t.b)} segundos.`;
-  if(isParcel(t)&&PARCELS[t.p]){const P_=PARCELS[t.p];return `${P_.name}, ${P_.where}. ${S.maxV<P_.unlock?`Se pone a la venta con ${fmt(P_.unlock)} vecinos.`:`Cuesta $${fmt(lotPrice(t.p))}: elige otra herramienta y tócalo dos veces para comprarlo.`}`}
+  if(isParcel(t)&&PARCELS[t.p]){const P_=PARCELS[t.p];return `${P_.name}, ${P_.where}. ${S.maxV<P_.unlock?`Se pone a la venta con ${fmt(P_.unlock)} vecinos.`:`Cuesta $${fmt(lotPrice(t.p))}: tócalo otra vez para comprarlo.`}`}
   if(t.k==='ajeno')return 'Terreno vecino: no es del Distrito y no se puede construir.';
   if(t.k==='lote'||t.k==='arbol'){const r=tileInfo(i).split(' · ').slice(1).join(' · ');return `${t.k==='arbol'?'Árbol en terreno libre':n}. ${connected(i%N,Math.floor(i/N))?'Tiene calle cerca: aquí se puede construir.':'Todavía no le llega una calle; pon una junto para poder construir.'} ${r[0].toUpperCase()+r.slice(1)}`}
   if(t.k==='rio')return `Río: ${whatShort(i)[1]}. Se cruza con puentes (herramienta Calle, $${fmt(Math.max(PUENTE_MIN,costOf('calle')*80))}). Cuando está seco se pueden poner parques, canchas, dog parks y palmas en el lecho, pero en la temporada de lluvias quedan bajo el agua y una crecida los daña.`;
@@ -4734,6 +4747,13 @@ function sfx(n){try{JAZZ.sfx(n)}catch(e){}}
 function act(i){
   let t=S.g[i];
   if(HEAT){say(tileInfo(i),true);return}
+  // los terrenos a la venta se compran con cualquier herramienta: un toque muestra el precio, otro lo compra
+  if(isParcel(t)&&PARCELS[t.p]){
+    const P=PARCELS[t.p],cost=lotPrice(t.p),nt=S.g.filter(x=>isParcel(x)&&x.p===t.p).length;
+    if(S.maxV<P.unlock){say(`${P.name} todavía no está a la venta. Con ${fmt(P.unlock)} vecinos podrás comprarlo.`,true);return}
+    if(pendLot===t.p&&Date.now()-pendT<6000){pendLot=null;if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para el ${P.name}.`,true);return}sfx('buy');buyParcel(t.p);return}
+    pendLot=t.p;pendT=Date.now();
+    say(t.p==='DA'?`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. La fábrica se achica y deja de bajar la plusvalía. Toca otra vez para comprarlo.`:`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. Más mantenimiento y vecinos un poco más exigentes. Toca otra vez para comprarlo.`,true);return}
   if(tool==='ver'){say(whatIs(i),true);return}
   if(tool==='mejorar'){if(t.k==='part'){i=t.a;t=S.g[i]}
     if(t.dmg){if(rioWet()){say('Espera a que baje el agua para repararlo.',true);return}const c=Math.round(costOf(t.k)*.4)+20;if(S.$<c){sfx('nope');say(`Repararlo cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
@@ -4745,12 +4765,6 @@ function act(i){
     if(v<need){say(`Para convertirlo en ${nx}, la zona necesita plusvalía ${Math.round(need*100)} y hoy tiene ${Math.round(v*100)}. Súbela con parques, plazas y comercio cerca.`,true);return}
     const c=lvCost(t,i);if(S.$<c){sfx('nope');say(`Convertirlo en ${nx} cuesta $${fmt(c)}. Te faltan $${fmt(c-S.$)}.`,true);return}
     sfx('build');S.$-=c;S.lvN=(S.lvN||0)+1;t.lu=LVT[L+1];t.lt=t.lu;recompute();say(`Pagaste $${fmt(c)}. Arrancó la obra: ${nameOf(t)} se convertirá en ${nx}. Tarda ${t.lu} segundos${DEFS[t.k].per?'':' y mientras tanto no atiende a nadie'}.`,true);save();refreshUI(true);return}
-  if(isParcel(t)&&PARCELS[t.p]){
-    const P=PARCELS[t.p],cost=lotPrice(t.p),nt=S.g.filter(x=>isParcel(x)&&x.p===t.p).length;
-    if(S.maxV<P.unlock){say(`${P.name} todavía no está a la venta. Con ${fmt(P.unlock)} vecinos podrás comprarlo.`,true);return}
-    if(pendLot===t.p&&Date.now()-pendT<6000){pendLot=null;if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para el ${P.name}.`,true);return}sfx('buy');buyParcel(t.p);return}
-    pendLot=t.p;pendT=Date.now();
-    say(t.p==='DA'?`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. La fábrica se achica y deja de bajar la plusvalía. Toca otra vez para comprarlo.`:`${P.name}, ${P.where}: ${nt} terrenos por $${fmt(cost)}. Más mantenimiento y vecinos un poco más exigentes. Toca otra vez para comprarlo.`,true);return}
   if(tool==='demoler'){
     if(t.k==='part'){i=t.a;t=S.g[i]}
     if(!DEFS[t.k]){say('Aquí no hay nada que demoler.',true);return}
@@ -5301,7 +5315,7 @@ function histLoad(){if(!S.hid)S.hid=Math.random().toString(36).slice(2,9);if(HIS
   try{HIST=JSON.parse(localStorage.getItem(HKEY)||'null')}catch(e){HIST=null}
   if(!HIST||HIST.v!==1||HIST.id!==S.hid||!Array.isArray(HIST.f))HIST={v:1,id:S.hid,iv:30,f:[]};
   HLAST=null;for(const f of HIST.f){if(f.a)HLAST=f.a.slice();else if(HLAST)for(const i in f.d)HLAST[i]=f.d[i]}}
-function histSave(){try{let s=JSON.stringify(HIST);while(s.length>1.2e6&&HIST.f.length>8){histThin();s=JSON.stringify(HIST)}localStorage.setItem(HKEY,s)}catch(e){}}
+function histSave(){try{let s=JSON.stringify(HIST);while(s.length>6e5&&HIST.f.length>8){histThin();s=JSON.stringify(HIST)}if(!lsPut(HKEY,s)&&HIST.f.length>8){histThin();lsPut(HKEY,JSON.stringify(HIST))}}catch(e){}}
 // con muchas fotos, se juntan de dos en dos (la primera, con el mapa completo, se queda)
 function histThin(){const F=HIST.f,out=[F[0]];for(let k=1;k<F.length;k+=2){const a=F[k],b=F[k+1];out.push(b?{t:b.t,v:b.v,d:Object.assign({},a.d,b.d)}:a)}HIST.f=out;HIST.iv*=2}
 function histSnap(){const codes=S.g.map(tcode),v=Math.round(S.v),t=Math.round(S.playT||0);
@@ -5432,7 +5446,7 @@ function fotoStep(rdt){tlStep(rdt);paseoStep(rdt);if(PHOTO&&!TL){const t=$('fHor
 
 /* ---------- arranque ---------- */
 function prep(d){
-  S=d;S.dist=DIST;ribFix();fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
+  S=d;S.dist=DIST;ribFix();parFix();fixPop();if(!S.pv2){S.pv2=1;if(S.seen)S.pvMsg=1}if(S.unl&&!S.unl.includes('ver'))S.unl.unshift('ver');
   // hitos retirados: se devuelven como terreno y se reembolsa la mitad
   {let ref=0;const old={tim:15000,mercado:60000,grandomo:200000};const live=i=>{const a=S.g[i];return a&&MULTI(a.k)&&!old[a.k]};for(let i=0;i<S.g.length;i++){const t=S.g[i];if(t.k==='reserva'||(t.k==='part'&&!live(t.a))||old[t.k]){if(old[t.k])ref+=old[t.k]/2;S.g[i]={k:'lote',s:t.s||1,b:0}}}if(ref)S.$+=ref}
   if(!S.g.some(t=>t.k==='lotedomo'||t.k==='domo')){let i=idx(OFF+8,OFF+8);if(!(S.g[i].k==='lote'||S.g[i].k==='arbol'))i=S.g.findIndex((t,j)=>(t.k==='lote'||t.k==='arbol')&&connected(j%N,Math.floor(j/N)));if(i>=0)S.g[i]={k:'lotedomo',s:1,b:0}}
@@ -5440,7 +5454,9 @@ function prep(d){
   if(S.migG){const mx=stats.mix,t=mx.fam+mx.pro+mx.est;if(t>0){const v=S.v;for(const g of G3)S.pop[g]=v*mx[g]/t;fixPop()}delete S.migG;recompute()}
 }
 function start(data){
-  distBoot();const viajando=viajeBoot();prep((data&&data.g&&(data.dist||'domo')===DIST)?data:(load()||newGame()));pruneDamaged();distUI();
+  distBoot();const viajando=viajeBoot();
+  // la copia más reciente gana: la que dejó una recarga en caliente puede ser vieja (de antes de un viaje entre distritos)
+  {const loc=load(),hot=data&&data.g&&data.g.length===N*N&&(data.dist||'domo')===DIST?data:null;prep(hot&&(!loc||(hot.t||0)>(loc.t||0))?hot:(loc||newGame()))}pruneDamaged();distUI();
   buildTools();resize();
   refreshUI(true);
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
@@ -5453,7 +5469,7 @@ function start(data){
   const adopt=d=>{stashPrev();
     prep(d);walkers=[];EXTRA=[];FUT=null;vozClose();GKEY='';GC=null;SPR.clear();LASTSPR.clear();buildTools();refreshUI(true);
     hasSave=!!S.seen;$('pname').value=S.name||$('pname').value;showTitle();
-    try{localStorage.setItem(KEY,JSON.stringify(serialize()))}catch(e){}};
+    lsPut(KEY,JSON.stringify(serialize()),true)};
   // buscar la partida guardada en la cuenta antes de dejar jugar, para no empezar encima de ella
   const framed=!!(window.claude&&window.claude.use);
   if(framed){$('tcont').disabled=true;$('tnew').disabled=true;status('Buscando tu partida en tu cuenta…')}
