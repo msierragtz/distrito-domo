@@ -28,6 +28,7 @@ function drawHousing(t,gx,gy,ic){
   const wall=lad?(LVL>=2?hexShade(pal.w,.05):pal.w):[pal.w,'#e9e4d8',['#e8a87c','#9ec5ab','#f2d58a','#b9cde0'][s%4],'#cfcac2','#f1ece2'][LVL];
   const SD=sidesOf(x0,y0,x1,y1);SD.L.__s='L';SD.R.__s='R';
   const g=box(x0,y0,x1,y1,0,H,'#bdb7ab',wall,hexShade(wall,-.17));
+  if(!ic&&LVL===3)corona(x0,y0,x1,y1,H,LVL);
   // ladrillo: hiladas y franjas de concreto
   if(lad){for(let v=FH+1;v<H-.5;v+=1.5){face(g,'L',0,v,1,.5,hexShade(pal.w,-.08));face(g,'R',0,v,1,.5,hexShade(pal.w,-.24))}
     for(let fl=1;fl<f;fl++){const v=fl*FH;face(g,'L',0,v-.5,1,1.5,'#e8e2d6');face(g,'R',0,v-.5,1,1.5,'#cfc8ba')}}
@@ -41,11 +42,11 @@ function drawHousing(t,gx,gy,ic){
   win(g,'R',.06,.5,.42,FH-3,'#5d92b8');face(g,'R',.6,0,.3,FH-1.5,'#2e2f36');face(g,'R',.64,0,.22,FH-2,'#45464f');
   {const aw=lad&&LVL===4?'#1f4d3a':LVL===4?'#2b2b2b':['#f26a21','#2a9d8f','#d62828','#3a6ea5'][s%4],ga=prot(SD.L,.02,.98,.08,FH-2.6,1,aw,aw);
     for(let q=0;q<14;q++)if(q%2)face(ga,'L',q/14,0,1/14,1,'#ffffff',NIGHT>.3);}
-  {const gc=prot(SD.R,.56,.94,.07,FH-1.2,.6,LVL===4?'#c9a227':'#5a5f6b');}
-  if(lad&&LVL===4){face(g,'R',.06,FH-1.6,.44,1,'#1f4d3a');face(g,'R',.1,FH-1.4,.36,.5,'#c9a227',NIGHT>.2)}
+  {const gc=prot(SD.R,.56,.94,.07,FH-1.2,.6,LVL===4?lvCol():'#5a5f6b');}
+  if(lad&&LVL===4){face(g,'R',.06,FH-1.6,.44,1,'#1f4d3a');face(g,'R',.1,FH-1.4,.36,.5,lvCol(),NIGHT>.2)}
   // pisos
   const big=LVL===3,cols=big?[.07,.55]:lad?[.08,.3,.58,.8]:[.07,.36,.65],ww=big?.36:lad?.14:.22,fr=big||lad&&LVL===3?'#1c1c1c':lad?(LVL===2?'#f4f2ec':'#e2d6c4'):LVL===2?'#ffffff':'#e8e4dc';
-  const bal=!lad,railK=LVL===4?'glass':'bars',railC=LVL===4?'#c9a227':LVL===2?'#ffffff':LVL===3?'#1c1c1c':'#3a3a3a';
+  const bal=!lad,railK=LVL===4?'glass':'bars',railC=LVL===4?lvCol():LVL===2?'#ffffff':LVL===3?'#1c1c1c':'#3a3a3a';
   for(let fl=1;fl<f;fl++){const v=fl*FH+1.5,wh=FH-3.2;
     // cara izquierda: ventanas
     for(let ci=0;ci<cols.length;ci++){const u=cols[ci];winF(g,'L',u,v,ww,wh,fr,'#2f5079',lad?'#e8e2d6':undefined);
@@ -69,7 +70,7 @@ function drawHousing(t,gx,gy,ic){
   if(lad&&LVL===3){for(let fl=1;fl<f;fl++){const v=fl*FH;prot(SD.L,.66,.97,.08,v,.5,'#1f1f1f');rail(SD.L,.66,.97,.08,v+.5,'bars','#1f1f1f');
       if(fl<f-1){const gg=protGeo(SD.L,.66,.97,.08,v+.5),p0=[gg.L[0]+(gg.B[0]-gg.L[0])*(fl%2?.1:.9),gg.L[1]+(gg.B[1]-gg.L[1])*(fl%2?.1:.9)-gg.lift],p1=[gg.L[0]+(gg.B[0]-gg.L[0])*(fl%2?.9:.1),gg.L[1]+(gg.B[1]-gg.L[1])*(fl%2?.9:.1)-gg.lift-FH+.5];line(p0[0],p0[1],p1[0],p1[1],'#1f1f1f')}}}
   // remate y pretil
-  const cap=LVL===4?(lad?'#c9a227':'#c9a227'):lad?'#e8e2d6':LVL===2?'#ffffff':'#d8d3c9';
+  const cap=LVL===4?(lad?lvCol():lvCol()):lad?'#e8e2d6':LVL===2?'#ffffff':'#d8d3c9';
   box(x0-.01,y0-.01,x1+.01,y1+.01,H,1.2,cap,cap,hexShade(cap,-.18));topFace(x0+.04,y0+.04,x1-.04,y1-.04,H+1.2,lad?'#9a8f80':'#a8a296');
   const R=H+1.2;
   // azotea

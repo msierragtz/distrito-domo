@@ -2170,6 +2170,7 @@ function drawHousing(t,gx,gy,ic){
   const wall=lad?(LVL>=2?hexShade(pal.w,.05):pal.w):[pal.w,'#e9e4d8',['#e8a87c','#9ec5ab','#f2d58a','#b9cde0'][s%4],'#cfcac2','#f1ece2'][LVL];
   const SD=sidesOf(x0,y0,x1,y1);SD.L.__s='L';SD.R.__s='R';
   const g=box(x0,y0,x1,y1,0,H,'#bdb7ab',wall,hexShade(wall,-.17));
+  if(!ic&&LVL===3)corona(x0,y0,x1,y1,H,LVL);
   // ladrillo: hiladas y franjas de concreto
   if(lad){for(let v=FH+1;v<H-.5;v+=1.5){face(g,'L',0,v,1,.5,hexShade(pal.w,-.08));face(g,'R',0,v,1,.5,hexShade(pal.w,-.24))}
     for(let fl=1;fl<f;fl++){const v=fl*FH;face(g,'L',0,v-.5,1,1.5,'#e8e2d6');face(g,'R',0,v-.5,1,1.5,'#cfc8ba')}}
@@ -2183,11 +2184,11 @@ function drawHousing(t,gx,gy,ic){
   win(g,'R',.06,.5,.42,FH-3,'#5d92b8');face(g,'R',.6,0,.3,FH-1.5,'#2e2f36');face(g,'R',.64,0,.22,FH-2,'#45464f');
   {const aw=lad&&LVL===4?'#1f4d3a':LVL===4?'#2b2b2b':['#f26a21','#2a9d8f','#d62828','#3a6ea5'][s%4],ga=prot(SD.L,.02,.98,.08,FH-2.6,1,aw,aw);
     for(let q=0;q<14;q++)if(q%2)face(ga,'L',q/14,0,1/14,1,'#ffffff',NIGHT>.3);}
-  {const gc=prot(SD.R,.56,.94,.07,FH-1.2,.6,LVL===4?'#c9a227':'#5a5f6b');}
-  if(lad&&LVL===4){face(g,'R',.06,FH-1.6,.44,1,'#1f4d3a');face(g,'R',.1,FH-1.4,.36,.5,'#c9a227',NIGHT>.2)}
+  {const gc=prot(SD.R,.56,.94,.07,FH-1.2,.6,LVL===4?lvCol():'#5a5f6b');}
+  if(lad&&LVL===4){face(g,'R',.06,FH-1.6,.44,1,'#1f4d3a');face(g,'R',.1,FH-1.4,.36,.5,lvCol(),NIGHT>.2)}
   // pisos
   const big=LVL===3,cols=big?[.07,.55]:lad?[.08,.3,.58,.8]:[.07,.36,.65],ww=big?.36:lad?.14:.22,fr=big||lad&&LVL===3?'#1c1c1c':lad?(LVL===2?'#f4f2ec':'#e2d6c4'):LVL===2?'#ffffff':'#e8e4dc';
-  const bal=!lad,railK=LVL===4?'glass':'bars',railC=LVL===4?'#c9a227':LVL===2?'#ffffff':LVL===3?'#1c1c1c':'#3a3a3a';
+  const bal=!lad,railK=LVL===4?'glass':'bars',railC=LVL===4?lvCol():LVL===2?'#ffffff':LVL===3?'#1c1c1c':'#3a3a3a';
   for(let fl=1;fl<f;fl++){const v=fl*FH+1.5,wh=FH-3.2;
     // cara izquierda: ventanas
     for(let ci=0;ci<cols.length;ci++){const u=cols[ci];winF(g,'L',u,v,ww,wh,fr,'#2f5079',lad?'#e8e2d6':undefined);
@@ -2211,7 +2212,7 @@ function drawHousing(t,gx,gy,ic){
   if(lad&&LVL===3){for(let fl=1;fl<f;fl++){const v=fl*FH;prot(SD.L,.66,.97,.08,v,.5,'#1f1f1f');rail(SD.L,.66,.97,.08,v+.5,'bars','#1f1f1f');
       if(fl<f-1){const gg=protGeo(SD.L,.66,.97,.08,v+.5),p0=[gg.L[0]+(gg.B[0]-gg.L[0])*(fl%2?.1:.9),gg.L[1]+(gg.B[1]-gg.L[1])*(fl%2?.1:.9)-gg.lift],p1=[gg.L[0]+(gg.B[0]-gg.L[0])*(fl%2?.9:.1),gg.L[1]+(gg.B[1]-gg.L[1])*(fl%2?.9:.1)-gg.lift-FH+.5];line(p0[0],p0[1],p1[0],p1[1],'#1f1f1f')}}}
   // remate y pretil
-  const cap=LVL===4?(lad?'#c9a227':'#c9a227'):lad?'#e8e2d6':LVL===2?'#ffffff':'#d8d3c9';
+  const cap=LVL===4?(lad?lvCol():lvCol()):lad?'#e8e2d6':LVL===2?'#ffffff':'#d8d3c9';
   box(x0-.01,y0-.01,x1+.01,y1+.01,H,1.2,cap,cap,hexShade(cap,-.18));topFace(x0+.04,y0+.04,x1-.04,y1-.04,H+1.2,lad?'#9a8f80':'#a8a296');
   const R=H+1.2;
   // azotea
@@ -3459,7 +3460,8 @@ const LAD=[{w:'#a8452c',b:'#5e2a1d',bal:'#f2efe8'},{w:'#b5533a',b:'#4a4a4a',bal:
 const EDI=[{w:'#eeebe4',b:'#b5653a',bal:'#7a5a3c'},{w:'#cfccc5',b:'#8c8f94',bal:'#7a5a3c'},{w:'#f3f0ea',b:'#9b9da3',bal:'#a0693f'},{w:'#e2d9cb',b:'#a8573a',bal:'#5f4630'}];
 function forSale(gx,gy,lift){const [x,y]=P(gx+.5,gy+.5);px(x,y-10-lift,1,10,'#555');px(x+6,y-10-lift,1,10,'#555');px(x-2,y-19-lift,11,9,'#f26a21');px(x-1,y-18-lift,9,1,'#ffffff');
       px(x+2,y-16-lift,3,1,'#fff');px(x+1,y-15-lift,1,1,'#fff');px(x+2,y-14-lift,3,1,'#fff');px(x+5,y-13-lift,1,1,'#fff');px(x+2,y-12-lift,3,1,'#fff');px(x+3,y-17-lift,1,6,'#fff')}
-function drawObj(t,gx,gy,ic){
+function drawObj(t,gx,gy,ic){const kit=!ic&&!(t.b>0)&&kitFor(t),L=kit?lvOf(t):0;if(kit)kitBase(t,gx,gy,L);drawObj0(t,gx,gy,ic);if(kit)kitFront(t,gx,gy,L)}
+function drawObj0(t,gx,gy,ic){
   const s=t.s,d=DEFS[t.k];WC=0;SEED=s+gx*7+gy*13;
   if(d&&t.b>0&&!ic){
     const p=1-t.b/t.bt,tall=d.per,H=tall?(d.f0*(t.k==='torre'?6:7)+3):(d.bt>=20?40:10);
@@ -3525,10 +3527,32 @@ function drawObj(t,gx,gy,ic){
     break}
   }
 }
-function lvAccent(t,gx,gy,h){const L=lvOf(t);if(L<2)return;
-  box(gx+.82,gy+.84,gx+.96,gy+.96,0,3,'#2b2b2b','#222','#1a1a1a');tree(gx+.89,gy+.9,.4);
-  if(L>=3){const [x,y]=P(gx+.15,gy+.85);px(x,y-12,1,12,'#555');px(x-1,y-13,3,2,'#ffe19a',NIGHT>.2);glow(x,y-12,8,.6)}
-  if(L===4){const [x,y]=P(gx+.5,gy+.5);px(x-6,y-h-4,13,1,'#c9a227');px(x-4,y-h-5,9,1,'#ffd84d')}}
+/* ---------- v79: kit de nivel. Lo mismo para todos los edificios con niveles, encima de su dibujo propio:
+   banqueta alrededor (guarnición → adoquín → piedra con filo del color del distrito), vida al frente (maceta → farol → jardinera)
+   y, donde el dibujo lo pide con corona(), un remate que rompe la silueta. Todo va dentro del sprite del edificio: no hay sprites de más. ---------- */
+let KIT=false; // apagado hasta que Mauricio apruebe la hoja (tests/hoja-kit.py lo enciende)
+const distCol=()=>(RIBV||DIST==='ribera')?'#2bb3a3':'#f26a21';
+const lvCol=()=>KIT?distCol():'#c9a227'; // acento del nivel 4 (antes dorado)
+const KITNO=new Set(['parque','dogpark','plaza','estac','cancha','golf','padel','ciclo','gas','malecon','alberca','parroquia','hotel','domo','torreagua','caseta','calle']);
+const kitFor=t=>{const d=DEFS[t.k];return KIT&&d&&LV[t.k]&&!d.obra&&!d.trophy&&!d.sz&&!KITNO.has(t.k)&&(d.per||isBiz(t.k)||t.k==='escuela'||t.k==='clinica'||t.k==='oficinas'||t.k==='banco')};
+function ring(gx,gy,a,b,col){const o=[[a,a],[1-a,a],[1-a,1-a],[a,1-a]],n=[[b,b],[1-b,b],[1-b,1-b],[b,1-b]];
+  for(let q=0;q<4;q++){const r=(q+1)%4;poly([P(gx+o[q][0],gy+o[q][1]),P(gx+o[r][0],gy+o[r][1]),P(gx+n[r][0],gy+n[r][1]),P(gx+n[q][0],gy+n[q][1])],col)}}
+function kitBase(t,gx,gy,L){if(L<2)return;
+  if(L===2){ring(gx,gy,0,.045,'#c9c2b4');return}
+  if(L===3){ring(gx,gy,0,.09,'#c4ad8c');for(let q=0;q<10;q++){const u=.05+q*.1;for(const [a,b] of [[[u,0],[u,.09]],[[u,.91],[u,1]],[[0,u],[.09,u]],[[.91,u],[1,u]]]){const p0=P(gx+a[0],gy+a[1]),p1=P(gx+b[0],gy+b[1]);line(p0[0],p0[1],p1[0],p1[1],'#a8916f')}}return}
+  ring(gx,gy,0,.1,'#b7b0a4');ring(gx,gy,.035,.06,'#d8d2c6');ring(gx,gy,.1,.13,distCol())}
+function kitFront(t,gx,gy,L){if(L<2)return;
+  // esquinas en pantalla: la de enfrente (B), la izquierda (Lc) y la derecha (R)
+  const C=[[0,0],[1,0],[1,1],[0,1]].map(c=>({c,p:P(gx+c[0],gy+c[1])}));const B=C.reduce((m,q)=>q.p[1]>m.p[1]?q:m),Lc=C.reduce((m,q)=>q.p[0]<m.p[0]?q:m),R=C.reduce((m,q)=>q.p[0]>m.p[0]?q:m);
+  const at=(A,k,ins=.07)=>{const cx=.5,cy=.5,x=A.c[0]+(B.c[0]-A.c[0])*k,y=A.c[1]+(B.c[1]-A.c[1])*k;return [gx+x+(cx-x)*ins*2,gy+y+(cy-y)*ins*2]};
+  const pot=(f,col)=>{const [x,y]=P(f[0],f[1]);px(x-1.5,y-2,3,2,col);px(x-2.5,y-5,5,3,'#3f8f4a');px(x-1.5,y-6,3,1,'#6db56a')};
+  if(L<4)pot(at(Lc,.3),'#9a5a3a');
+  if(L>=3){const [x,y]=P(...at(R,.22));px(x,y-13,1,13,'#4a4f5a');px(x-1,y-14,3,2,'#ffe19a',NIGHT>.2);glow(x+.5,y-12,9,.6)}
+  if(L===4){const f=at(Lc,.3,.09),[x,y]=P(f[0],f[1]);px(x-3,y-2,6,2,distCol());px(x-3,y-3,6,1,hexShade(distCol(),.25));tree(f[0],f[1],.42)}}
+// remate: lo llama cada dibujo con el rectángulo de su azotea. Nivel 3: cornisa clara; nivel 4: corona del color del distrito, más ancha que el edificio
+function corona(x0,y0,x1,y1,H,L,roof){if(!KIT||L<3)return;const c=L===4?distCol():'#efe9dc',o=L===4?.03:.02,hh=L===4?3:1.6;
+  box(x0-o,y0-o,x1+o,y1+o,H-hh,hh,roof||'#bdb7ab',c,hexShade(c,-.18));
+  if(L===4){box(x0-o,y0-o,x1+o,y1+o,H-hh-.8,.8,roof||'#bdb7ab','#fff3e0',hexShade('#fff3e0',-.15));if(NIGHT>.3){const [x,y]=P((x0+x1)/2,(y0+y1)/2);glow(x,y-H,16,.5,distCol())}}}
 function drawNeed(gx,gy){
   if(Math.floor(T*2)%2)return;const [x,y]=P(gx+.5,gy+.5);
   circ(x,y-30,4.5,'#fff',true);px(x-.5,y-33,1,4,'#d64545',true);px(x-.5,y-28,1,1,'#d64545',true);

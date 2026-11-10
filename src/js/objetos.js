@@ -2,7 +2,8 @@ const LAD=[{w:'#a8452c',b:'#5e2a1d',bal:'#f2efe8'},{w:'#b5533a',b:'#4a4a4a',bal:
 const EDI=[{w:'#eeebe4',b:'#b5653a',bal:'#7a5a3c'},{w:'#cfccc5',b:'#8c8f94',bal:'#7a5a3c'},{w:'#f3f0ea',b:'#9b9da3',bal:'#a0693f'},{w:'#e2d9cb',b:'#a8573a',bal:'#5f4630'}];
 function forSale(gx,gy,lift){const [x,y]=P(gx+.5,gy+.5);px(x,y-10-lift,1,10,'#555');px(x+6,y-10-lift,1,10,'#555');px(x-2,y-19-lift,11,9,'#f26a21');px(x-1,y-18-lift,9,1,'#ffffff');
       px(x+2,y-16-lift,3,1,'#fff');px(x+1,y-15-lift,1,1,'#fff');px(x+2,y-14-lift,3,1,'#fff');px(x+5,y-13-lift,1,1,'#fff');px(x+2,y-12-lift,3,1,'#fff');px(x+3,y-17-lift,1,6,'#fff')}
-function drawObj(t,gx,gy,ic){
+function drawObj(t,gx,gy,ic){const kit=!ic&&!(t.b>0)&&kitFor(t),L=kit?lvOf(t):0;if(kit)kitBase(t,gx,gy,L);drawObj0(t,gx,gy,ic);if(kit)kitFront(t,gx,gy,L)}
+function drawObj0(t,gx,gy,ic){
   const s=t.s,d=DEFS[t.k];WC=0;SEED=s+gx*7+gy*13;
   if(d&&t.b>0&&!ic){
     const p=1-t.b/t.bt,tall=d.per,H=tall?(d.f0*(t.k==='torre'?6:7)+3):(d.bt>=20?40:10);
@@ -68,10 +69,32 @@ function drawObj(t,gx,gy,ic){
     break}
   }
 }
-function lvAccent(t,gx,gy,h){const L=lvOf(t);if(L<2)return;
-  box(gx+.82,gy+.84,gx+.96,gy+.96,0,3,'#2b2b2b','#222','#1a1a1a');tree(gx+.89,gy+.9,.4);
-  if(L>=3){const [x,y]=P(gx+.15,gy+.85);px(x,y-12,1,12,'#555');px(x-1,y-13,3,2,'#ffe19a',NIGHT>.2);glow(x,y-12,8,.6)}
-  if(L===4){const [x,y]=P(gx+.5,gy+.5);px(x-6,y-h-4,13,1,'#c9a227');px(x-4,y-h-5,9,1,'#ffd84d')}}
+/* ---------- v79: kit de nivel. Lo mismo para todos los edificios con niveles, encima de su dibujo propio:
+   banqueta alrededor (guarnición → adoquín → piedra con filo del color del distrito), vida al frente (maceta → farol → jardinera)
+   y, donde el dibujo lo pide con corona(), un remate que rompe la silueta. Todo va dentro del sprite del edificio: no hay sprites de más. ---------- */
+let KIT=false; // apagado hasta que Mauricio apruebe la hoja (tests/hoja-kit.py lo enciende)
+const distCol=()=>(RIBV||DIST==='ribera')?'#2bb3a3':'#f26a21';
+const lvCol=()=>KIT?distCol():'#c9a227'; // acento del nivel 4 (antes dorado)
+const KITNO=new Set(['parque','dogpark','plaza','estac','cancha','golf','padel','ciclo','gas','malecon','alberca','parroquia','hotel','domo','torreagua','caseta','calle']);
+const kitFor=t=>{const d=DEFS[t.k];return KIT&&d&&LV[t.k]&&!d.obra&&!d.trophy&&!d.sz&&!KITNO.has(t.k)&&(d.per||isBiz(t.k)||t.k==='escuela'||t.k==='clinica'||t.k==='oficinas'||t.k==='banco')};
+function ring(gx,gy,a,b,col){const o=[[a,a],[1-a,a],[1-a,1-a],[a,1-a]],n=[[b,b],[1-b,b],[1-b,1-b],[b,1-b]];
+  for(let q=0;q<4;q++){const r=(q+1)%4;poly([P(gx+o[q][0],gy+o[q][1]),P(gx+o[r][0],gy+o[r][1]),P(gx+n[r][0],gy+n[r][1]),P(gx+n[q][0],gy+n[q][1])],col)}}
+function kitBase(t,gx,gy,L){if(L<2)return;
+  if(L===2){ring(gx,gy,0,.045,'#c9c2b4');return}
+  if(L===3){ring(gx,gy,0,.09,'#c4ad8c');for(let q=0;q<10;q++){const u=.05+q*.1;for(const [a,b] of [[[u,0],[u,.09]],[[u,.91],[u,1]],[[0,u],[.09,u]],[[.91,u],[1,u]]]){const p0=P(gx+a[0],gy+a[1]),p1=P(gx+b[0],gy+b[1]);line(p0[0],p0[1],p1[0],p1[1],'#a8916f')}}return}
+  ring(gx,gy,0,.1,'#b7b0a4');ring(gx,gy,.035,.06,'#d8d2c6');ring(gx,gy,.1,.13,distCol())}
+function kitFront(t,gx,gy,L){if(L<2)return;
+  // esquinas en pantalla: la de enfrente (B), la izquierda (Lc) y la derecha (R)
+  const C=[[0,0],[1,0],[1,1],[0,1]].map(c=>({c,p:P(gx+c[0],gy+c[1])}));const B=C.reduce((m,q)=>q.p[1]>m.p[1]?q:m),Lc=C.reduce((m,q)=>q.p[0]<m.p[0]?q:m),R=C.reduce((m,q)=>q.p[0]>m.p[0]?q:m);
+  const at=(A,k,ins=.07)=>{const cx=.5,cy=.5,x=A.c[0]+(B.c[0]-A.c[0])*k,y=A.c[1]+(B.c[1]-A.c[1])*k;return [gx+x+(cx-x)*ins*2,gy+y+(cy-y)*ins*2]};
+  const pot=(f,col)=>{const [x,y]=P(f[0],f[1]);px(x-1.5,y-2,3,2,col);px(x-2.5,y-5,5,3,'#3f8f4a');px(x-1.5,y-6,3,1,'#6db56a')};
+  if(L<4)pot(at(Lc,.3),'#9a5a3a');
+  if(L>=3){const [x,y]=P(...at(R,.22));px(x,y-13,1,13,'#4a4f5a');px(x-1,y-14,3,2,'#ffe19a',NIGHT>.2);glow(x+.5,y-12,9,.6)}
+  if(L===4){const f=at(Lc,.3,.09),[x,y]=P(f[0],f[1]);px(x-3,y-2,6,2,distCol());px(x-3,y-3,6,1,hexShade(distCol(),.25));tree(f[0],f[1],.42)}}
+// remate: lo llama cada dibujo con el rectángulo de su azotea. Nivel 3: cornisa clara; nivel 4: corona del color del distrito, más ancha que el edificio
+function corona(x0,y0,x1,y1,H,L,roof){if(!KIT||L<3)return;const c=L===4?distCol():'#efe9dc',o=L===4?.03:.02,hh=L===4?3:1.6;
+  box(x0-o,y0-o,x1+o,y1+o,H-hh,hh,roof||'#bdb7ab',c,hexShade(c,-.18));
+  if(L===4){box(x0-o,y0-o,x1+o,y1+o,H-hh-.8,.8,roof||'#bdb7ab','#fff3e0',hexShade('#fff3e0',-.15));if(NIGHT>.3){const [x,y]=P((x0+x1)/2,(y0+y1)/2);glow(x,y-H,16,.5,distCol())}}}
 function drawNeed(gx,gy){
   if(Math.floor(T*2)%2)return;const [x,y]=P(gx+.5,gy+.5);
   circ(x,y-30,4.5,'#fff',true);px(x-.5,y-33,1,4,'#d64545',true);px(x-.5,y-28,1,1,'#d64545',true);
