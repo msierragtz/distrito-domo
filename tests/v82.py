@@ -18,7 +18,7 @@ async def main():
     if r['a']['miss']>5:bad.append('edificios sin respaldo: %d'%r['a']['miss'])
     if r['a']['clr']>0:bad.append('la caché se vació completa')
     objn,cap=r['cap']
-    if objn<300 or cap<max(900,objn*1.3):bad.append('tope mal calculado: %s'%r['cap'])
+    if objn<300 or cap<max(900,objn*1.6):bad.append('tope mal calculado: %s'%r['cap'])
     if r['n']['sprl']<r['n']['last']*.5:bad.append('la noche no terminó de llegar: %s'%r['n'])
     if errs:bad.append('errores: %s'%errs)
     await b.close()

@@ -1,8 +1,13 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 10 nov 2026 (artifact v82; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 10 nov 2026 (artifact v83; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Giro del mapa sin huecos y nombres originales de los negocios (v83)**:
+  - Giro: antes, al girar, cada edificio desaparecía hasta que se dibujaba de nuevo y la ciudad iba saliendo por partes (en la ciudad de 2,600 con CPU 4x más lenta, ~5,900 veces un edificio sin dibujar por giro y cuadros de hasta 35 ms de trabajo forzado). Ahora, mientras llega el dibujo nuevo, se muestra el del giro anterior en espejo (un cuarto de vuelta en isométrico es casi un espejo; con media vuelta se usa tal cual): la ciudad se ve completa desde el primer cuadro y los dibujos definitivos entran por presupuesto (más alto el primer segundo y medio: `TURNT`). Solo se nota en letreros y puertas, que quedan al revés un momento. `getSprite` (`src.mir`), `drawSprite` (`sp.fx`). El tope del respaldo sube a 1.6 × `OBJN` para conservar el giro anterior.
+  - Lo que sigue sin dibujo un instante: lo que entra a la vista por primera vez al girar (decenas de casos, antes miles).
+  - Nombres: regresan los originales de los negocios inventados (los 20 de `VARN` y el Consultorio Altusalud): Chochomos, Panacea, La Regional, Señora Katana, Lonchería El Huerco, Mariscos el Mikas, Asador La Pampa, Alpha Brew, Prensa Negra, La Pastelería 89, Dough, Éclair, La Loquera Bar, Rey Bar, Billar Sultana, El Cacique Azteca, Bar 1800, Mezcalería Coyote, Azotea Tupaz y Cuarzo Lounge. Decisión de Mauricio: solo se renombran las marcas que sí existen (banco, acerera, universidades, equipos, Torre Caliza y el nombre del juego). Siguen cambiados Jitomates Market, Brunch Cañón y Cúpula Bar. `tools/renombre-v83.py`; `tests/v77.py` vigila que no vuelvan los sustitutos.
+  - Prueba: `tests/v83.py`.
 - **Caché de sprites (v82)** (H1-5 de la auditoría v74):
   - Causa real de los tirones del anochecer: la imagen de respaldo de cada edificio (`LASTSPR`) se guardaba con la fase de «ventanas que se apagan» en la llave, así que cada vez que cambiaba esa fase el edificio se quedaba sin respaldo: o no se dibujaba unos cuadros o se rehacía a la fuerza (hasta 35 ms por cuadro). En la ciudad de 2,600 con CPU 4x más lenta: 5,372 veces sin respaldo y 4,584 edificios sin dibujar en un atardecer; ahora 1 y 0.
   - El respaldo va por edificio (sin la fase de ventanas). Los topes salen del tamaño de la ciudad (`OBJN`, lo cuenta `recompute`; `sprCap()` = el mayor de 900 y 1.3 × `OBJN`) y se desaloja lo que lleva más cuadros sin usarse (`sprTrim`, sello `u` por sprite), no lo más viejo de crear. Ya no hay vaciados completos: ni el de 1,600 por nivel de noche ni el de contornos (`OUTC`, que ahora guarda hasta 4 giros).

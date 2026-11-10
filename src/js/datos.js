@@ -5,7 +5,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=82; // versión que ve el jugador (igual al 0.82 de package.json)
+const VER=83; // versión que ve el jugador (igual al 0.83 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -87,7 +87,7 @@ const LV={
   cine:['Cine de barrio','Cine de 4 salas','Multicinema','Cine VIP'],
   golf:['Campo de práctica','Driving range iluminado','Club de golf','Club campestre'],
   escuela:['Guardería','Escuela primaria','Colegio privado','Campus Cañón'],
-  clinica:['Consultorio Buenasalud','Clínica con urgencias','Clínica de especialidades','Hospital Distrito'],
+  clinica:['Consultorio Altusalud','Clínica con urgencias','Clínica de especialidades','Hospital Distrito'],
   cancha:['Cancha de barrio','Cancha de pasto sintético','Unidad deportiva','Estadio de barrio'],
   resto:['Puesto de barbacoa','Lonchería','Hamburguesas gourmet','Restaurante de autor'],
   cafe:['Café de olla','Cafetería','Café de especialidad','Brunch y concept store'],
@@ -114,9 +114,9 @@ const LVTH=[0,0,.55,.68,.84],LVT=[0,0,20,40,60];
 {const n=LVTH.slice(2).map(v=>Math.round(v*100)),last=n.pop();DEFS.mejorar.desc=DEFS.mejorar.desc.replace('46, 58 o 70',n.join(', ')+(String(last)[0]==='8'?' u ':' o ')+last)}
 const lvOf=t=>t.lv||1;
 const VARN={
-  resto:[['Puesto de barbacoa','Pollos al carbón','Tacos a vapor','Elotes asados'],['Lonchería El Plebe','El Pollo Pillo','Tacos de asada','Sushi Troll'],['Smash Burgers','Bison Mad Wings','Asador El Carbón Feliz','Mariscos El Compadre'],['Chorizos Chema','Panaderia','La Regionalísima','Señora Sartén']],
-  cafe:[['Café de carrito','Churros Poncho','Pan dulce','Tamales'],['Jim Borbons','Starblocks','Panadería La Espiga','Nevería Ordóñez'],['Beta Brew','Prensa Francesa','Pastelería 90','Té y Matcha'],['Masa Madre','Galería Acero','Pan Pretencioso','Brunch Cañón']],
-  bar:[['Micheladas','Clamatos','Litros','Depósito'],['Cantina Huasteca','Reyecito Bar','Billar La Sultanita','La Loca Luna'],['Mezcalería El Tlacuache','El Cacique Jubilado','Bar 1900','Cervecería Lúpulo'],['Azotea Topacio','Lounge Mica','Huasteca Sky','Cúpula Bar']]};
+  resto:[['Puesto de barbacoa','Pollos al carbón','Tacos a vapor','Elotes asados'],['Lonchería El Huerco','El Pollo Pillo','Tacos de asada','Sushi Troll'],['Smash Burgers','Bison Mad Wings','Asador La Pampa','Mariscos el Mikas'],['Chochomos','Panacea','La Regional','Señora Katana']],
+  cafe:[['Café de carrito','Churros Poncho','Pan dulce','Tamales'],['Jim Borbons','Starblocks','Panadería La Espiga','Nevería Ordóñez'],['Alpha Brew','Prensa Negra','La Pastelería 89','Té y Matcha'],['Dough','Galería Acero','Éclair','Brunch Cañón']],
+  bar:[['Micheladas','Clamatos','Litros','Depósito'],['Cantina Huasteca','Rey Bar','Billar Sultana','La Loquera Bar'],['Mezcalería Coyote','El Cacique Azteca','Bar 1800','Cervecería Lúpulo'],['Azotea Tupaz','Cuarzo Lounge','Huasteca Sky','Cúpula Bar']]};
 const lvName=(t,L)=>VARN[t.k]?VARN[t.k][L-1][(t.s>>2)%4]:LV[t.k][L-1];
 const nameOf=t=>LV[t.k]?lvName(t,lvOf(t)):(DEFS[t.k]?DEFS[t.k].name:'Terreno');
 const isBiz=k=>!!(DEFS[k]&&DEFS[k].inc&&DEFS[k].R&&LIKE[k]&&!DEFS[k].obra);

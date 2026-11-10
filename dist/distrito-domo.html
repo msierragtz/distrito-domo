@@ -438,7 +438,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=82; // versión que ve el jugador (igual al 0.82 de package.json)
+const VER=83; // versión que ve el jugador (igual al 0.83 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -520,7 +520,7 @@ const LV={
   cine:['Cine de barrio','Cine de 4 salas','Multicinema','Cine VIP'],
   golf:['Campo de práctica','Driving range iluminado','Club de golf','Club campestre'],
   escuela:['Guardería','Escuela primaria','Colegio privado','Campus Cañón'],
-  clinica:['Consultorio Buenasalud','Clínica con urgencias','Clínica de especialidades','Hospital Distrito'],
+  clinica:['Consultorio Altusalud','Clínica con urgencias','Clínica de especialidades','Hospital Distrito'],
   cancha:['Cancha de barrio','Cancha de pasto sintético','Unidad deportiva','Estadio de barrio'],
   resto:['Puesto de barbacoa','Lonchería','Hamburguesas gourmet','Restaurante de autor'],
   cafe:['Café de olla','Cafetería','Café de especialidad','Brunch y concept store'],
@@ -547,9 +547,9 @@ const LVTH=[0,0,.55,.68,.84],LVT=[0,0,20,40,60];
 {const n=LVTH.slice(2).map(v=>Math.round(v*100)),last=n.pop();DEFS.mejorar.desc=DEFS.mejorar.desc.replace('46, 58 o 70',n.join(', ')+(String(last)[0]==='8'?' u ':' o ')+last)}
 const lvOf=t=>t.lv||1;
 const VARN={
-  resto:[['Puesto de barbacoa','Pollos al carbón','Tacos a vapor','Elotes asados'],['Lonchería El Plebe','El Pollo Pillo','Tacos de asada','Sushi Troll'],['Smash Burgers','Bison Mad Wings','Asador El Carbón Feliz','Mariscos El Compadre'],['Chorizos Chema','Panaderia','La Regionalísima','Señora Sartén']],
-  cafe:[['Café de carrito','Churros Poncho','Pan dulce','Tamales'],['Jim Borbons','Starblocks','Panadería La Espiga','Nevería Ordóñez'],['Beta Brew','Prensa Francesa','Pastelería 90','Té y Matcha'],['Masa Madre','Galería Acero','Pan Pretencioso','Brunch Cañón']],
-  bar:[['Micheladas','Clamatos','Litros','Depósito'],['Cantina Huasteca','Reyecito Bar','Billar La Sultanita','La Loca Luna'],['Mezcalería El Tlacuache','El Cacique Jubilado','Bar 1900','Cervecería Lúpulo'],['Azotea Topacio','Lounge Mica','Huasteca Sky','Cúpula Bar']]};
+  resto:[['Puesto de barbacoa','Pollos al carbón','Tacos a vapor','Elotes asados'],['Lonchería El Huerco','El Pollo Pillo','Tacos de asada','Sushi Troll'],['Smash Burgers','Bison Mad Wings','Asador La Pampa','Mariscos el Mikas'],['Chochomos','Panacea','La Regional','Señora Katana']],
+  cafe:[['Café de carrito','Churros Poncho','Pan dulce','Tamales'],['Jim Borbons','Starblocks','Panadería La Espiga','Nevería Ordóñez'],['Alpha Brew','Prensa Negra','La Pastelería 89','Té y Matcha'],['Dough','Galería Acero','Éclair','Brunch Cañón']],
+  bar:[['Micheladas','Clamatos','Litros','Depósito'],['Cantina Huasteca','Rey Bar','Billar Sultana','La Loquera Bar'],['Mezcalería Coyote','El Cacique Azteca','Bar 1800','Cervecería Lúpulo'],['Azotea Tupaz','Cuarzo Lounge','Huasteca Sky','Cúpula Bar']]};
 const lvName=(t,L)=>VARN[t.k]?VARN[t.k][L-1][(t.s>>2)%4]:LV[t.k][L-1];
 const nameOf=t=>LV[t.k]?lvName(t,lvOf(t)):(DEFS[t.k]?DEFS[t.k].name:'Terreno');
 const isBiz=k=>!!(DEFS[k]&&DEFS[k].inc&&DEFS[k].R&&LIKE[k]&&!DEFS[k].obra);
@@ -1630,7 +1630,7 @@ function artResto(t,gx,gy,L){const ln=t.s==null?0:(t.s>>2)%4;t.__gx=gx;t.__gy=gy
 const RESTO=[
  // A · hamburguesas
  [t=>restoOld(t,t.__gx,t.__gy,1),t=>restoOld(t,t.__gx,t.__gy,2),t=>restoOld(t,t.__gx,t.__gy,3),
-  (t,gx,gy)=>{ // Chorizos Chema: hamburguesería de dos pisos con hamburguesa gigante
+  (t,gx,gy)=>{ // Chochomos: hamburguesería de dos pisos con hamburguesa gigante
    const H=18,g=shopBox(gx,gy,.1,.1,.6,.7,H,'#2b2b2b','#232323','#3a3a3a');
    face(g,'L',.05,0,.9,8,NIGHT>.2?'#ffd27a':'#f0c27a',NIGHT>.2);for(const u of [.35,.65])face(g,'L',u,0,.02,8,'#1c1c1c');face(g,'L',0,8,1,1.4,'#e0a050');
    face(g,'R',.1,0,.35,6.5,'#3d3d3d');face(g,'R',.55,2,.35,5,NIGHT>.2?'#ffd27a':'#f0c27a',NIGHT>.2);face(g,'R',0,8,1,1.4,'#c98a3a');
@@ -1660,7 +1660,7 @@ const RESTO=[
    dsort(gx,gy,[[.8,.3,()=>{cb(gx+.74,gy+.22,gx+.86,gy+.4,0,2.2,'#7a4e2c');cb(gx+.72,gy+.2,gx+.88,gy+.42,2.2,.4,'#8a5a3a')}],[.8,.66,()=>{cb(gx+.74,gy+.58,gx+.86,gy+.76,0,2.2,'#7a4e2c');cb(gx+.72,gy+.56,gx+.88,gy+.78,2.2,.4,'#8a5a3a')}],
      [.92,.9,()=>{const g2=cb(gx+.88,gy+.86,gx+.96,gy+.94,0,3,'#9aa0a8');face(g2,'L',0,1,1,.4,'#6e737a')}]]);
    {const a=P(gx+.6,gy+.15),b=P(gx+.95,gy+.15);bulbsH([a[0],a[1]-10],[b[0],b[1]-8],6,2)}},
-  (t,gx,gy)=>{ // Panaderia: blanco, ventanales y terraza con plantas
+  (t,gx,gy)=>{ // Panacea: blanco, ventanales y terraza con plantas
    const H=16,g=shopBox(gx,gy,.1,.1,.58,.72,H,'#f4f3ef','#dcd9d2','#c9c5bd');
    face(g,'L',.05,0,.9,7.5,NIGHT>.2?'#ffe2a8':'#bcd9e8',NIGHT>.2);for(const u of [.3,.55,.8])face(g,'L',u,0,.02,7.5,'#9a958c');
    face(g,'L',.05,9.5,.9,4,NIGHT>.2?'#ffe2a8':'#bcd9e8',NIGHT>.2);face(g,'L',0,8,1,1,'#c9a227');face(g,'R',.1,9.5,.8,4,'#bcd9e8');face(g,'R',0,8,1,1,'#b08f20');
@@ -1680,7 +1680,7 @@ const RESTO=[
    for(const [a,b] of [[.16,.16],[.9,.16],[.16,.88],[.9,.88]]){const [x,y]=P(gx+a,gy+b);px(x,y-12,1,12,'#8d9096')}
    {const g=box(gx+.12,gy+.12,gx+.94,gy+.92,11,.6,'#2f6db5','#25589a','#1d4a80');face(g,'L',0,-.4,1,.4,'#ffffff');face(g,'R',0,-.4,1,.4,'#ececec')}
    poleSign(gx+.06,gy+.5,4,'#ffffff',tacoIco)},
-  (t,gx,gy)=>{ // Asador El Carbón Feliz: casa de ladrillo con chimenea y parrilla
+  (t,gx,gy)=>{ // Asador La Pampa: casa de ladrillo con chimenea y parrilla
    const H=12,g=shopBox(gx,gy,.1,.12,.6,.72,H,'#a8522f','#8a4227','#6e4a2c');
    for(let v=1;v<H;v+=1.2){face(g,'L',0,v,1,.25,'#963f22');face(g,'R',0,v,1,.25,'#7a351c')}
    face(g,'L',.1,1,.35,5,NIGHT>.2?'#ffcf87':'#7fb2d4',NIGHT>.2);face(g,'L',.55,0,.3,6.5,'#5a3a24');face(g,'R',.2,2,.6,4,NIGHT>.2?'#ffcf87':'#7fb2d4',NIGHT>.2);
@@ -1707,13 +1707,13 @@ const RESTO=[
    {const [x,y]=P(gx+.14,gy+.5);px(x-.25,y-10,.5,2,'#555');circ(x,y-6.5,2.2,'#d62828',NIGHT>.2);px(x-2,y-6.7,4,.4,'#8a1a1a',NIGHT>.2);if(NIGHT>.2)glow(x,y-6.5,8,.8)}
    {const [x,y]=P(gx+.37,gy+.43);shrimpIco(x,y-H-3,1.2,NIGHT>.2);if(NIGHT>.2)glow(x,y-H-4,10,.6)}
    dsort(gx,gy,[[.82,.32,()=>{cb(gx+.76,gy+.24,gx+.9,gy+.4,0,1.5,'#7a4e2c');chairH(gx+.9,gy+.3,'#2b2b2b')}],[.82,.7,()=>{cb(gx+.76,gy+.62,gx+.9,gy+.78,0,1.5,'#7a4e2c');chairH(gx+.9,gy+.68,'#2b2b2b')}],[.4,.9,()=>planter(gx+.4,gy+.88,.3)]])},
-  (t,gx,gy)=>{ // Mariscos El Compadre: azul y blanco con camarón gigante
+  (t,gx,gy)=>{ // Mariscos el Mikas: azul y blanco con camarón gigante
    const H=11,g=shopBox(gx,gy,.1,.14,.56,.72,H,'#ffffff','#e4e8ec','#2f6db5');
    face(g,'L',0,0,1,2,'#2f6db5');face(g,'R',0,0,1,2,'#25589a');face(g,'L',.08,2.5,.84,4.5,'#9fc4dc');for(const u of [.36,.64])face(g,'L',u,2.5,.02,4.5,'#2f6db5');
    for(let k=0;k<8;k++)face(g,'L',k/8,7.5,1/8,1.5,k%2?'#2f6db5':'#ffffff');face(g,'R',.2,3,.6,3.5,'#9fc4dc');
    {const [x,y]=P(gx+.33,gy+.43);shrimpIco(x,y-H-5,2,NIGHT>.2);if(NIGHT>.2)glow(x,y-H-6,14,.8)}
    dsort(gx,gy,tablesSet(gx,gy,'#2f6db5','#ffffff',[[.8,.3],[.8,.66]]).concat([[.92,.9,()=>{const c=cb(gx+.86,gy+.84,gx+.97,gy+.95,0,3,'#2f6db5');face(c,'L',0,1,1,.6,'#ffffff')}]]))},
-  (t,gx,gy)=>{ // Señora Sartén: negro con acentos rojos, faroles y bambú
+  (t,gx,gy)=>{ // Señora Katana: negro con acentos rojos, faroles y bambú
    const H=17,g=shopBox(gx,gy,.1,.1,.6,.72,H,'#1f1f22','#18181a','#7a1f1f');
    face(g,'L',.05,0,.9,7,NIGHT>.2?'#ffd9a0':'#5a3a2a',NIGHT>.2);for(let k=1;k<6;k++)face(g,'L',k/6,0,.015,7,'#1c1c1c');face(g,'L',0,7,1,1,'#b52a2a');face(g,'R',0,7,1,1,'#8f2020');
    for(let k=0;k<6;k++)face(g,'L',.06+k*.15,9.5,.08,5,'#2a2a2e');face(g,'R',.15,9.5,.7,5,'#2a2a2e');
@@ -1870,7 +1870,7 @@ function artEscuela(t,gx,gy,L){
   dsort(gx,gy,[[.89,.24,()=>{const g=box(gx+.82,gy+.04,gx+.98,gy+.44,0,6,'#7a3b28','#a5583c','#8c4a32');for(let k=0;k<2;k++)win(g,'L',.15+k*.45,1.6,.3,2.8,'#a9c8dc');win(g,'R',.1,1.6,.8,2.8,'#93b8d0');face(g,'L',0,5,1,1,'#efe7da');face(g,'R',0,5,1,1,'#d9d0c2');box(gx+.81,gy+.03,gx+.99,gy+.45,6,1,'#5a2a1c','#6a3222','#5a2a1c')}],
     [.86,.66,()=>tree(gx+.86,gy+.66,.6)],[.14,.84,()=>tree(gx+.14,gy+.84,.62)],[.86,.9,()=>tree(gx+.86,gy+.9,.48)]]);
   if(NIGHT>.2){const [x,y]=P(gx+.41,gy+.5);glow(x,y-6,12,.6,'#ffd9a0')}}
-/* CLÍNICA — 1 Consultorio Buenasalud · 2 Clínica con urgencias · 3 Clínica de especialidades · 4 Hospital Distrito */
+/* CLÍNICA — 1 Consultorio Altusalud · 2 Clínica con urgencias · 3 Clínica de especialidades · 4 Hospital Distrito */
 function ambulance(gx,gy){const a=cb(gx+.7,gy+.7,gx+.9,gy+.8,.6,3.4,'#f4f4f4');face(a,'L',0,1.4,1,.6,'#d62828');face(a,'R',0,1.4,1,.6,'#b52020');face(a,'L',.7,2,.24,1.2,'#7fb6d8');
   const [x,y]=P(gx+.73,gy+.8),[x2,y2]=P(gx+.88,gy+.8);circ(x,y,.9,'#2b2b2b');circ(x2,y2,.9,'#2b2b2b')}
 function redCross(g,u,v,s=1){const on=NIGHT>.2;face(g,'L',u+.08*s,v,.14*s,3.8*s,'#d62828',on);face(g,'L',u,v+1.2*s,.3*s,1.4*s,'#d62828',on)}
@@ -4477,8 +4477,8 @@ const SPRL=new Map(),SPR={clear(){SPRL.clear();OUTC.clear()}},LASTSPR=new Map();
 // contorno de cada edificio: depende solo de su forma, así que se calcula una vez y se reusa en los cuatro niveles de noche
 const OUTC=new Map();
 // v82: los topes de la caché salen del tamaño de la ciudad (OBJN = cosas con dibujo en el mapa, lo cuenta recompute) y se desaloja lo que lleva más cuadros sin usarse
-let SPRF=0,OBJN=0;
-const sprCap=()=>Math.max(900,Math.ceil(OBJN*1.3)+64);
+let SPRF=0,OBJN=0,TURNT=-1e9;
+const sprCap=()=>Math.max(900,Math.ceil(OBJN*1.6)+64);
 function sprTrim(M,cap){if(M.size<=cap)return;const a=[];for(const [k,v] of M)a.push([v.u||0,k]);a.sort((x,y)=>x[0]-y[0]);for(let n=M.size-Math.floor(cap*.88),k=0;k<n;k++){M.delete(a[k][1]);SPRSTAT.ev++}}
 // v82: contadores de la caché (los lee la sonda tests/perf-cache.py): sin respaldo, sin dibujar, vaciados y desalojos
 const SPRSTAT={miss:0,nul:0,clr:0,ev:0,mk:0};
@@ -4514,10 +4514,14 @@ function getSprite(t,gx,gy,i,nb,ghost){
   let M=SPRL.get(nb);if(!M){M=new Map();SPRL.set(nb,M)}
   let sp=M.get(base);if(sp){sp.u=SPRF;return sp}
   // el respaldo va por edificio, sin la fase de ventanas: cuando se apagan de madrugada se sigue viendo la imagen anterior mientras llega la nueva
-  const pre=base.slice(0,base.lastIndexOf('|')),last=LASTSPR.get(pre);
+  const pre=base.slice(0,base.lastIndexOf('|'));let last=LASTSPR.get(pre),src=last;
+  // v83: recién girado, mientras llega el dibujo nuevo se usa el del giro anterior en espejo (un cuarto de vuelta en isométrico es casi un espejo; media vuelta, casi la misma silueta)
+  if(!last){const kk=r=>`${i}|${t.k}|${t.s}|${t.f||0}|${t.lv||1}|${r}|${ghost?'g':''}`;
+    if((src=LASTSPR.get(kk((ROT+3)%4))||LASTSPR.get(kk((ROT+1)%4))))last=src.mir||(src.mir={c:src.c,ax:src.c.width/RES-src.ax,ay:src.ay,glows:src.glows.map(g=>[-g[0],g[1],g[2],g[3],g[4]]),fx:1});
+    else last=src=LASTSPR.get(kk((ROT+2)%4))}
   // sin tiempo en este cuadro: se usa la imagen anterior; si no hay (recién girado), se espera unos cuadros en vez de congelar la pantalla
   // lo que ya tiene imagen anterior espera turno (pero al menos dos por cuadro se renuevan aunque el cuadro venga tarde, para que la noche sí llegue en aparatos lentos); lo que no tiene (recién girado) se arma con hasta ~35 ms de trabajo por cuadro y al menos dos por cuadro
-  if(last){if(sprBudget<=0||(SPRMIN<=0&&performance.now()>SPRDL)){last.u=SPRF;return last}SPRMIN--}else{SPRSTAT.miss++;if(SPRBT>35){if(SPRFORCE<=0){SPRSTAT.nul++;return null}SPRFORCE--}}
+  if(last){if(sprBudget<=0||(SPRMIN<=0&&performance.now()>SPRDL)){src.u=SPRF;return last}SPRMIN--}else{SPRSTAT.miss++;if(SPRBT>35){if(SPRFORCE<=0){SPRSTAT.nul++;return null}SPRFORCE--}}
   sprBudget--;SPRSTAT.mk++;sprTrim(M,Math.max(1600,sprCap()));
   {const t0=performance.now(),pw=WLATE;WLATE=wl;try{sp=makeSprite(t,gx,gy,nb,pre)}finally{WLATE=pw}SPRBT+=performance.now()-t0;if(wl)for(let q=0;q<wl;q++)M.delete(pre+'|'+q)}sp.u=SPRF;M.set(base,sp);
   // respaldo con tope: se queda la imagen más reciente de cada cosa; las de giros o pisos viejos se van saliendo (antes crecía sin límite)
@@ -4529,7 +4533,8 @@ function neonF(c,x,y){if(c!=='#ff6fae'||lowMo())return 1;const h=((Math.sin(x*12
 function swayOf(t,gx,gy){if(lowMo()||lowQ())return 0;const k=t.k;if(!(k==='arbol'||k==='palma'||(k==='ajeno'&&t.s%9===0&&!Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy))))return 0;
   const w=WXA>0?.05+.04*WXA:.018;return w*Math.sin(T*1.7+gx*.9+gy*1.7)+w*.45*Math.sin(T*3.3+gx*2.3+gy*.7)}
 function drawSprite(sp,gx,gy,sz=1,ng,sh){const [qw,qh]=Array.isArray(sz)?sz:[sz,sz],[cx,cy]=P(gx+qw/2,gy+qh/2);
-  if(sh){ctx.save();ctx.translate(rr(cx),rr(cy));ctx.transform(1,0,sh,1,0,0);ctx.drawImage(sp.c,-sp.ax,-sp.ay,sp.c.width/RES,sp.c.height/RES);ctx.restore()}
+  if(sp.fx){ctx.save();ctx.translate(rr(cx),rr(cy));if(sh)ctx.transform(1,0,sh,1,0,0);ctx.scale(-1,1);ctx.drawImage(sp.c,-(sp.c.width/RES-sp.ax),-sp.ay,sp.c.width/RES,sp.c.height/RES);ctx.restore()}
+  else if(sh){ctx.save();ctx.translate(rr(cx),rr(cy));ctx.transform(1,0,sh,1,0,0);ctx.drawImage(sp.c,-sp.ax,-sp.ay,sp.c.width/RES,sp.c.height/RES);ctx.restore()}
   else ctx.drawImage(sp.c,rr(cx-sp.ax),rr(cy-sp.ay),sp.c.width/RES,sp.c.height/RES);
   if(!ng)for(const g of sp.glows)glow(cx+g[0],cy+g[1],g[2],g[3]*neonF(g[4],cx,cy),g[4])}
 function drawSprN(t,gx,gy,i,sz,a,ghost){const s1=getSprite(t,gx,gy,i,NLO,ghost);if(!s1)return;ctx.globalAlpha=a;const sh=ghost?0:swayOf(t,gx,gy);
@@ -4591,7 +4596,7 @@ function groundLayer(nb,ph){
 function tileFill(pts){rasterPoly(pts)}
 function render(){
   const ph=S.clock/DAY;NIGHT=keyf(NF,ph);NCOL=ncol(NIGHT);LIGHTN=0;
-  if(REAL)hover=-1;SEASON_C=SEASON();const nb=Math.round(NIGHT*16)/16;sprBudget=TL?60:14;SPRFORCE=TL?8:2;SPRBT=0;SPRF++;SPRMIN=2;SPRDL=performance.now()+(lowQ()?4:TL?14:6);WBUD=lowQ()?2:5;nightPair(NIGHT);WLPH=ph>.62&&ph<.88?(ph-.62)/.26:-1;
+  if(REAL)hover=-1;SEASON_C=SEASON();const nb=Math.round(NIGHT*16)/16;{const tu=performance.now()-TURNT<1500;sprBudget=TL?60:tu?40:14;SPRDL=performance.now()+(lowQ()?(tu?8:4):TL?14:tu?12:6)}SPRFORCE=TL?8:2;SPRBT=0;SPRF++;SPRMIN=2;WBUD=lowQ()?2:5;nightPair(NIGHT);WLPH=ph>.62&&ph<.88?(ph-.62)/.26:-1;
   cam.ox=Math.round(bw/2+panX/zoom);cam.oy=Math.round(bh/2-N*TH/2+panY/zoom+30);
   drawBack(keyf(SKY,ph,true));drawBolt();
   const G=groundLayer(nb,ph);ctx.drawImage(G,cam.ox-G.width/RES/2,cam.oy-4,G.width/RES,G.height/RES);
@@ -4990,7 +4995,7 @@ function clampPan(){const x=panX/zoom,y=panY/zoom+30,hw=N*TW/2*.88,hh=N*TH/2*.88
 function centerCam(){panX=0;panY=0}
 cv.addEventListener('dblclick',e=>{if(tileAt(e)<0)centerCam()});
 $('zin').onclick=()=>setZoom(zoom+1);$('zout').onclick=()=>setZoom(zoom-1);
-function turn(d){ROT=(ROT+d+4)%4;hover=-1;SPRL.clear();try{localStorage.setItem(KEY+'.rot',ROT)}catch(e){}}
+function turn(d){ROT=(ROT+d+4)%4;hover=-1;SPRL.clear();TURNT=performance.now();try{localStorage.setItem(KEY+'.rot',ROT)}catch(e){}}
 $('rl').onclick=()=>turn(-1);$('rr').onclick=()=>turn(1);
 try{ROT=(+localStorage.getItem(KEY+'.rot')||0)%4}catch(e){}
 let resetArm=0;

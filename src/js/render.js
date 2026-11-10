@@ -97,8 +97,8 @@ const SPRL=new Map(),SPR={clear(){SPRL.clear();OUTC.clear()}},LASTSPR=new Map();
 // contorno de cada edificio: depende solo de su forma, así que se calcula una vez y se reusa en los cuatro niveles de noche
 const OUTC=new Map();
 // v82: los topes de la caché salen del tamaño de la ciudad (OBJN = cosas con dibujo en el mapa, lo cuenta recompute) y se desaloja lo que lleva más cuadros sin usarse
-let SPRF=0,OBJN=0;
-const sprCap=()=>Math.max(900,Math.ceil(OBJN*1.3)+64);
+let SPRF=0,OBJN=0,TURNT=-1e9;
+const sprCap=()=>Math.max(900,Math.ceil(OBJN*1.6)+64);
 function sprTrim(M,cap){if(M.size<=cap)return;const a=[];for(const [k,v] of M)a.push([v.u||0,k]);a.sort((x,y)=>x[0]-y[0]);for(let n=M.size-Math.floor(cap*.88),k=0;k<n;k++){M.delete(a[k][1]);SPRSTAT.ev++}}
 // v82: contadores de la caché (los lee la sonda tests/perf-cache.py): sin respaldo, sin dibujar, vaciados y desalojos
 const SPRSTAT={miss:0,nul:0,clr:0,ev:0,mk:0};
@@ -134,10 +134,14 @@ function getSprite(t,gx,gy,i,nb,ghost){
   let M=SPRL.get(nb);if(!M){M=new Map();SPRL.set(nb,M)}
   let sp=M.get(base);if(sp){sp.u=SPRF;return sp}
   // el respaldo va por edificio, sin la fase de ventanas: cuando se apagan de madrugada se sigue viendo la imagen anterior mientras llega la nueva
-  const pre=base.slice(0,base.lastIndexOf('|')),last=LASTSPR.get(pre);
+  const pre=base.slice(0,base.lastIndexOf('|'));let last=LASTSPR.get(pre),src=last;
+  // v83: recién girado, mientras llega el dibujo nuevo se usa el del giro anterior en espejo (un cuarto de vuelta en isométrico es casi un espejo; media vuelta, casi la misma silueta)
+  if(!last){const kk=r=>`${i}|${t.k}|${t.s}|${t.f||0}|${t.lv||1}|${r}|${ghost?'g':''}`;
+    if((src=LASTSPR.get(kk((ROT+3)%4))||LASTSPR.get(kk((ROT+1)%4))))last=src.mir||(src.mir={c:src.c,ax:src.c.width/RES-src.ax,ay:src.ay,glows:src.glows.map(g=>[-g[0],g[1],g[2],g[3],g[4]]),fx:1});
+    else last=src=LASTSPR.get(kk((ROT+2)%4))}
   // sin tiempo en este cuadro: se usa la imagen anterior; si no hay (recién girado), se espera unos cuadros en vez de congelar la pantalla
   // lo que ya tiene imagen anterior espera turno (pero al menos dos por cuadro se renuevan aunque el cuadro venga tarde, para que la noche sí llegue en aparatos lentos); lo que no tiene (recién girado) se arma con hasta ~35 ms de trabajo por cuadro y al menos dos por cuadro
-  if(last){if(sprBudget<=0||(SPRMIN<=0&&performance.now()>SPRDL)){last.u=SPRF;return last}SPRMIN--}else{SPRSTAT.miss++;if(SPRBT>35){if(SPRFORCE<=0){SPRSTAT.nul++;return null}SPRFORCE--}}
+  if(last){if(sprBudget<=0||(SPRMIN<=0&&performance.now()>SPRDL)){src.u=SPRF;return last}SPRMIN--}else{SPRSTAT.miss++;if(SPRBT>35){if(SPRFORCE<=0){SPRSTAT.nul++;return null}SPRFORCE--}}
   sprBudget--;SPRSTAT.mk++;sprTrim(M,Math.max(1600,sprCap()));
   {const t0=performance.now(),pw=WLATE;WLATE=wl;try{sp=makeSprite(t,gx,gy,nb,pre)}finally{WLATE=pw}SPRBT+=performance.now()-t0;if(wl)for(let q=0;q<wl;q++)M.delete(pre+'|'+q)}sp.u=SPRF;M.set(base,sp);
   // respaldo con tope: se queda la imagen más reciente de cada cosa; las de giros o pisos viejos se van saliendo (antes crecía sin límite)
@@ -149,7 +153,8 @@ function neonF(c,x,y){if(c!=='#ff6fae'||lowMo())return 1;const h=((Math.sin(x*12
 function swayOf(t,gx,gy){if(lowMo()||lowQ())return 0;const k=t.k;if(!(k==='arbol'||k==='palma'||(k==='ajeno'&&t.s%9===0&&!Object.values(SIGNS).some(a=>a[0]===gx&&a[1]===gy))))return 0;
   const w=WXA>0?.05+.04*WXA:.018;return w*Math.sin(T*1.7+gx*.9+gy*1.7)+w*.45*Math.sin(T*3.3+gx*2.3+gy*.7)}
 function drawSprite(sp,gx,gy,sz=1,ng,sh){const [qw,qh]=Array.isArray(sz)?sz:[sz,sz],[cx,cy]=P(gx+qw/2,gy+qh/2);
-  if(sh){ctx.save();ctx.translate(rr(cx),rr(cy));ctx.transform(1,0,sh,1,0,0);ctx.drawImage(sp.c,-sp.ax,-sp.ay,sp.c.width/RES,sp.c.height/RES);ctx.restore()}
+  if(sp.fx){ctx.save();ctx.translate(rr(cx),rr(cy));if(sh)ctx.transform(1,0,sh,1,0,0);ctx.scale(-1,1);ctx.drawImage(sp.c,-(sp.c.width/RES-sp.ax),-sp.ay,sp.c.width/RES,sp.c.height/RES);ctx.restore()}
+  else if(sh){ctx.save();ctx.translate(rr(cx),rr(cy));ctx.transform(1,0,sh,1,0,0);ctx.drawImage(sp.c,-sp.ax,-sp.ay,sp.c.width/RES,sp.c.height/RES);ctx.restore()}
   else ctx.drawImage(sp.c,rr(cx-sp.ax),rr(cy-sp.ay),sp.c.width/RES,sp.c.height/RES);
   if(!ng)for(const g of sp.glows)glow(cx+g[0],cy+g[1],g[2],g[3]*neonF(g[4],cx,cy),g[4])}
 function drawSprN(t,gx,gy,i,sz,a,ghost){const s1=getSprite(t,gx,gy,i,NLO,ghost);if(!s1)return;ctx.globalAlpha=a;const sh=ghost?0:swayOf(t,gx,gy);
@@ -211,7 +216,7 @@ function groundLayer(nb,ph){
 function tileFill(pts){rasterPoly(pts)}
 function render(){
   const ph=S.clock/DAY;NIGHT=keyf(NF,ph);NCOL=ncol(NIGHT);LIGHTN=0;
-  if(REAL)hover=-1;SEASON_C=SEASON();const nb=Math.round(NIGHT*16)/16;sprBudget=TL?60:14;SPRFORCE=TL?8:2;SPRBT=0;SPRF++;SPRMIN=2;SPRDL=performance.now()+(lowQ()?4:TL?14:6);WBUD=lowQ()?2:5;nightPair(NIGHT);WLPH=ph>.62&&ph<.88?(ph-.62)/.26:-1;
+  if(REAL)hover=-1;SEASON_C=SEASON();const nb=Math.round(NIGHT*16)/16;{const tu=performance.now()-TURNT<1500;sprBudget=TL?60:tu?40:14;SPRDL=performance.now()+(lowQ()?(tu?8:4):TL?14:tu?12:6)}SPRFORCE=TL?8:2;SPRBT=0;SPRF++;SPRMIN=2;WBUD=lowQ()?2:5;nightPair(NIGHT);WLPH=ph>.62&&ph<.88?(ph-.62)/.26:-1;
   cam.ox=Math.round(bw/2+panX/zoom);cam.oy=Math.round(bh/2-N*TH/2+panY/zoom+30);
   drawBack(keyf(SKY,ph,true));drawBolt();
   const G=groundLayer(nb,ph);ctx.drawImage(G,cam.ox-G.width/RES/2,cam.oy-4,G.width/RES,G.height/RES);

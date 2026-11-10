@@ -30,7 +30,7 @@ function clampPan(){const x=panX/zoom,y=panY/zoom+30,hw=N*TW/2*.88,hh=N*TH/2*.88
 function centerCam(){panX=0;panY=0}
 cv.addEventListener('dblclick',e=>{if(tileAt(e)<0)centerCam()});
 $('zin').onclick=()=>setZoom(zoom+1);$('zout').onclick=()=>setZoom(zoom-1);
-function turn(d){ROT=(ROT+d+4)%4;hover=-1;SPRL.clear();try{localStorage.setItem(KEY+'.rot',ROT)}catch(e){}}
+function turn(d){ROT=(ROT+d+4)%4;hover=-1;SPRL.clear();TURNT=performance.now();try{localStorage.setItem(KEY+'.rot',ROT)}catch(e){}}
 $('rl').onclick=()=>turn(-1);$('rr').onclick=()=>turn(1);
 try{ROT=(+localStorage.getItem(KEY+'.rot')||0)%4}catch(e){}
 let resetArm=0;

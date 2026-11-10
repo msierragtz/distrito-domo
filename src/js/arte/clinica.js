@@ -1,4 +1,4 @@
-/* CLÍNICA — 1 Consultorio Buenasalud · 2 Clínica con urgencias · 3 Clínica de especialidades · 4 Hospital Distrito */
+/* CLÍNICA — 1 Consultorio Altusalud · 2 Clínica con urgencias · 3 Clínica de especialidades · 4 Hospital Distrito */
 function ambulance(gx,gy){const a=cb(gx+.7,gy+.7,gx+.9,gy+.8,.6,3.4,'#f4f4f4');face(a,'L',0,1.4,1,.6,'#d62828');face(a,'R',0,1.4,1,.6,'#b52020');face(a,'L',.7,2,.24,1.2,'#7fb6d8');
   const [x,y]=P(gx+.73,gy+.8),[x2,y2]=P(gx+.88,gy+.8);circ(x,y,.9,'#2b2b2b');circ(x2,y2,.9,'#2b2b2b')}
 function redCross(g,u,v,s=1){const on=NIGHT>.2;face(g,'L',u+.08*s,v,.14*s,3.8*s,'#d62828',on);face(g,'L',u,v+1.2*s,.3*s,1.4*s,'#d62828',on)}
