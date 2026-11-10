@@ -1,15 +1,20 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 9 nov 2026 (artifact v80; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 9 nov 2026 (artifact v81; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Segunda tanda de silueta y detalle (v81)**:
+  - Torre: marquesina en el vestíbulo desde el nivel 2 (del color del distrito en el 4), aletas de piedra también en el cuerpo alto de cristal para que se lea como un solo edificio, y banda del color del distrito bajo el remate del nivel 4, encendida de noche.
+  - Usos mixtos: cornisa corrida que separa el local de los departamentos (del color del distrito en el nivel 4), letrero de bandera más grande y pegado a la esquina, y ático iluminado en la azotea del nivel 4.
+  - Museo: torre mirador con franja del color del distrito y linterna iluminada, tres pendones en la explanada y escultura nueva. Plaza comercial: tienda ancla alta con marquesina de cine, fachadas de color por local y tragaluces a cuatro aguas.
+  - Hoja: `tests/hoja-v81.py`.
+  - Falta del documento: edificio, ladrillo y casa (remates y plantas bajas); parque y estacionamiento; café, restaurante y bar de Cañón; estadio, bosque y metro; parroquia, hotel, alberca y puente; gente por silueta, perros, carritos y vehículos nuevos; ventanas de noche por nivel.
 - **Primera tanda de silueta y detalle (v80)** (documento «Distrito Sierra: mejoras de silueta y detalle»):
   - Café de la Ribera con identidad propia (`ribCafe`, `taza()`): crema con toldo verde agua y una taza gigante con vapor en los 4 niveles (triciclo con termo, café de esquina, tostador con teja y chimenea de cobre, pabellón de cristal). Ya no comparte ladrillo, diente de sierra ni sombrillas con bares y restaurantes.
   - Rascacielos de oficinas pulido (`artRasca2`): tres cuerpos escalonados con terrazas, aletas blancas, franja del color del distrito que se enciende de noche, vestíbulo de doble altura y aguja.
   - Plaza nivel 4: ágora con torre de reloj, asta bandera y bancas (antes no se entendía). Jitomates: el jitomate en los 4 niveles y el nivel 3 menos oscuro. Malecón: barandal blanco con filo verde agua y foquitos entre faroles.
   - Autos (`carSprite`): contorno, faros y calaveras que se encienden de noche, brillo en el parabrisas; la caché saca los 120 más viejos en vez de vaciarse.
   - Hojas: `tests/hoja-v80.py`, `tests/hoja-rasca.py`.
-  - Falta del documento: torre, usos mixtos, edificio, ladrillo y casa (remates y plantas bajas); parque y estacionamiento; café, restaurante y bar de Cañón; museo, plaza comercial, estadio, bosque y metro; parroquia, hotel, alberca y puente; gente por silueta, perros, carritos y vehículos nuevos; ventanas de noche por nivel.
 - **Kit de nivel (v79)**: todos los edificios con niveles (vivienda, negocios, escuela, clínica, oficinas, banco) llevan, encima de su dibujo, banqueta alrededor (guarnición en el nivel 2, adoquín en el 3, piedra con filo del color del distrito en el 4) y vida al frente (maceta, farol, jardinera con arbolito). El acento del nivel 4 dejó de ser dorado: es el color del distrito (naranja en Cañón, verde agua en la Ribera; `distCol()`, `lvCol()`). Cornisa clara en el nivel 3 de edificio y ladrillo (`corona()`). Va dentro del sprite de cada edificio: no hay sprites de más. Funciones `kitBase`, `kitFront` en `objetos.js`; hoja: `tests/hoja-kit.py`. Falta: ventanas de noche por nivel y remate propio en las demás familias (documento «Distrito Sierra: mejoras de silueta y detalle»).
 - **Nombre definitivo (v78)**: el juego se llama **Distrito Sierra** (antes Distrito Pixel en la v76–v77). Se quedan el distrito Cañón, La Cúpula y todas las marcas nuevas. La torre de vivienda pasa de «Torre Caliza» (nombre real) a «Torre Peña Alta». La prueba `tests/v77.py` también falla si vuelve a aparecer «Distrito Pixel».
 - **Medir sin servidor (v77)**: cada partida anota el segundo de juego en que cruza 100, 500, 1,000, 2,000 y 3,000 vecinos (`S.hitos`; −1 si ya los había pasado antes de medir) y los días distintos en que se abrió (`S.dias`). En ⚙ Opciones, «Compartir mi avance» copia un texto con versión, distrito, vecinos, tiempo, hitos, días, estado de la guía, tipo de aparato y errores, para pegarlo en un comentario. Archivo `medir.js`, constante `VER`. Prueba: `tests/v77.py`.

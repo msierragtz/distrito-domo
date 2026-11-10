@@ -105,6 +105,7 @@ function drawTower(t,gx,gy,f,FH,LVL,hh){
   face(g,'L',0,0,1,FH,'#8d877e');face(g,'R',0,0,1,FH,'#78726a');win(g,'L',.06,.5,.88,FH-1.5,'#6fa3c7');win(g,'R',.06,.5,.5,FH-1.5,'#5d92b8');face(g,'R',.64,0,.24,FH-1,'#3d3d46');
   for(const u of [.3,.55,.8])face(g,'L',u,.5,.015,FH-1.5,'#5a554f');
   prot(SD.L,.02,.98,.07,FH-.6,.6,LVL===4?'#a0693f':'#5a554f');prot(SD.R,.02,.98,.07,FH-.6,.6,LVL===4?'#8a5a36':'#4a4640');
+  if(LVL>=2){prot(SD.L,.28,.72,.16,FH-.4,.9,LVL===4?lvCol():'#f4f3ef');face(g,'L',.42,.5,.16,FH-1.5,NIGHT>.2?'#ffe2a8':'#bfe0f0',NIGHT>.2)}
   const floorsOf=(gg,a,b,base,glassy)=>{for(let fl=a;fl<b;fl++){const v=fl*FH-base+1.2,wh=FH-2.6;
     for(const side of ['L','R']){
       if(LVL===1){for(const u of [.1,.32,.54,.76])winF(gg,side,u,v,.14,wh,'#e6e3dc','#2f5079','#ffffff')}
@@ -113,6 +114,7 @@ function drawTower(t,gx,gy,f,FH,LVL,hh){
   floorsOf(g,1,sbF,0,LVL===3&&false);if(setb)floorsOf(g2,sbF,f,Hs,LVL>=3);
   if(LVL<=2||!setb){for(const [gg,h0,h1] of [[g,FH,Hs]].concat(setb&&LVL<3?[[g2,0,H-Hs]]:[])){face(gg,'L',.94,h0,.06,h1-h0,'#e2dfd8');face(gg,'R',0,h0,.06,h1-h0,'#c9c5bd');if(LVL>=2){face(gg,'L',.465,h0,.07,h1-h0,'#e6e3dc');face(gg,'R',.465,h0,.07,h1-h0,'#cbc7bf')}}}
   if(LVL===1){const bc=['#dcd8d0','#c98a5a','#7f9bb0'][rv];for(let fl=1;fl<f;fl+=3){face(g,'L',0,fl*FH,1,.6,bc);face(g,'R',0,fl*FH,1,.6,hexShade(bc,-.12))}}
+  if(setb&&LVL>=3)for(const sd of ['L','R']){const c=sd==='L'?stone:stoneR;face(g2,sd,0,0,.07,H-Hs,c);face(g2,sd,.93,0,.07,H-Hs,c);face(g2,sd,.465,0,.07,H-Hs,c)}
   // esquinas de cristal (Plus en adelante)
   if(LVL>=2){face(g,'L',0,FH,.05,Hs-FH,'#8fd3ff',NIGHT>.2);face(g,'R',.95,FH,.05,Hs-FH,'#7cc3ee',NIGHT>.2)}
   // balcones
@@ -147,6 +149,7 @@ function drawTower(t,gx,gy,f,FH,LVL,hh){
     const [cx,cy]=P(gx+.5,y1-i2);glow(cx,cy-R-2,16,.8);return}
   // Sky: remate de cristal y helipuerto
   const gc=box(x0+i2+.02,y0+i2+.02,x1-i2-.02,y1-i2-.02,R,4,'#bfe2f2','#9fd0ee','#7fb0cf');face(gc,'L',0,0,1,4,'rgba(255,255,255,.15)',true);
+  face(gc,'L',0,0,1,1.2,lvCol(),NIGHT>.2);face(gc,'R',0,0,1,1.2,hexShade(lvCol(),-.2),NIGHT>.2);if(NIGHT>.2){const [cx,cy]=P(gx+.5,gy+.5);glow(cx,cy-R-2,16,.6,lvCol())}
   const R2=R+4;
   if(rv===1){topFace(x0+i2+.03,y0+i2+.03,x1-i2-.03,y1-i2-.03,R2,'#d9d6cf');topFace(x0+i2+.08,y0+i2+.08,gx+.62,gy+.62,R2+.1,'#3f8fc4');topFace(x0+i2+.1,y0+i2+.1,gx+.6,gy+.6,R2+.2,'#5fb3e6');
     lifted(R2,()=>{cb(gx+.68,gy+.28,gx+.84,gy+.34,0,.6,'#f4f4f4');cb(gx+.66,gy+.72,gx+.82,gy+.78,0,.6,'#f4f4f4');planter(gx+.76,gy+.52,.26)});return}

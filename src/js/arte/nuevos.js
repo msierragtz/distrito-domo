@@ -58,8 +58,9 @@ function artMixto(t,gx,gy,L,ic){const s=t.s,f=ic?3:Math.max(3,t.f||3),FH=7,GF=8.
   face(g,'L',.04,GF-2.4,.92,2,lc);for(let k=0;k<6;k++)face(g,'L',.14+k*.12,GF-1.9,.08,1,'#ffffff');
   if(L>=2){const ga=prot(SD.L,.04,.96,.13,GF-3.3,.9,lc,lc);for(let q=1;q<9;q+=2)face(ga,'L',q/9,0,1/9,.9,'#ffffff')}
   face(g,'R',.56,0,.24,GF-2,L===4?'#8a5a30':'#5a3a24');face(g,'R',.54,GF-2,.28,.4,WR);winF(g,'R',.12,1.6,.3,GF-4,WR,'#2b4b75',WR);
+  if(L>=2)for(const sd of ['L','R']){const c=L===4?lvCol():sd==='L'?W:WR;prot(SD[sd],0,1,.045,GF-.1,.9,c)}
   // letrero de bandera con el ícono del local (de noche se enciende)
-  {const [x,y]=fpt(g,'L',.02,GF-1);px(x-3.6,y-.4,3.6,.5,'#3a3a3a');px(x-7,y-5,5,5,lc,on);px(x-7,y-5,5,.5,hexShade(lc,.3),on);localIcon(x-4.5,y-1.2,lk);if(on)glow(x-4.5,y-2.5,7,.7,lc)}
+  {const [x,y]=fpt(g,'L',.02,GF-1);px(x-2,y-.4,2,.6,'#3a3a3a');px(x-6.4,y-6,6,6,'#2b2b2b');px(x-5.9,y-5.5,5,5,lc,on);px(x-5.9,y-5.5,5,.6,hexShade(lc,.3),on);localIcon(x-3.4,y-1.6,lk);if(on)glow(x-3.4,y-3,7,.7,lc)}
   // departamentos: dos ventanas grandes por cara
   for(let fl=1;fl<f;fl++){const v=GF+(fl-1)*FH;if(L>=2){face(g,'L',0,v-.3,1,.6,L===4?'#8a5a30':W);face(g,'R',0,v-.3,1,.6,L===4?'#6e4524':WR)}
     for(const sd of ['L','R'])for(const u of [.12,.56]){const w=.32,fr=L===1?hexShade(wall,-.12):sd==='L'?W:WR,bal=L>=3&&sd==='L'&&(L===4||(fl+Math.round(u*10))%2===0);
@@ -72,6 +73,7 @@ function artMixto(t,gx,gy,L,ic){const s=t.s,f=ic?3:Math.max(3,t.f||3),FH=7,GF=8.
   if(L===1)tinaco(gx+.36,gy+.3,R,'#1f1f1f');else if(L===2){const gm=cb(gx+.24,gy+.24,gx+.44,gy+.46,R,3.4,'#d8d2c4');face(gm,'L',.3,0,.35,2.6,'#6b4226');minisplit(gm,'R',.1,.4);lifted(R,()=>planter(gx+.7,gy+.32,.3))}
   else{lifted(R,()=>{for(const [a,b] of [[.26,.26],[.26,.62],[.62,.26]]){const [x,y]=P(gx+a,gy+b);px(x-.3,y-6,.7,6,'#7a4e2c')}for(let q=0;q<5;q++){const a=P(gx+.26+q*.09,gy+.24),b=P(gx+.26+q*.09,gy+.64);line(a[0],a[1]-6.1,b[0],b[1]-6.1,'#8a5a30')}
       tableH(gx+.46,gy+.46,'#f7f3ea','#555');chairH(gx+.38,gy+.38,'#2f6f5e');planter(gx+.74,gy+.3,.3);planter(gx+.74,gy+.7,.3)});
+    if(L===4){const pg=cb(gx+.5,gy+.22,gx+.8,gy+.5,R,5,'#f7f3ea','#ffffff');face(pg,'L',.1,.6,.8,3.4,on?'#ffe2a8':'#9fc4dc',on);face(pg,'R',.1,.6,.8,3.4,on?'#f2d090':'#8cb6d2',on);box(gx+.48,gy+.2,gx+.82,gy+.52,R+5,.7,'#bdb7ab',lvCol(),hexShade(lvCol(),-.2))}
     if(L===4){const a=P(x0+.03,y1-.03),b=P(x1-.03,y1-.03);foquitos([a[0],a[1]-R],[b[0],b[1]-R],4.5,7,1.3)}else lifted(R,()=>planter(gx+.4,gy+.72,.3))}}
 
 /* ---------- Cicloestación: anclajes con bicis del color del distrito; luego techo, taller y techo solar ---------- */
