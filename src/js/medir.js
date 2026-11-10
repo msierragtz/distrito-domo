@@ -10,7 +10,7 @@ function avanceTxt(){hitosStep();const nv=n=>Math.round(n).toLocaleString('es-MX
   const hs=HITOS.filter(h=>S.hitos[h]!=null).map(h=>S.hitos[h]<0?`${nv(h)} (antes de medir)`:`${nv(h)} en ${m(S.hitos[h])} min`);
   let ne=0;try{ne=JSON.parse(localStorage.getItem(KEY+'.errores')||'[]').reduce((a,e)=>a+(e.n||1),0)}catch(e){}
   const guia=S.tuto===9?'terminada o saltada':S.tuto>0?`en el paso ${S.tuto}`:'no la vio',tc=(()=>{try{return matchMedia('(pointer:coarse)').matches}catch(e){return false}})();
-  return [`Distrito Pixel v${VER} · ${DNAME}`,
+  return [`Distrito Sierra v${VER} · ${DNAME}`,
     `Vecinos: ${nv(S.v)} (máximo ${nv(S.maxV||0)}) · satisfacción ${Math.round((stats.sat||0)*100)}%`,
     `Tiempo de juego: ${m(S.playT||0)} min en ${(S.dias||[]).length||1} día${((S.dias||[]).length||1)===1?'':'s'}`,
     `Hitos: ${hs.length?hs.join(', '):'todavía ninguno'}`,

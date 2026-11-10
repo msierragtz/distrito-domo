@@ -1,9 +1,9 @@
-"""Renombre v76 (una sola vez): el juego pasa a llamarse Distrito Pixel, el primer distrito es Cañón, su emblema es La Cúpula,
+"""Renombre v76 (una sola vez): el juego pasa a llamarse Distrito Sierra, el primer distrito es Cañón, su emblema es La Cúpula,
 y salen las marcas reales. Las llaves internas ('domo', distritoDomo.*) no cambian: nadie pierde su partida."""
 import re,glob,io
 R=[ # (patrón, reemplazo) en orden
- (r"copia de Distrito Domo","copia de Distrito Pixel"),(r"<title>Distrito Domo","<title>Distrito Pixel"),(r"Distrito Domo se juega","Distrito Pixel se juega"),
- (r"DISTRITO<br>DOMO","DISTRITO<br>PIXEL"),(r"retro en el Distrito Domo de Santa Catarina","retro en Santa Catarina"),
+ (r"copia de Distrito Domo","copia de Distrito Sierra"),(r"<title>Distrito Domo","<title>Distrito Sierra"),(r"Distrito Domo se juega","Distrito Sierra se juega"),
+ (r"DISTRITO<br>DOMO","DISTRITO<br>SIERRA"),(r"retro en el Distrito Domo de Santa Catarina","retro en Santa Catarina"),
  (r"¡EL DOMO ESTÁ LISTO!","¡LA CÚPULA ESTÁ LISTA!"),(r"Terreno del Domo","Terreno de La Cúpula"),(r"La foto del Domo","La foto de La Cúpula"),(r"Momento del Domo","Momento de La Cúpula"),
  (r"El arco naranja del Distrito","La cúpula con su arco naranja, emblema del Distrito"),
  (r"EL DOMO","LA CÚPULA"),(r"El Domo","La Cúpula"),

@@ -6,7 +6,7 @@ from PIL import Image,ImageDraw,ImageFont,ImageChops
 from playwright.async_api import async_playwright
 CAP=BUILD+'/capturas/'
 F=lambda sz,b=False:ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans'+('-Bold' if b else '')+'.ttf',sz)
-DOMO={'edificio':['Departamentos','Remodelados','Lofts','Residencial de lujo'],'ladrillo':['Ladrillo','Remodelado','Lofts','Boutique de ladrillo'],'torre':['Torre Caliza','Plus','Premium','Sky'],
+DOMO={'edificio':['Departamentos','Remodelados','Lofts','Residencial de lujo'],'ladrillo':['Ladrillo','Remodelado','Lofts','Boutique de ladrillo'],'torre':['Torre Peña Alta','Plus','Premium','Sky'],
   'cafe':['Café de olla','Cafetería','Especialidad','Brunch'],'resto':['Barbacoa','Lonchería','Hamburguesas','De autor'],'bar':['Micheladas','Cantina','Mezcalería','Azotea'],
   'paleteria':['Carrito','De barrio','Artesanal','Heladería'],'tomates':['Jitomates','Market','Market','Market'],'oficinas':['Oficinas','Coworking','Corporativo','Verde']}
 TIT={'edificio':'Edificio  →  Casas de la Ribera','ladrillo':'Edificio de ladrillo  →  Bodegas del río','torre':'Torre  →  Torre Malecón','cafe':'Café','resto':'Restaurante  →  mariscos y asadero',

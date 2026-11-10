@@ -53,7 +53,7 @@ function start(data){
   let impD=null,impT=0;
   $('timp').onclick=()=>{if(impD&&Date.now()-impT<8000){adopt(impD);impD=null;$('timp').textContent='Cargar copia';status(`Listo: cargué la copia (${vec(S)}).`,'ok');CLOUD.push(JSON.stringify(S),true);return}$('tfile').value='';$('tfile').click()};
   $('tfile').onchange=async()=>{const f=$('tfile').files&&$('tfile').files[0];if(!f)return;let d=null;try{d=parseSave(await f.text())}catch(e){}
-    if(!d){status('Ese archivo no es una copia de Distrito Pixel.','warn');return}
+    if(!d){status('Ese archivo no es una copia de Distrito Sierra.','warn');return}
     if((d.dist||'domo')!==DIST){status(`Esa copia es del ${(d.dist||'domo')==='ribera'?'Distrito Ribera':'Distrito Cañón'}: cámbiate a ese distrito y cárgala ahí.`,'warn');return}
     const dmsg=d.demo?' Es una partida de demostración: al terminar, toca «Recuperar anterior» para volver a la tuya.':'';
     if(!hasSave){adopt(d);status(`Listo: cargué la copia (${vec(S)}).${dmsg}`,'ok');CLOUD.push(JSON.stringify(S),true);return}

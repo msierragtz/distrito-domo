@@ -5,7 +5,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=77; // versión que ve el jugador (igual al 0.77 de package.json)
+const VER=78; // versión que ve el jugador (igual al 0.78 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -33,7 +33,7 @@ const DEFS={
   oficinas:{R:6,val:[.08,4],name:'Oficinas',cost:5000,grow:1.15,unlock:120,bt:30,com:12,inc:25,upk:2,desc:'Empleo y coworking para profesionistas y estudiantes. A las familias no les gusta tenerlas cerca (tráfico).'},
   banco:{R:4,val:[.08,3],name:'Banco',cost:1200,grow:1.15,unlock:250,bt:14,com:4,inc:8,upk:.8,desc:'Les sirve a profesionistas y familias. Los negocios a 4 cuadras ganan 10% más.'},
   gas:{R:4,val:[.03,2],name:'Gasolinera',cost:600,grow:1.15,unlock:100,bt:12,com:3,inc:6,upk:.5,desc:'Va pegada a una avenida, para que entren los coches. Su tiendita les sirve a profesionistas y familias, pero a las familias no les gusta tenerla cerca.'},
-  torre:{name:'Torre Caliza',cost:6000,grow:1.25,unlock:160,bt:60,f0:16,fmax:26,per:6,upc:900,upg:1.15,upk:.22,desc:'16 pisos: aquí viven sobre todo profesionistas, que pagan más renta. Tócala otra vez para crecerla, o tócala sobre un edificio para convertirlo en torre sin perder vecinos.'},
+  torre:{name:'Torre Peña Alta',cost:6000,grow:1.25,unlock:160,bt:60,f0:16,fmax:26,per:6,upc:900,upg:1.15,upk:.22,desc:'16 pisos: aquí viven sobre todo profesionistas, que pagan más renta. Tócala otra vez para crecerla, o tócala sobre un edificio para convertirlo en torre sin perder vecinos.'},
   torreagua:{name:'Torre de agua',cost:50000,grow:1.2,unlock:600,bt:40,upk:.6,val:[.05,3],desc:'El tanque del Distrito alcanza para 1,000 vecinos. Cada Torre de agua surte a 1,000 más (puedes tener todas las que quieras): sin ella, arriba de 1,000 vecinos empiezan los problemas de agua.'},
   kiosco:{name:'Kiosco de la música',cost:0,unlock:500,bt:10,upk:0,max:1,trophy:1,R:4,val:[.08,3],desc:'Trofeo de 500 vecinos, gratis. De noche toca un trío: las familias de alrededor están más contentas y el jazz suma una trompeta.'},
   mirador:{name:'Mirador del Distrito',cost:0,unlock:1000,bt:20,upk:0,max:1,trophy:1,val:[.2,5],desc:'Trofeo de 1,000 vecinos, gratis. Vista a la Sierra Madre: sube la plusvalía 5 cuadras a la redonda.'},
@@ -102,7 +102,7 @@ const LV={
   oficinas:['Oficinas','Coworking','Corporativo','Corporativo verde'],
   edificio:['Departamentos','Departamentos remodelados','Lofts','Residencial de lujo'],
   ladrillo:['Edificio de ladrillo','Ladrillo restaurado','Lofts industriales','Boutique de ladrillo'],
-  torre:['Torre Caliza','Torre Caliza Plus','Torre Caliza Premium','Torre Caliza Sky'],
+  torre:['Torre Peña Alta','Torre Peña Alta Plus','Torre Peña Alta Premium','Torre Peña Alta Sky'],
   casaf:['Casa en obra gris','Casa pintada con cochera','Casa con terraza','Casa remodelada'],
   mixto:['Local con departamentos','Edificio de usos mixtos','Usos mixtos con balcones','Usos mixtos de diseño'],
   ciclo:['Cicloestación','Cicloestación techada','Bici-taller','Cicloestación solar'],

@@ -25,7 +25,7 @@ async def main():
     await pg.goto('file://'+BUILD+'/arnes.html');await pg.wait_for_timeout(1000)
     d=await pg.evaluate("[__dd.DIST,__dd.RIBV,__dd.DEFS.edificio.name,__dd.DEFS.torre.name,__dd.nameOf({k:'cafe',s:4,lv:2}),__dd.nameOf({k:'tomates',s:0,lv:1})]");print('domo',d)
     ok(d[0]=='domo' and d[1] is False,'en el Cañón no se usa el arte de la Ribera')
-    ok(d[2]=='Edificio' and d[3]=='Torre Caliza' and d[4]=='Starblocks' and d[5]=='Jitomates Market','el Cañón conserva sus nombres y marcas')
+    ok(d[2]=='Edificio' and d[3]=='Torre Peña Alta' and d[4]=='Starblocks' and d[5]=='Jitomates Market','el Cañón conserva sus nombres y marcas')
     # 2) Ribera: su arte y sus nombres
     await pg.evaluate("localStorage.setItem('distritoDomo.distrito','ribera')");await pg.reload();await pg.wait_for_timeout(1200);await pg.click('#tcont',force=True);await pg.wait_for_timeout(800)
     r=await pg.evaluate("[__dd.DIST,__dd.RIBV,__dd.DEFS.edificio.name,__dd.DEFS.ladrillo.name,__dd.DEFS.torre.name,__dd.DEFS.tomates.name,__dd.nameOf({k:'cafe',s:4,lv:3}),__dd.nameOf({k:'resto',s:9,lv:2}),__dd.nameOf({k:'edificio',s:0,lv:4})]");print('ribera',r)

@@ -1,4 +1,4 @@
-# Distrito Pixel
+# Distrito Sierra
 
 Simulador de ciudad retro, en pixel art isométrico, ambientado en Santa Catarina, Nuevo León. Idea y dirección: Mauricio. Programación, pixel art y jazz: Claude.
 
@@ -68,7 +68,7 @@ Para una versión nueva:
 1. Cambiar lo que haga falta en `src/`.
 2. `npm run build` y abrir `dist/distrito-domo.html` en el navegador.
 3. `npm test`.
-4. Subir `version` en `package.json` (0.76 → 0.77 = v77), hacer commit con lo que cambió.
+4. Subir `version` en `package.json` (0.77 → 0.78 = v78), hacer commit con lo que cambió.
 5. Publicar `dist/distrito-domo.html` en el artifact y, si toca, `npm run itch` para itch.io.
 
 `dist/distrito-domo.html` sí se guarda en git, para que siempre esté a la mano la última versión jugable.
@@ -102,5 +102,5 @@ Para usar otro Chromium: `CHROME=/ruta/al/chrome`.
 
 ## Pendientes conocidos
 
-Ver `docs/pendientes.md`. En la v76 salieron las marcas e instituciones reales y el juego dejó de llamarse como el desarrollo real: ahora es Distrito Pixel, con los distritos Cañón y Ribera (las llaves internas siguen siendo `domo` y `distritoDomo.*` para no perder partidas).
+Ver `docs/pendientes.md`. En la v76 salieron las marcas e instituciones reales y el juego dejó de llamarse como el desarrollo real: ahora es Distrito Sierra, con los distritos Cañón y Ribera (las llaves internas siguen siendo `domo` y `distritoDomo.*` para no perder partidas).
 
