@@ -39,7 +39,7 @@ function liveWater(t,gx,gy){if(lowMo()||lowQ()||t.b>0||t.lu>0)return;const L=lvO
     for(let q=0;q<2;q++){const pr=(T*.45+q*.5)%1,ox=Math.sin(q*7.3+Math.floor(T*.45+q*.5)*2.1)*4,oy=Math.cos(q*3.1+Math.floor(T*.45+q*.5)*1.7)*1.5,rx=.8+pr*4;
       for(let k=0;k<12;k++){const an=k/12*Math.PI*2;px(x+ox+Math.cos(an)*rx-.3,y+oy+Math.sin(an)*rx*.5,.6,.4,`rgba(210,240,255,${(.65*(1-pr)).toFixed(2)})`)}}
     if(NIGHT<.5)for(let k=0;k<4;k++){const ph=(T*.6+k*.37)%1;if(ph<.5){const a=Math.sin(ph*2*Math.PI);px(x-6+k*3.6+Math.sin(T+k)*1.2,y-1+((k*5)%3)-1,1,.5,`rgba(255,255,255,${a.toFixed(2)})`)}}}}
-/* gente afuera de cafés, restaurantes, bares y Jitomates: depende de la hora y de cuántos clientes tiene el negocio */
+/* gente afuera de cafés, restaurantes, bares y Tomates: depende de la hora y de cuántos clientes tiene el negocio */
 const VIS=new Map();
 function visitorsOf(t,i){const ph=S.clock/DAY,k=t.k;let w=0;
   if(k==='cafe')w=ph<.22?1:ph<.45?.45:ph>.88?.4:0;else if(k==='resto')w=(ph>.24&&ph<.37)||(ph>.5&&ph<.68)?1:.15;else if(k==='bar')w=ph>.52&&ph<.92?1:0;else if(k==='tomates')w=ph<.92&&ph>.0?.45:0;

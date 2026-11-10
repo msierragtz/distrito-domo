@@ -203,7 +203,7 @@ function distBoot(){if(DIST!=='ribera'){for(const k of ['malecon','alberca','par
   Object.assign(DEFS.edificio,{name:'Casas de la Ribera',desc:'Casas pintadas, cada edificio de su color; 6 vecinos por piso: sobre todo estudiantes, luego familias. Tócalo otra vez para subirle un piso.'});
   Object.assign(DEFS.ladrillo,{name:'Bodegas del río',desc:'Bodegas de ladrillo convertidas en departamentos, con tanque de agua de madera: las prefieren las familias. Tócalo otra vez para subirle un piso.'});
   DEFS.torre.name='Torre Malecón';Object.assign(DEFS.tomates,{name:'Mercadito de la Ribera',desc:'Mercadito abierto día y noche: le sirve a todos.'});
-  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Jitomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Jitomates Market','mercadito');
+  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Tomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Tomates Market','mercadito');
   document.title='Distrito Ribera';for(const el of document.querySelectorAll('header h1'))el.firstChild.textContent='DISTRITO RIBERA';
   const tt=document.querySelector('#title .tt');if(tt)tt.innerHTML='DISTRITO<br>RIBERA';document.body.classList.add('ribera')}
 

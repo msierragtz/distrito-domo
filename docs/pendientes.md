@@ -1,8 +1,9 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 10 nov 2026 (artifact v83; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 10 nov 2026 (artifact v84; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Tomates Market regresa (v84)**: es un negocio real, pequeño, y su dueño es amigo de Mauricio, así que conserva su nombre en el juego (Tomates Market, 24 horas, Gourmet y Signature). `tests/v77.py` ahora vigila que no vuelva «Jitomates». Siguen cambiadas solo las marcas grandes (BanReMás, Aceros El Cerro, Uni del Valle, Instituto, Rayones contra Tigrillos, Torre Peña Alta).
 - **Giro del mapa sin huecos y nombres originales de los negocios (v83)**:
   - Giro: antes, al girar, cada edificio desaparecía hasta que se dibujaba de nuevo y la ciudad iba saliendo por partes (en la ciudad de 2,600 con CPU 4x más lenta, ~5,900 veces un edificio sin dibujar por giro y cuadros de hasta 35 ms de trabajo forzado). Ahora, mientras llega el dibujo nuevo, se muestra el del giro anterior en espejo (un cuarto de vuelta en isométrico es casi un espejo; con media vuelta se usa tal cual): la ciudad se ve completa desde el primer cuadro y los dibujos definitivos entran por presupuesto (más alto el primer segundo y medio: `TURNT`). Solo se nota en letreros y puertas, que quedan al revés un momento. `getSprite` (`src.mir`), `drawSprite` (`sp.fx`). El tope del respaldo sube a 1.6 × `OBJN` para conservar el giro anterior.
   - Lo que sigue sin dibujo un instante: lo que entra a la vista por primera vez al girar (decenas de casos, antes miles).

@@ -8,7 +8,7 @@ fallas=[]
 def ok(c,msg):
   print(('OK   ' if c else 'FALLA ')+msg)
   if not c:fallas.append(msg)
-VIEJAS=['Torre Caliza','Distrito Pixel','DISTRITO<br>PIXEL','Distrito Domo','DISTRITO DOMO','El Domo','EL DOMO','Banregio','DeAcero','UDEM','del Tec','Rayados','Tigres','Tomates','Buenasalud','Chorizos Chema','Señora Sartén','El Plebe','El Compadre','Carbón Feliz','Beta Brew','Prensa Francesa','Pastelería 90','Loca Luna','Sultanita','Cacique Jubilado','Bar 1900','Tlacuache','Topacio','Lounge Mica']
+VIEJAS=['Torre Caliza','Distrito Pixel','DISTRITO<br>PIXEL','Distrito Domo','DISTRITO DOMO','El Domo','EL DOMO','Banregio','DeAcero','UDEM','del Tec','Rayados','Tigres','Jitomates','Buenasalud','Chorizos Chema','Señora Sartén','El Plebe','El Compadre','Carbón Feliz','Beta Brew','Prensa Francesa','Pastelería 90','Loca Luna','Sultanita','Cacique Jubilado','Bar 1900','Tlacuache','Topacio','Lounge Mica']
 async def main():
   html=open(ROOT+'/dist/distrito-domo.html',encoding='utf8').read()
   # los identificadores internos (artTomates, tomates:) no cuentan: solo texto que ve el jugador
@@ -21,7 +21,7 @@ async def main():
     b=await lanzar(p);pg=await b.new_page(viewport={'width':1280,'height':800});errs=[];pg.on('pageerror',lambda e:errs.append(str(e)));E=pg.evaluate
     await pg.goto('file://'+BUILD+'/arnes.html');await E("localStorage.clear();localStorage.setItem('distritoDomo.guia','1')");await pg.reload();await pg.wait_for_timeout(800)
     t=await E("[document.querySelector('h1.tt').textContent,__dd.DEFS.domo.name,__dd.DEFS.fabrica.name,__dd.DEFS.tomates.name,document.getElementById('tdDomo').textContent]")
-    print(t);ok(t[0].replace('\n','')=='DISTRITOSIERRA' and t[1]=='La Cúpula' and t[2]=='Aceros El Cerro' and t[3]=='Jitomates Market' and t[4].startswith('Cañón'),'pantalla de inicio, emblema, fábrica y súper con sus nombres nuevos')
+    print(t);ok(t[0].replace('\n','')=='DISTRITOSIERRA' and t[1]=='La Cúpula' and t[2]=='Aceros El Cerro' and t[3]=='Tomates Market' and t[4].startswith('Cañón'),'pantalla de inicio, emblema, fábrica y súper con sus nombres nuevos')
     await pg.click('#tcont',force=True);await pg.wait_for_timeout(600)
     ok('CAÑÓN' in await E("document.querySelector('header h1, #hud h1, h1').textContent.toUpperCase()"),'arriba dice Distrito Cañón')
     # hitos y días
@@ -32,7 +32,7 @@ async def main():
     # compartir
     await E("document.getElementById('optb').click()");await pg.wait_for_timeout(200);await E("document.getElementById('oShare').click()");await pg.wait_for_timeout(400)
     tx=await E("document.getElementById('oAv').textContent");print(tx)
-    ok('Distrito Sierra v83 · Distrito Cañón' in tx and '100 en 10 min' in tx and '500 en 32 min' in tx and '1 día' in tx and 'errores: 0' in tx,'«Compartir mi avance» arma el texto con hitos, días y errores')
+    ok('Distrito Sierra v84 · Distrito Cañón' in tx and '100 en 10 min' in tx and '500 en 32 min' in tx and '1 día' in tx and 'errores: 0' in tx,'«Compartir mi avance» arma el texto con hitos, días y errores')
     # se guarda y vuelve; un segundo día
     await E("__dd.S.dias=['2026-01-01'];__dd.S.seen=1");await pg.reload();await pg.wait_for_timeout(800);await pg.click('#tcont',force=True);await pg.wait_for_timeout(500)
     r=await E("[__dd.S.hitos,__dd.S.dias]");ok(r[0].get('100')==600 and r[1]==['2026-01-01',hoy],f'los hitos se guardan y otro día se suma a la lista {r[1]}')

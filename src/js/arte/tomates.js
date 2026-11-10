@@ -15,7 +15,7 @@ function artTomates(t,gx,gy,L){
       [.5,.84,()=>{for(let k=0;k<3;k++){const [x,y]=P(gx+.42+k*.08,gy+.84);px(x-1,y-2-(k%2),2.5,2,k===1?'#2f6db5':'#d62828');px(x-1,y-2.5-(k%2),2.5,.5,'#f2c94c')}}],
       ]);
     return}
-  if(L===2){ // Jitomates 24 horas
+  if(L===2){ // Tomates 24 horas
     const H=11,g=cb(gx+.12,gy+.12,gx+.88,gy+.88,0,H,'#f4f2ee','#d8d3cb');
     face(g,'L',0,7,1,4,'#e2342b');face(g,'R',0,7,1,4,'#c22a22');
     win(g,'L',.06,1,.88,5.5,'#9fd0ee');for(const u of [.3,.55,.8])face(g,'L',u,1,.015,5.5,'#9aa0a8');
@@ -24,7 +24,7 @@ function artTomates(t,gx,gy,L){
     {const [x,y]=P(gx+.3,gy+.3);tomatoLogo(x,y-16,3.5,NIGHT>.2);glow(x,y-16,10,.6)}
     dsort(gx,gy,[[.06,.5,()=>{const g2=cb(gx+.02,gy+.42,gx+.1,gy+.56,0,6,'#5a5f6b');face(g2,'R',.2,3,.6,2,'#4fb0e0',true)}]]);
     return}
-  if(L===3){ // Jitomates Gourmet
+  if(L===3){ // Tomates Gourmet
     const H=11,g=cb(gx+.12,gy+.12,gx+.82,gy+.8,0,H,'#2f7a5a','#d8d3cb');
     win(g,'L',.06,1,.88,5.5,'#ffe2a8');for(const u of [.33,.66])face(g,'L',u,1,.02,5.5,'#16382a');
     face(g,'R',.08,0,.4,6.5,'#ffe2a8',true);face(g,'R',.55,0,.3,6.5,'#16382a');
@@ -35,7 +35,7 @@ function artTomates(t,gx,gy,L){
     dsort(gx,gy,[...[.24,.42,.6].map((a,k)=>[a,.9,()=>{const g2=cb(gx+a-.07,gy+.84,gx+a+.07,gy+.95,0,2.5,'#a0663a');const [x,y]=P(gx+a,gy+.9);for(let j=0;j<5;j++)px(x-2+j,y-3-(j%2)*.5,1,1,['#e2342b','#f2c94c','#59b04f','#f26a21','#8e44ad'][(j+k)%5])}]),
       [.9,.3,()=>planter(gx+.92,gy+.24,.4)]]);
     return}
-  // Jitomates Signature: caja de cristal, techo verde
+  // Tomates Signature: caja de cristal, techo verde
   const H=12,g=cb(gx+.12,gy+.12,gx+.84,gy+.84,0,H,'#cfe6f2','#7fca58');
   win(g,'L',0,0,1,H,'#bfe2f2');win(g,'R',0,0,1,H,'#a9d4ea');
   for(const u of [0,.25,.5,.75,1]){face(g,'L',u-.01,0,.02,H,'#2b2b2b');face(g,'R',u-.01,0,.02,H,'#2b2b2b')}

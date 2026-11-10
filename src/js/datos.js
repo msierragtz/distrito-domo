@@ -5,7 +5,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=83; // versión que ve el jugador (igual al 0.83 de package.json)
+const VER=84; // versión que ve el jugador (igual al 0.84 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -24,7 +24,7 @@ const DEFS={
   plaza:{R:4,val:[.16,3],name:'Plaza',cost:100,grow:1.15,unlock:20,bt:6,verde:6,upk:0.2,desc:'Área verde y punto de encuentro: a familias y estudiantes también les sirve de comercio.'},
   cafe:{R:4,val:[.1,3],name:'Café y postres',cost:180,grow:1.12,unlock:10,bt:8,com:6,inc:3,upk:0.3,desc:'Les gusta a profesionistas y estudiantes. Junto a un parque o plaza gana 50% más.'},
   caseta:{val:[.1,4],name:'Caseta',cost:260,grow:1.2,unlock:25,bt:6,seg:1,upk:.7,desc:'Controla las fiestas de unos 80 estudiantes. A los estudiantes no les gusta tenerla cerca.'},
-  tomates:{R:5,val:[.07,3],name:'Jitomates Market',cost:260,grow:1.15,unlock:25,bt:8,com:8,inc:4.5,upk:0.4,desc:'Tienda abierta día y noche: le sirve a todos.'},
+  tomates:{R:5,val:[.07,3],name:'Tomates Market',cost:260,grow:1.15,unlock:25,bt:8,com:8,inc:4.5,upk:0.4,desc:'Tienda abierta día y noche: le sirve a todos.'},
   estac:{R:4,name:'Estacionamiento',cost:220,grow:1.12,unlock:15,bt:6,park:12.5,inc:1,upk:0.15,desc:'Aquí todo mundo llega en carro. Calma el tráfico.'},
   ciclo:{R:4,val:[.06,3],name:'Cicloestación',cost:180,grow:1.12,unlock:80,bt:6,park:5,upk:.15,desc:'Bicis compartidas: baja la necesidad de estacionamiento a 4 cuadras y salen ciclistas a las calles. Junto a oficinas, la escuela o el metro cubre 50% más.'},
   padel:{R:5,val:[.1,3],name:'Pádel',cost:350,grow:1.15,unlock:40,bt:8,com:6,verde:2,inc:4,upk:0.4,desc:'Les gusta a profesionistas y familias. Da un poco de verde.'},
@@ -91,7 +91,7 @@ const LV={
   cancha:['Cancha de barrio','Cancha de pasto sintético','Unidad deportiva','Estadio de barrio'],
   resto:['Puesto de barbacoa','Lonchería','Hamburguesas gourmet','Restaurante de autor'],
   cafe:['Café de olla','Cafetería','Café de especialidad','Brunch y concept store'],
-  tomates:['Jitomates Market','Jitomates 24 horas','Jitomates Gourmet','Jitomates Signature'],
+  tomates:['Tomates Market','Tomates 24 horas','Tomates Gourmet','Tomates Signature'],
   padel:['Pádel','Pádel techado','Club de pádel','Club deportivo privado'],
   parque:['Parque de barrio','Parque con juegos','Jardín con fuente','Parque con lago'],
   plaza:['Plaza','Plaza con fuente','Plaza con arte','Paseo comercial'],

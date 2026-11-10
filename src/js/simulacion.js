@@ -196,15 +196,15 @@ function tick(dt,quiet){
       if(S.arr[g]>=5){S.arr[g]=0;if(Math.random()<.6)say({
         fam:Math.random()<.4?`Llegó la familia ${sur()} con su perro. Ya preguntaron por el dog park.`:`Se mudó la familia ${sur()} al Distrito. Ya son ${Math.floor(S.v+1e-6)} vecinos.`,
         pro:`Llegó la Ing. ${sur()}, trabaja en Valle y quería vivir cerca.`,
-        est:Math.random()<.5?`Llegaron estudiantes de la Uni del Valle al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Instituto. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Jitomates'} más cercano.`}[g],false,{p:0})}
+        est:Math.random()<.5?`Llegaron estudiantes de la Uni del Valle al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Instituto. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Tomates'} más cercano.`}[g],false,{p:0})}
       if(S.dep[g]>=3){S.dep[g]=0;const q=complaint(g);say({fam:`Una familia se fue del Distrito. ${q}`,pro:`Un profesionista se mudó a otro lado. ${q}`,est:`Unos estudiantes se fueron del Distrito. ${q}`}[g],false,{p:0,tab:CTAB})}
     }
     S.hintT=(S.hintT||0)+dt;if(S.hintT>25){S.hintT=0;if(sat<.75&&S.v>3){const q=complaint();say(q,false,{p:1,tab:CTAB})}}
   }
 }
 /* la queja más urgente: dice qué falta y cuántos edificios no lo tienen cerca */
-const COMTXT={fam:'Jitomates, restaurante, pádel, plaza, escuela o cancha',pro:'café, Jitomates, restaurante, pádel, oficinas o bar',est:'café, Jitomates, bar, oficinas o plaza'},COMNEW={fam:['unas','paleteria','boliche','cine'],pro:['barber','unas','gym','cine','golf'],est:['barber','paleteria','boliche','cine']};
-const NEEDTXT={verde:['área verde','globito verde','parque, plaza o dog park'],com:['comercio','globito naranja','café, Jitomates Market o restaurante'],park:['estacionamiento','globito azul','estacionamiento o cicloestación'],dog:['dog park','globito café','dog park']};
+const COMTXT={fam:'Tomates, restaurante, pádel, plaza, escuela o cancha',pro:'café, Tomates, restaurante, pádel, oficinas o bar',est:'café, Tomates, bar, oficinas o plaza'},COMNEW={fam:['unas','paleteria','boliche','cine'],pro:['barber','unas','gym','cine','golf'],est:['barber','paleteria','boliche','cine']};
+const NEEDTXT={verde:['área verde','globito verde','parque, plaza o dog park'],com:['comercio','globito naranja','café, Tomates Market o restaurante'],park:['estacionamiento','globito azul','estacionamiento o cicloestación'],dog:['dog park','globito café','dog park']};
 // v75: CTAB = la pestaña donde está lo que falta (al tocar la queja se abre esa y no la que adivine el texto)
 let CTAB=null;const AGUA_O={p:2,tool:'torreagua',hint:1};
 function complaint(g){

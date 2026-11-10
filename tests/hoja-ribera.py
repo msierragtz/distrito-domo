@@ -8,9 +8,9 @@ CAP=BUILD+'/capturas/'
 F=lambda sz,b=False:ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans'+('-Bold' if b else '')+'.ttf',sz)
 DOMO={'edificio':['Departamentos','Remodelados','Lofts','Residencial de lujo'],'ladrillo':['Ladrillo','Remodelado','Lofts','Boutique de ladrillo'],'torre':['Torre Peña Alta','Plus','Premium','Sky'],
   'cafe':['Café de olla','Cafetería','Especialidad','Brunch'],'resto':['Barbacoa','Lonchería','Hamburguesas','De autor'],'bar':['Micheladas','Cantina','Mezcalería','Azotea'],
-  'paleteria':['Carrito','De barrio','Artesanal','Heladería'],'tomates':['Jitomates','Market','Market','Market'],'oficinas':['Oficinas','Coworking','Corporativo','Verde']}
+  'paleteria':['Carrito','De barrio','Artesanal','Heladería'],'tomates':['Tomates','Market','Market','Market'],'oficinas':['Oficinas','Coworking','Corporativo','Verde']}
 TIT={'edificio':'Edificio  →  Casas de la Ribera','ladrillo':'Edificio de ladrillo  →  Bodegas del río','torre':'Torre  →  Torre Malecón','cafe':'Café','resto':'Restaurante  →  mariscos y asadero',
-  'bar':'Bar  →  depósito, cervecería y salón cumbiero','paleteria':'Paletería  →  aguas frescas y nevería','tomates':'Jitomates  →  Mercadito de la Ribera','oficinas':'Oficinas  →  coworking en bodega'}
+  'bar':'Bar  →  depósito, cervecería y salón cumbiero','paleteria':'Paletería  →  aguas frescas y nevería','tomates':'Tomates  →  Mercadito de la Ribera','oficinas':'Oficinas  →  coworking en bodega'}
 FL={'edificio':5,'ladrillo':5,'torre':18}
 SD_,SR_=1.25,2.5
 def img(u):return Image.open(io.BytesIO(base64.b64decode(u.split(',')[1]))).convert('RGB')

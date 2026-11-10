@@ -1,4 +1,4 @@
-"""Hoja de la v80: café de la Ribera con identidad propia, plaza nivel 4, Jitomates, malecón y autos con contorno y luces.
+"""Hoja de la v80: café de la Ribera con identidad propia, plaza nivel 4, Tomates, malecón y autos con contorno y luces.
 Uso: python3 tests/hoja-v80.py → build/capturas/hoja-v80.png"""
 import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from comun import BUILD,lanzar
 import asyncio,io,base64,json
@@ -16,7 +16,7 @@ async def main():
     rows=[('Café Ribera',await get([['cafe',L,0,1] for L in (1,2,3,4)],True)+await get([['cafe',4,0,1]],True,1)),
       ('Bar Ribera',await get([['bar',L,0,1] for L in (1,2,3,4)],True)),('Restaurante Ribera',await get([['resto',L,0,1] for L in (1,2,3,4)],True)),
       ('Plaza',await get([['plaza',L,0,1] for L in (1,2,3,4)])+await get([['plaza',4,0,1]],False,1)),
-      ('Jitomates',await get([['tomates',L,0,1] for L in (1,2,3,4)])),('Malecón',await get([['malecon',1,0,2],['malecon',1,0,3]],True)+await get([['malecon',1,0,2]],True,1))]
+      ('Tomates',await get([['tomates',L,0,1] for L in (1,2,3,4)])),('Malecón',await get([['malecon',1,0,2],['malecon',1,0,3]],True)+await get([['malecon',1,0,2]],True,1))]
     cars=[]
     for nb in (0,1):
       for m,c in (('car','#d62828'),('suv','#f4f4f4'),('pick','#2f6db5'),('mini','#f2c94c')):

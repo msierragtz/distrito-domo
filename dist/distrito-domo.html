@@ -438,7 +438,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=83; // versión que ve el jugador (igual al 0.83 de package.json)
+const VER=84; // versión que ve el jugador (igual al 0.84 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -457,7 +457,7 @@ const DEFS={
   plaza:{R:4,val:[.16,3],name:'Plaza',cost:100,grow:1.15,unlock:20,bt:6,verde:6,upk:0.2,desc:'Área verde y punto de encuentro: a familias y estudiantes también les sirve de comercio.'},
   cafe:{R:4,val:[.1,3],name:'Café y postres',cost:180,grow:1.12,unlock:10,bt:8,com:6,inc:3,upk:0.3,desc:'Les gusta a profesionistas y estudiantes. Junto a un parque o plaza gana 50% más.'},
   caseta:{val:[.1,4],name:'Caseta',cost:260,grow:1.2,unlock:25,bt:6,seg:1,upk:.7,desc:'Controla las fiestas de unos 80 estudiantes. A los estudiantes no les gusta tenerla cerca.'},
-  tomates:{R:5,val:[.07,3],name:'Jitomates Market',cost:260,grow:1.15,unlock:25,bt:8,com:8,inc:4.5,upk:0.4,desc:'Tienda abierta día y noche: le sirve a todos.'},
+  tomates:{R:5,val:[.07,3],name:'Tomates Market',cost:260,grow:1.15,unlock:25,bt:8,com:8,inc:4.5,upk:0.4,desc:'Tienda abierta día y noche: le sirve a todos.'},
   estac:{R:4,name:'Estacionamiento',cost:220,grow:1.12,unlock:15,bt:6,park:12.5,inc:1,upk:0.15,desc:'Aquí todo mundo llega en carro. Calma el tráfico.'},
   ciclo:{R:4,val:[.06,3],name:'Cicloestación',cost:180,grow:1.12,unlock:80,bt:6,park:5,upk:.15,desc:'Bicis compartidas: baja la necesidad de estacionamiento a 4 cuadras y salen ciclistas a las calles. Junto a oficinas, la escuela o el metro cubre 50% más.'},
   padel:{R:5,val:[.1,3],name:'Pádel',cost:350,grow:1.15,unlock:40,bt:8,com:6,verde:2,inc:4,upk:0.4,desc:'Les gusta a profesionistas y familias. Da un poco de verde.'},
@@ -524,7 +524,7 @@ const LV={
   cancha:['Cancha de barrio','Cancha de pasto sintético','Unidad deportiva','Estadio de barrio'],
   resto:['Puesto de barbacoa','Lonchería','Hamburguesas gourmet','Restaurante de autor'],
   cafe:['Café de olla','Cafetería','Café de especialidad','Brunch y concept store'],
-  tomates:['Jitomates Market','Jitomates 24 horas','Jitomates Gourmet','Jitomates Signature'],
+  tomates:['Tomates Market','Tomates 24 horas','Tomates Gourmet','Tomates Signature'],
   padel:['Pádel','Pádel techado','Club de pádel','Club deportivo privado'],
   parque:['Parque de barrio','Parque con juegos','Jardín con fuente','Parque con lago'],
   plaza:['Plaza','Plaza con fuente','Plaza con arte','Paseo comercial'],
@@ -914,7 +914,7 @@ function distBoot(){if(DIST!=='ribera'){for(const k of ['malecon','alberca','par
   Object.assign(DEFS.edificio,{name:'Casas de la Ribera',desc:'Casas pintadas, cada edificio de su color; 6 vecinos por piso: sobre todo estudiantes, luego familias. Tócalo otra vez para subirle un piso.'});
   Object.assign(DEFS.ladrillo,{name:'Bodegas del río',desc:'Bodegas de ladrillo convertidas en departamentos, con tanque de agua de madera: las prefieren las familias. Tócalo otra vez para subirle un piso.'});
   DEFS.torre.name='Torre Malecón';Object.assign(DEFS.tomates,{name:'Mercadito de la Ribera',desc:'Mercadito abierto día y noche: le sirve a todos.'});
-  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Jitomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Jitomates Market','mercadito');
+  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Tomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Tomates Market','mercadito');
   document.title='Distrito Ribera';for(const el of document.querySelectorAll('header h1'))el.firstChild.textContent='DISTRITO RIBERA';
   const tt=document.querySelector('#title .tt');if(tt)tt.innerHTML='DISTRITO<br>RIBERA';document.body.classList.add('ribera')}
 
@@ -1135,15 +1135,15 @@ function tick(dt,quiet){
       if(S.arr[g]>=5){S.arr[g]=0;if(Math.random()<.6)say({
         fam:Math.random()<.4?`Llegó la familia ${sur()} con su perro. Ya preguntaron por el dog park.`:`Se mudó la familia ${sur()} al Distrito. Ya son ${Math.floor(S.v+1e-6)} vecinos.`,
         pro:`Llegó la Ing. ${sur()}, trabaja en Valle y quería vivir cerca.`,
-        est:Math.random()<.5?`Llegaron estudiantes de la Uni del Valle al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Instituto. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Jitomates'} más cercano.`}[g],false,{p:0})}
+        est:Math.random()<.5?`Llegaron estudiantes de la Uni del Valle al piso de arriba. Ya hubo fiesta hasta las 3 am.`:`Se mudaron unos estudiantes del Instituto. Preguntaron dónde está el ${DIST==='ribera'?'mercadito':'Tomates'} más cercano.`}[g],false,{p:0})}
       if(S.dep[g]>=3){S.dep[g]=0;const q=complaint(g);say({fam:`Una familia se fue del Distrito. ${q}`,pro:`Un profesionista se mudó a otro lado. ${q}`,est:`Unos estudiantes se fueron del Distrito. ${q}`}[g],false,{p:0,tab:CTAB})}
     }
     S.hintT=(S.hintT||0)+dt;if(S.hintT>25){S.hintT=0;if(sat<.75&&S.v>3){const q=complaint();say(q,false,{p:1,tab:CTAB})}}
   }
 }
 /* la queja más urgente: dice qué falta y cuántos edificios no lo tienen cerca */
-const COMTXT={fam:'Jitomates, restaurante, pádel, plaza, escuela o cancha',pro:'café, Jitomates, restaurante, pádel, oficinas o bar',est:'café, Jitomates, bar, oficinas o plaza'},COMNEW={fam:['unas','paleteria','boliche','cine'],pro:['barber','unas','gym','cine','golf'],est:['barber','paleteria','boliche','cine']};
-const NEEDTXT={verde:['área verde','globito verde','parque, plaza o dog park'],com:['comercio','globito naranja','café, Jitomates Market o restaurante'],park:['estacionamiento','globito azul','estacionamiento o cicloestación'],dog:['dog park','globito café','dog park']};
+const COMTXT={fam:'Tomates, restaurante, pádel, plaza, escuela o cancha',pro:'café, Tomates, restaurante, pádel, oficinas o bar',est:'café, Tomates, bar, oficinas o plaza'},COMNEW={fam:['unas','paleteria','boliche','cine'],pro:['barber','unas','gym','cine','golf'],est:['barber','paleteria','boliche','cine']};
+const NEEDTXT={verde:['área verde','globito verde','parque, plaza o dog park'],com:['comercio','globito naranja','café, Tomates Market o restaurante'],park:['estacionamiento','globito azul','estacionamiento o cicloestación'],dog:['dog park','globito café','dog park']};
 // v75: CTAB = la pestaña donde está lo que falta (al tocar la queja se abre esa y no la que adivine el texto)
 let CTAB=null;const AGUA_O={p:2,tool:'torreagua',hint:1};
 function complaint(g){
@@ -1795,7 +1795,7 @@ function artTomates(t,gx,gy,L){
       [.5,.84,()=>{for(let k=0;k<3;k++){const [x,y]=P(gx+.42+k*.08,gy+.84);px(x-1,y-2-(k%2),2.5,2,k===1?'#2f6db5':'#d62828');px(x-1,y-2.5-(k%2),2.5,.5,'#f2c94c')}}],
       ]);
     return}
-  if(L===2){ // Jitomates 24 horas
+  if(L===2){ // Tomates 24 horas
     const H=11,g=cb(gx+.12,gy+.12,gx+.88,gy+.88,0,H,'#f4f2ee','#d8d3cb');
     face(g,'L',0,7,1,4,'#e2342b');face(g,'R',0,7,1,4,'#c22a22');
     win(g,'L',.06,1,.88,5.5,'#9fd0ee');for(const u of [.3,.55,.8])face(g,'L',u,1,.015,5.5,'#9aa0a8');
@@ -1804,7 +1804,7 @@ function artTomates(t,gx,gy,L){
     {const [x,y]=P(gx+.3,gy+.3);tomatoLogo(x,y-16,3.5,NIGHT>.2);glow(x,y-16,10,.6)}
     dsort(gx,gy,[[.06,.5,()=>{const g2=cb(gx+.02,gy+.42,gx+.1,gy+.56,0,6,'#5a5f6b');face(g2,'R',.2,3,.6,2,'#4fb0e0',true)}]]);
     return}
-  if(L===3){ // Jitomates Gourmet
+  if(L===3){ // Tomates Gourmet
     const H=11,g=cb(gx+.12,gy+.12,gx+.82,gy+.8,0,H,'#2f7a5a','#d8d3cb');
     win(g,'L',.06,1,.88,5.5,'#ffe2a8');for(const u of [.33,.66])face(g,'L',u,1,.02,5.5,'#16382a');
     face(g,'R',.08,0,.4,6.5,'#ffe2a8',true);face(g,'R',.55,0,.3,6.5,'#16382a');
@@ -1815,7 +1815,7 @@ function artTomates(t,gx,gy,L){
     dsort(gx,gy,[...[.24,.42,.6].map((a,k)=>[a,.9,()=>{const g2=cb(gx+a-.07,gy+.84,gx+a+.07,gy+.95,0,2.5,'#a0663a');const [x,y]=P(gx+a,gy+.9);for(let j=0;j<5;j++)px(x-2+j,y-3-(j%2)*.5,1,1,['#e2342b','#f2c94c','#59b04f','#f26a21','#8e44ad'][(j+k)%5])}]),
       [.9,.3,()=>planter(gx+.92,gy+.24,.4)]]);
     return}
-  // Jitomates Signature: caja de cristal, techo verde
+  // Tomates Signature: caja de cristal, techo verde
   const H=12,g=cb(gx+.12,gy+.12,gx+.84,gy+.84,0,H,'#cfe6f2','#7fca58');
   win(g,'L',0,0,1,H,'#bfe2f2');win(g,'R',0,0,1,H,'#a9d4ea');
   for(const u of [0,.25,.5,.75,1]){face(g,'L',u-.01,0,.02,H,'#2b2b2b');face(g,'R',u-.01,0,.02,H,'#2b2b2b')}
@@ -4419,7 +4419,7 @@ function liveWater(t,gx,gy){if(lowMo()||lowQ()||t.b>0||t.lu>0)return;const L=lvO
     for(let q=0;q<2;q++){const pr=(T*.45+q*.5)%1,ox=Math.sin(q*7.3+Math.floor(T*.45+q*.5)*2.1)*4,oy=Math.cos(q*3.1+Math.floor(T*.45+q*.5)*1.7)*1.5,rx=.8+pr*4;
       for(let k=0;k<12;k++){const an=k/12*Math.PI*2;px(x+ox+Math.cos(an)*rx-.3,y+oy+Math.sin(an)*rx*.5,.6,.4,`rgba(210,240,255,${(.65*(1-pr)).toFixed(2)})`)}}
     if(NIGHT<.5)for(let k=0;k<4;k++){const ph=(T*.6+k*.37)%1;if(ph<.5){const a=Math.sin(ph*2*Math.PI);px(x-6+k*3.6+Math.sin(T+k)*1.2,y-1+((k*5)%3)-1,1,.5,`rgba(255,255,255,${a.toFixed(2)})`)}}}}
-/* gente afuera de cafés, restaurantes, bares y Jitomates: depende de la hora y de cuántos clientes tiene el negocio */
+/* gente afuera de cafés, restaurantes, bares y Tomates: depende de la hora y de cuántos clientes tiene el negocio */
 const VIS=new Map();
 function visitorsOf(t,i){const ph=S.clock/DAY,k=t.k;let w=0;
   if(k==='cafe')w=ph<.22?1:ph<.45?.45:ph>.88?.4:0;else if(k==='resto')w=(ph>.24&&ph<.37)||(ph>.5&&ph<.68)?1:.15;else if(k==='bar')w=ph>.52&&ph<.92?1:0;else if(k==='tomates')w=ph<.92&&ph>.0?.45:0;
