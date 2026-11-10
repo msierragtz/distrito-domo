@@ -438,7 +438,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=78; // versión que ve el jugador (igual al 0.78 de package.json)
+const VER=79; // versión que ve el jugador (igual al 0.79 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -2687,7 +2687,7 @@ function artMuseo(t,gx,gy){const on=NIGHT>.2;
 }
 
 /* Rascacielos de oficinas · 2×2: basamento, torre de vidrio con remates y antena */
-function artRasca(t,gx,gy){const on=NIGHT>.2;
+function artRasca(t,gx,gy){if(RASCA2)return artRasca2(t,gx,gy);const on=NIGHT>.2;
   quad(gx,gy,.03,.03,1.97,1.97,'#d9d4ca');
   const b=cb(gx+.12,gy+.12,gx+1.88,gy+1.88,0,9,'#d8d4cc','#4a4f56');win(b,'L',.04,.6,.92,6.6,'#ffe2a8');win(b,'R',.04,.6,.92,6.6,'#f2d090');for(let k=1;k<8;k++){face(b,'L',k/8,.6,.01,6.6,'#3a3f47');face(b,'R',k/8,.6,.01,6.6,'#3a3f47')}
   box(gx+.1,gy+.1,gx+1.9,gy+1.9,9,1,'#8a9099','#c9c5bd','#b9b5ad');
@@ -2779,6 +2779,39 @@ function artMetro(t,gx,gy){const on=NIGHT>.2;
     [1.2,1.98,()=>{const [x,y]=P(gx+1.2,gy+1.98);person(x,y,{shirt:'#2f6db5',pants:'#2b2b2b',skin:'#c68642',hair:'#1c1c1c',front:true,scale:.85})}]]);
 }
 
+
+/* Rascacielos de oficinas, versión pulida (v79, en espera de aprobación): tres cuerpos escalonados con terrazas ajardinadas,
+   aletas blancas en las esquinas, una franja del color del distrito de arriba abajo que se enciende de noche, vestíbulo de
+   doble altura con marquesina y remate en aguja. */
+let RASCA2=false;
+function artRasca2(t,gx,gy){const on=NIGHT>.2,ac=distCol(),W='#eef1f4',WS='#cfd6de';
+  quad(gx,gy,.03,.03,1.97,1.97,'#d9d4ca');quad(gx,gy,.08,.08,1.92,1.92,'#cfc8bb');
+  // podio con vestíbulo de doble altura, siempre encendido
+  const b=cb(gx+.12,gy+.12,gx+1.88,gy+1.88,0,10,'#dcd8d0','#4a4f56');
+  for(const sd of ['L','R']){face(b,sd,.04,.8,.92,7.4,on?(sd==='L'?'#ffe2a8':'#f2d090'):(sd==='L'?'#bfe0f0':'#a6cfe6'),on);for(let k=1;k<10;k++)face(b,sd,k/10,.8,.012,7.4,'#3a3f47');face(b,sd,.04,4.4,.92,.5,'#3a3f47');
+    face(b,sd,0,8.4,1,1.6,ac,on);face(b,sd,0,8.4,1,.4,hexShade(ac,-.25),on)}
+  face(b,'L',.4,.8,.2,5.6,on?'#fff3c8':'#e8f4fb',on);face(b,'L',.495,.8,.01,5.6,'#3a3f47');
+  box(gx+.1,gy+.1,gx+1.9,gy+1.9,10,1.2,'#9aa0a8',W,WS);
+  const lifted=(lift,fn)=>{const o=cam.oy;cam.oy-=lift;try{fn()}finally{cam.oy=o}};
+  const tier=(ins,lift,h,logo)=>{const g=cb(gx+ins,gy+ins,gx+2-ins,gy+2-ins,lift,h,'#2f5d8a','#3f6f9e');
+    for(let v=1.4;v<h-1.6;v+=3){win(g,'L',.07,v,.86,2,'#86b6dc');win(g,'R',.07,v,.86,2,'#5f93bf');face(g,'L',.07,v+2,.86,1,'#24486e');face(g,'R',.07,v+2,.86,1,'#1c3a5a')}
+    for(const u of [.26,.74]){face(g,'L',u,0,.012,h,'#1c3a5a');face(g,'R',u,0,.012,h,'#162f4a')}
+    for(const sd of ['L','R']){face(g,sd,0,0,.06,h,sd==='L'?W:WS);face(g,sd,.94,0,.06,h,sd==='L'?W:WS);face(g,sd,.46,0,.08,h,ac,on);face(g,sd,.46,0,.015,h,hexShade(ac,-.3),on)}
+    if(!on){face(g,'L',.14,h*.25,.07,h*.55,'rgba(255,255,255,.16)',true);face(g,'L',.24,h*.15,.03,h*.6,'rgba(255,255,255,.1)',true)}
+    if(logo){face(g,'L',.12,h-6.4,.3,3.6,W,on);for(let q=0;q<3;q++)face(g,'L',.15+q*.085,h-5.6,.05,2,'#1c3a5a',on)}
+    box(gx+ins-.02,gy+ins-.02,gx+2-ins+.02,gy+2-ins+.02,lift+h,1.2,'#8a9099',W,WS);return lift+h+1.2};
+  // terrazas ajardinadas en cada escalón: arbolitos en las tres esquinas que se ven
+  const garden=(ins,lift)=>{const c=[[ins+.07,ins+.07],[2-ins-.07,ins+.07],[2-ins-.07,2-ins-.07],[ins+.07,2-ins-.07]].map(q=>({q,y:P(gx+q[0],gy+q[1])[1]})).sort((a,b_)=>a.y-b_.y).slice(1);
+    lifted(lift,()=>{for(const {q} of c){const [x,y]=P(gx+q[0],gy+q[1]);px(x-2,y-2,4,2,'#3a3a3a');tree(gx+q[0],gy+q[1],.34)}})};
+  let top=tier(.34,11.2,44);const l1=top;top=tier(.46,top,34);garden(.34,l1);const l2=top;top=tier(.58,top,22,true);garden(.46,l2);
+  // remate: banda de luz y aguja
+  box(gx+.6,gy+.6,gx+1.4,gy+1.4,top,2,'#9aa0a8',on?'#fff6d8':W,on?'#f0e2b0':WS);pyramid(gx+.68,gy+.68,gx+1.32,gy+1.32,top+2,13,'#dfe6ee','#b4c0cc');
+  {const [x,y]=P(gx+1,gy+1),ty=y-top-15;px(x,ty-15,1,15,'#9aa0a6');px(x-1.5,ty-5,4,1,'#9aa0a6');circ(x+.5,ty-16,1.2,'#ff3b30',true);
+    if(on){glow(x+.5,ty-16,8,1,'#ff3b30');glow(x,y-top-2,26,.7,'#fff0c0');glow(x,y-60,30,.35,ac)}}
+  dsort(gx,gy,[[1.95,.6,()=>planter(gx+1.95,gy+.6,.38)],[.6,1.95,()=>planter(gx+.6,gy+1.95,.38)],[1.95,1.95,()=>lamp(gx+1.95,gy+1.95)],[1.95,1.3,()=>planter(gx+1.95,gy+1.3,.34)],
+    [1.3,1.97,()=>{const [x,y]=P(gx+1.3,gy+1.97);person(x,y,{shirt:'#2b2b2b',pants:'#2b2b2b',skin:'#e0ac69',hair:'#3a2a1e',front:true,scale:.85})}],
+    [1.05,1.97,()=>{const [x,y]=P(gx+1.05,gy+1.97);person(x,y,{shirt:'#f4f4f4',pants:'#3a4a6a',skin:'#c68642',hair:'#1c1c1c',front:true,scale:.85})}]]);
+}
 /* ===== trofeos ===== */
 function domoArc(x,y,R,th){arcTop(x,y,R,th,'#f26a21',NIGHT>.2);arcTop(x,y,R,Math.max(.5,th*.3),'#ff9a5c',NIGHT>.2)}
 /* 500 B · Kiosco de la música */
@@ -3530,7 +3563,7 @@ function drawObj0(t,gx,gy,ic){
 /* ---------- v79: kit de nivel. Lo mismo para todos los edificios con niveles, encima de su dibujo propio:
    banqueta alrededor (guarnición → adoquín → piedra con filo del color del distrito), vida al frente (maceta → farol → jardinera)
    y, donde el dibujo lo pide con corona(), un remate que rompe la silueta. Todo va dentro del sprite del edificio: no hay sprites de más. ---------- */
-let KIT=false; // apagado hasta que Mauricio apruebe la hoja (tests/hoja-kit.py lo enciende)
+let KIT=true; // aprobado por Mauricio el 9 nov 2026
 const distCol=()=>(RIBV||DIST==='ribera')?'#2bb3a3':'#f26a21';
 const lvCol=()=>KIT?distCol():'#c9a227'; // acento del nivel 4 (antes dorado)
 const KITNO=new Set(['parque','dogpark','plaza','estac','cancha','golf','padel','ciclo','gas','malecon','alberca','parroquia','hotel','domo','torreagua','caseta','calle']);

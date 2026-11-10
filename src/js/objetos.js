@@ -72,7 +72,7 @@ function drawObj0(t,gx,gy,ic){
 /* ---------- v79: kit de nivel. Lo mismo para todos los edificios con niveles, encima de su dibujo propio:
    banqueta alrededor (guarnición → adoquín → piedra con filo del color del distrito), vida al frente (maceta → farol → jardinera)
    y, donde el dibujo lo pide con corona(), un remate que rompe la silueta. Todo va dentro del sprite del edificio: no hay sprites de más. ---------- */
-let KIT=false; // apagado hasta que Mauricio apruebe la hoja (tests/hoja-kit.py lo enciende)
+let KIT=true; // aprobado por Mauricio el 9 nov 2026
 const distCol=()=>(RIBV||DIST==='ribera')?'#2bb3a3':'#f26a21';
 const lvCol=()=>KIT?distCol():'#c9a227'; // acento del nivel 4 (antes dorado)
 const KITNO=new Set(['parque','dogpark','plaza','estac','cancha','golf','padel','ciclo','gas','malecon','alberca','parroquia','hotel','domo','torreagua','caseta','calle']);
