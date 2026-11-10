@@ -59,9 +59,17 @@ function carSprite(col,m,dir,nb){const key=`${col}|${m}|${dir}|${ROT}|${nb}|${RE
       box(x0,y0,x1,y1,.8,2.4,col,s1,s2);box(ca+(sg>0?0:.04),y0+.02,cz-(sg>0?.04:0),y1-.02,3.2,2.2,gl,'#22303f','#1a2633');box(ca+(sg>0?.03:.07),y0+.02,cz-(sg>0?.07:.03),y1-.02,5.2,.6,col,s1,s2);
       box(ba+.02,y0+.03,bz-.02,y1-.03,3,.5,s2,s2,s2)}
     else{const hb=m==='suv'?3.2:m==='mini'?2.5:2.6,ch=m==='suv'?2.4:2,i0=m==='suv'?.06:m==='mini'?.08:.1,i1=m==='suv'?.38:m==='mini'?.3:.32;
-      box(x0,y0,x1,y1,.8,hb,col,s1,s2);box(x0+i0,y0+.025,x0+i1,y1-.025,.8+hb,ch,gl,'#22303f','#1a2633');if(m==='suv')box(x0+i0,y0+.025,x0+i1,y1-.025,.8+hb+ch,.6,col,s1,s2)}}
+      box(x0,y0,x1,y1,.8,hb,col,s1,s2);box(x0+i0,y0+.025,x0+i1,y1-.025,.8+hb,ch,gl,'#22303f','#1a2633');if(m==='suv')box(x0+i0,y0+.025,x0+i1,y1-.025,.8+hb+ch,.6,col,s1,s2)}
+    // v80: faros y calaveras (encendidos de noche), brillo en el parabrisas y contorno como el de los edificios
+    {const rear=dir>0?x0:x1,on=nb>.3;
+      if(seen(sg,0)){vq(fr,y0+.025,fr,y0+.065,1.5,2.5,on?'#fff3c0':'#e8e4d6',on);vq(fr,y1-.065,fr,y1-.025,1.5,2.5,on?'#fff3c0':'#e8e4d6',on)}
+      if(seen(-sg,0)){vq(rear,y0+.025,rear,y0+.06,1.6,2.5,on?'#ff4a3d':'#a8322a',on);vq(rear,y1-.06,rear,y1-.025,1.6,2.5,on?'#ff4a3d':'#a8322a',on)}
+      for(const [ys,n] of [[y1,1],[y0,-1]])if(seen(0,n)){vq(x0+.05,ys,x1-.05,ys,1,1.35,s2);if(!on)vq(fr-sg*.2,ys,fr-sg*.17,ys,m==='pick'?3.6:3.8,m==='pick'?5:5.2,'rgba(255,255,255,.55)',true)}}
+    fastOutline(ctx)}
+  catch(e){console.warn('auto',m,e)}
   finally{ctx=pc;cam.ox=po.ox;cam.oy=po.oy;NIGHT=pn;NCOL=pnc}
-  sp={c,ax:w/2,ay:h-9};if(CARC.size>400)CARC.clear();CARC.set(key,sp);return sp}
+  // al llenarse se sacan los más viejos, no toda la caché de golpe
+  sp={c,ax:w/2,ay:h-9};if(CARC.size>400){let n=0;for(const k of CARC.keys()){CARC.delete(k);if(++n>=120)break}}CARC.set(key,sp);return sp}
 /* camión urbano y tráiler: se arman con cajas y caras laterales; los detalles solo se pintan en las caras que se ven */
 const VEH={bus:{L:1.15,W:.24},trailer:{L:1.56,W:.24}};
 function vq(ax,ay,bx,by,v0,v1,col,lit){poly([up(P(ax,ay),v0),up(P(bx,by),v0),up(P(bx,by),v1),up(P(ax,ay),v1)],col,lit)}

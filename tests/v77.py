@@ -32,7 +32,7 @@ async def main():
     # compartir
     await E("document.getElementById('optb').click()");await pg.wait_for_timeout(200);await E("document.getElementById('oShare').click()");await pg.wait_for_timeout(400)
     tx=await E("document.getElementById('oAv').textContent");print(tx)
-    ok('Distrito Sierra v79 · Distrito Cañón' in tx and '100 en 10 min' in tx and '500 en 32 min' in tx and '1 día' in tx and 'errores: 0' in tx,'«Compartir mi avance» arma el texto con hitos, días y errores')
+    ok('Distrito Sierra v80 · Distrito Cañón' in tx and '100 en 10 min' in tx and '500 en 32 min' in tx and '1 día' in tx and 'errores: 0' in tx,'«Compartir mi avance» arma el texto con hitos, días y errores')
     # se guarda y vuelve; un segundo día
     await E("__dd.S.dias=['2026-01-01'];__dd.S.seen=1");await pg.reload();await pg.wait_for_timeout(800);await pg.click('#tcont',force=True);await pg.wait_for_timeout(500)
     r=await E("[__dd.S.hitos,__dd.S.dias]");ok(r[0].get('100')==600 and r[1]==['2026-01-01',hoy],f'los hitos se guardan y otro día se suma a la lista {r[1]}')

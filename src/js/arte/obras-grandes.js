@@ -152,7 +152,7 @@ function artMetro(t,gx,gy){const on=NIGHT>.2;
 /* Rascacielos de oficinas, versión pulida (v79, en espera de aprobación): tres cuerpos escalonados con terrazas ajardinadas,
    aletas blancas en las esquinas, una franja del color del distrito de arriba abajo que se enciende de noche, vestíbulo de
    doble altura con marquesina y remate en aguja. */
-let RASCA2=false;
+let RASCA2=true; // aprobado el 9 nov 2026
 function artRasca2(t,gx,gy){const on=NIGHT>.2,ac=distCol(),W='#eef1f4',WS='#cfd6de';
   quad(gx,gy,.03,.03,1.97,1.97,'#d9d4ca');quad(gx,gy,.08,.08,1.92,1.92,'#cfc8bb');
   // podio con vestíbulo de doble altura, siempre encendido

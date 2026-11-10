@@ -81,8 +81,9 @@ function rioDyn(t,gx,gy){const w=rioW();
 function rioSides(gx,gy){const out=[];for(const [dx,dy] of NB){const n=inb(gx+dx,gy+dy)?S.g[idx(gx+dx,gy+dy)]:null;if(n&&isRio(n))out.push([dx,dy])}return out}
 function artMalecon(t,gx,gy){const sides=rioSides(gx,gy),on=NIGHT>.25;
   for(const [dx,dy] of (sides.length?sides:[[1,0]])){const a=dx?P(gx+(dx>0?.94:.06),gy+.04):P(gx+.04,gy+(dy>0?.94:.06)),b=dx?P(gx+(dx>0?.94:.06),gy+.96):P(gx+.96,gy+(dy>0?.94:.06));
-    for(let q=0;q<=6;q++){const f=q/6;px(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-4,1,4,'#6b7280')}line(a[0],a[1]-4,b[0],b[1]-4,'#9aa3ad');line(a[0],a[1]-2,b[0],b[1]-2,'#7b8591')}
+    for(let q=0;q<=6;q++){const f=q/6;px(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f-5,1.2,5,'#f4f2ec')}line(a[0],a[1]-5,b[0],b[1]-5,'#ffffff',false,1.5);line(a[0],a[1]-3,b[0],b[1]-3,'#2bb3a3');line(a[0],a[1]-1.4,b[0],b[1]-1.4,'#d8d4ca')}
   for(const [u,v] of [[.25,.25],[.75,.75]]){const [x,y]=P(gx+u,gy+v);px(x,y-12,1,12,'#3d4250');px(x-1,y-13,3,2,on?'#ffe19a':'#e6e1cf',on);glow(x,y-12,9,.7)}
+  {const p0=P(gx+.25,gy+.25),p1=P(gx+.75,gy+.75);bulbsH([p0[0],p0[1]-12],[p1[0],p1[1]-12],6,2)}
   palm(gx+.3,gy+.72,.8);bench(gx+.62,gy+.38);
   if(t.s%2===0)person(...P(gx+.5,gy+.6),{shirt:'#3fa7d6',pants:'#2b3a55',skin:'#c68642',hair:'#1c1c1c',dx:1,front:true,scale:.8,fr:0})}
 // El landmark de Ribera va sobre el río, en el puente de en medio: el tablero cubre las 3 casillas del cruce (u de -1 a 2)

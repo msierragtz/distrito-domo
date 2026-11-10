@@ -166,33 +166,42 @@ const RIBLV={cafe:['Triciclo de pan dulce','Café de esquina','Tostador en bodeg
   bar:['Depósito El Puente','Cervecería en bodega','Salón cumbiero','Azotea al río'],paleteria:['Aguas frescas','Paletería rosa','Nevería y raspados','Nevería La Ribereña'],
   tomates:['Puesto de frutas','Mercadito de la Ribera','Mercado techado','Mercado gourmet'],oficinas:['Oficinas en bodega','Coworking del Río','Corporativo de ladrillo','Corporativo verde'],
   edificio:['Casas de la Ribera','Casas pintadas','Casas con terraza','Casas de cantera'],ladrillo:['Bodegas del río','Lofts con mural','Lofts con tragaluz','Bodega boutique'],torre:['Torre Malecón','Torre Malecón Plus','Torre Malecón Premium','Torre Malecón Sky']};
-function ribCafe(t,gx,gy,L){const s=t.s;
-  if(L===1){dsort(gx,gy,[ // triciclo con canasta de pan, sombrilla y bancos
-    [.46,.46,()=>{const g=cb(gx+.38,gy+.4,gx+.58,gy+.54,2,3.2,'#2bb3a3','#7fd6cc');face(g,'L',0,2,1,.6,'#f4efe2');for(const [a,b] of [[.36,.56],[.62,.56],[.62,.4]]){const [x,y]=P(gx+a,gy+b);circ(x,y-1.2,1.4,'#2b2b2b');circ(x,y-1.2,.6,'#9aa1ab')}
-      const [x,y]=P(gx+.48,gy+.46);ellipse(x,y-6.4,3.6,1.3,'#c98a3a');for(let q=0;q<5;q++)px(x-2.8+q*1.2,y-7.6-(q%2)*.5,1.1,.9,['#f2b632','#e85d75','#f4efe2','#c98a3a','#f2b632'][q])}],
-    [.74,.72,()=>stoolH(gx+.74,gy+.72,'#e85d75')],[.6,.84,()=>stoolH(gx+.6,gy+.84,'#f2b632')]]);
-    {const [x,y]=P(gx+.5,gy+.46);px(x,y-13,.5,13,'#7a7a7a');parasol(x+.25,y-13,7.5,['#2bb3a3','#ffffff'],1.2)}
-    {const [x,y]=P(gx+.16,gy+.84);px(x,y-5,.5,5,'#6e4a2c');letrero(x-3.5,y-9,7.5,'#f4efe2','#2bb3a3')}return}
-  if(L===2){const H=12,c=['#2bb3a3','#e85d75','#f2b632'][s%3],g=cb(gx+.14,gy+.14,gx+.6,gy+.62,0,H,c,'#d8d3c9'); // café de esquina con azulejo y toldo
-    for(let q=0;q<10;q++){face(g,'L',q/10,0,.1,2,(q%2)?'#2a5ea8':'#f4efe2');face(g,'R',q/10,0,.1,2,(q%2)?'#24508f':'#d8d3c9')}
+/* Café de la Ribera (v80): identidad propia para no confundirse con bares y restaurantes. Siempre crema con toldo a rayas
+   verde agua y una taza gigante con vapor: 1 triciclo con termo, 2 café de esquina, 3 tostador con chimenea de cobre y techo
+   de teja a dos aguas, 4 pabellón de cristal con terraza abajo. Nada de ladrillo, sombrillas en la azotea ni diente de sierra. */
+function taza(x,y,sc){const on=NIGHT>.2,w=3*sc;ellipse(x,y,w+1.6*sc,1.1*sc,'#d8d3c9',on);px(x-w,y-5*sc,2*w,5*sc,'#ffffff',on);px(x-w,y-5*sc,2*w,1.2*sc,'#2bb3a3',on);px(x-w+.6*sc,y-5.6*sc,2*w-1.2*sc,.8*sc,'#6e4a2c',on);
+  px(x+w,y-4*sc,1.2*sc,.8*sc,'#ffffff',on);px(x+w+.8*sc,y-4*sc,.8*sc,2.6*sc,'#ffffff',on);px(x+w,y-2*sc,1.2*sc,.8*sc,'#ffffff',on);px(x-w,y-.8*sc,2*w,.8*sc,'#e4e0d8',on);
+  px(x-.8,y-7.4*sc,1,1.4,'#ffffff',true);px(x+.6,y-8.8*sc,1,1.4,'#ffffff',true);px(x-.4,y-10.2*sc,1,1,'#ffffff',true);
+  if(on)glow(x,y-3*sc,7*sc,.7,'#fff0c8')}
+function ribCafe(t,gx,gy,L){const CR='#f6efdf',CR2='#ddd5c3',TQ='#2bb3a3';
+  if(L===1){dsort(gx,gy,[ // triciclo de pan dulce: vitrina, termo grande y bancos (sin sombrilla: eso es del puesto de mariscos)
+    [.46,.46,()=>{const g=cb(gx+.34,gy+.38,gx+.6,gy+.54,2,3.4,TQ,'#7fd6cc');face(g,'L',0,1.6,1,1.8,'#d8f0f8');face(g,'L',0,1.4,1,.3,'#f4efe2');for(const [a,b] of [[.32,.56],[.62,.56],[.62,.38]]){const [x,y]=P(gx+a,gy+b);circ(x,y-1.3,1.5,'#2b2b2b');circ(x,y-1.3,.6,'#9aa1ab')}
+      const [x,y]=P(gx+.47,gy+.46);for(let q=0;q<5;q++)px(x-3+q*1.3,y-7.2-(q%2)*.5,1.1,.9,['#f2b632','#e85d75','#f4efe2','#c98a3a','#f2b632'][q]);
+      const [tx,ty]=P(gx+.6,gy+.42);px(tx-1,ty-10.5,2.4,5,'#c0c6cc');px(tx-1,ty-11.2,2.4,.8,'#3a3a3a');px(tx-1,ty-8.4,2.4,.8,TQ)}],
+    [.74,.74,()=>stoolH(gx+.74,gy+.74,TQ)],[.58,.86,()=>stoolH(gx+.58,gy+.86,'#f4efe2')]]);
+    {const [x,y]=P(gx+.2,gy+.3);px(x,y-15,.6,15,'#6e4a2c');taza(x+.3,y-15,.9)}return}
+  if(L===2){const H=11,g=cb(gx+.14,gy+.14,gx+.62,gy+.62,0,H,CR,CR2); // café de esquina: azulejo, toldo a rayas y taza en la azotea
+    for(let q=0;q<10;q++){face(g,'L',q/10,0,.1,2,(q%2)?TQ:'#f4efe2');face(g,'R',q/10,0,.1,2,(q%2)?'#239a8c':'#d8d3c9')}
     face(g,'L',.1,2,.36,6,'#3a2a1e');win(g,'L',.12,2.5,.32,5,'#9fc4dc');face(g,'L',.56,2,.34,5,'#3a2a1e');win(g,'L',.58,2.5,.3,4,'#9fc4dc');win(g,'R',.14,2.5,.4,5,'#8cb6d2');
-    toldo(g,'L',.04,.96,7.6,.1,'#ffffff','#f2b632',7);letrero(...(()=>{const A=g.L,B=g.B;return [A[0]+(B[0]-A[0])*.2,A[1]+(B[1]-A[1])*.2-H+.5]})(),8,'#f4efe2','#3a2a1e');
-    azotea(gx+.14,gy+.14,gx+.6,gy+.62,H,1);bugam(g,'R',.92,H-.5,6);
-    dsort(gx,gy,[[.8,.3,()=>{chairH(gx+.86,gy+.26,'#d62828');tableH(gx+.78,gy+.32,'#f4f4f4','#888');chairH(gx+.7,gy+.38,'#d62828')}],[.4,.82,()=>{chairH(gx+.48,gy+.78,'#d62828');tableH(gx+.4,gy+.84,'#f4f4f4','#888')}]]);return}
-  if(L===3){const H=13,g=cb(gx+.12,gy+.12,gx+.64,gy+.66,0,H,'#8e3b2a','#9a8f80'); // tostador en bodega: portón de cristal, foquitos, bici
-    for(let v=1.2;v<H;v+=1.3){face(g,'L',0,v,1,.3,'#7a3324');face(g,'R',0,v,1,.3,'#6a2a1e')}face(g,'L',.06,0,.88,8,'#1c1c1c');win(g,'L',.08,.4,.84,7.2,'#c9e2f0');for(let q=1;q<6;q++)face(g,'L',.08+q*.14,.4,.012,7.2,'#1c1c1c');for(const v of [2.8,5.2])face(g,'L',.08,v,.84,.2,'#1c1c1c');
-    win(g,'R',.12,1,.5,6,'#8cb6d2');face(g,'R',.1,9,.8,2.4,'#1c1c1c');face(g,'R',.16,9.6,.5,1.2,'#f2b632',NIGHT>.2);sawtooth(gx+.12,gy+.12,gx+.64,gy+.66,H,2,'#6f7680','#9fd0ee','#7a3324');
-    {const a=P(gx+.12,gy+.72),b=P(gx+.66,gy+.72);bulbsH([a[0],a[1]-10],[b[0],b[1]-10],6,1.4)}
-    dsort(gx,gy,[[.82,.4,()=>{const [x,y]=P(gx+.82,gy+.4);circ(x-2.4,y-2,1.8,'#2b2b2b');circ(x-2.4,y-2,1.1,'#ece8e0');circ(x+2.4,y-2,1.8,'#2b2b2b');circ(x+2.4,y-2,1.1,'#ece8e0');line(x-2.4,y-2,x,y-4.4,'#e85d75');line(x,y-4.4,x+2.4,y-2,'#e85d75')}],
-      [.5,.84,()=>{tableH(gx+.5,gy+.84,'#a0693f');stoolH(gx+.6,gy+.78,'#2b2b2b');stoolH(gx+.4,gy+.9,'#2b2b2b')}]]);return}
-  // café terraza: dos pisos blancos, terraza con sombrillas, bugambilia
-  const H=18,g=cb(gx+.12,gy+.12,gx+.62,gy+.68,0,H,'#f4efe2','#d8d3c9');face(g,'L',0,0,1,1,'#2bb3a3');face(g,'R',0,0,1,1,'#239a8c');
-  win(g,'L',.08,1.5,.4,6,'#9fc4dc');win(g,'L',.54,1.5,.38,6,'#9fc4dc');face(g,'R',.1,0,.3,7,'#2bb3a3');win(g,'R',.5,1.5,.4,6,'#8cb6d2');
-  for(const u of [.08,.54])winF(g,'L',u,10,.36,5,'#2bb3a3','#2f5079');winF(g,'R',.5,10,.4,5,'#2bb3a3','#2f5079');
-  toldo(g,'L',.04,.96,7.2,.09,'#ffffff','#2bb3a3',7);bugam(g,'L',.06,H-.5,9);
-  box(gx+.1,gy+.1,gx+.64,gy+.7,H,.8,'#c98a5a','#f4f2ec','#d8d4ca');lifted(H+.8,()=>{umbH(gx+.28,gy+.3,'#2bb3a3',5,'#239a8c');umbH(gx+.52,gy+.52,'#f2b632',5,'#d99a1c');planter(gx+.56,gy+.2,.3)});
-  {const a=P(gx+.1,gy+.7),b=P(gx+.64,gy+.7);bulbsH([a[0],a[1]-H-4],[b[0],b[1]-H-4],6,1.2)}
-  dsort(gx,gy,[[.8,.4,()=>{chairH(gx+.86,gy+.36,'#f4f4f4');tableH(gx+.8,gy+.42,'#a0693f')}],[.8,.8,()=>planter(gx+.82,gy+.82,.36)]])}
+    toldo(g,'L',.04,.96,7.6,.1,'#ffffff',TQ,7);box(gx+.12,gy+.12,gx+.64,gy+.64,H,.8,'#c9c2b4',CR,CR2);
+    {const [x,y]=P(gx+.38,gy+.38);taza(x,y-H-.8,1.5)}
+    dsort(gx,gy,[[.8,.3,()=>{chairH(gx+.86,gy+.26,TQ);tableH(gx+.78,gy+.32,'#f4f4f4','#888');chairH(gx+.7,gy+.38,TQ)}],[.4,.82,()=>{chairH(gx+.48,gy+.78,TQ);tableH(gx+.4,gy+.84,'#f4f4f4','#888')}]]);return}
+  if(L===3){const H=10,g=cb(gx+.12,gy+.14,gx+.62,gy+.66,0,H,CR,CR2); // tostador: nave crema con teja a dos aguas y chimenea de cobre
+    face(g,'L',0,0,1,1.2,TQ);face(g,'R',0,0,1,1.2,'#239a8c');face(g,'L',.08,1.2,.84,6.4,'#3a2a1e');win(g,'L',.1,1.6,.8,5.6,'#c9e2f0');for(let q=1;q<5;q++)face(g,'L',.1+q*.16,1.6,.012,5.6,'#3a2a1e');
+    win(g,'R',.14,2,.3,4.6,'#8cb6d2');win(g,'R',.56,2,.3,4.6,'#8cb6d2');toldo(g,'L',.04,.96,7.8,.09,'#ffffff',TQ,7);
+    pyramid(gx+.08,gy+.1,gx+.66,gy+.7,H,7,'#c8623a','#a84e2c');
+    {const c=cb(gx+.66,gy+.2,gx+.78,gy+.32,0,19,'#c47a3a','#e09a55');face(c,'L',0,6,1,.6,'#8a4f22');face(c,'L',0,13,1,.6,'#8a4f22');face(c,'R',0,6,1,.6,'#7a451c');face(c,'R',0,13,1,.6,'#7a451c');box(gx+.64,gy+.18,gx+.8,gy+.34,19,1,'#5a3a24','#6a4326','#55351d');const [x,y]=P(gx+.72,gy+.26);smokeH(x,y-22)}
+    {const [x,y]=P(gx+.16,gy+.8);px(x,y-9,.6,9,'#6e4a2c');taza(x+.3,y-9,1)}
+    dsort(gx,gy,[[.5,.86,()=>{tableH(gx+.5,gy+.86,'#a0693f');stoolH(gx+.6,gy+.8,TQ);stoolH(gx+.4,gy+.92,TQ)}],[.84,.6,()=>{for(let k=0;k<2;k++)cb(gx+.8,gy+.56,gx+.9,gy+.66,k*1.6,1.6,'#c9a06a')}]]);return}
+  // pabellón de cristal: terraza con columnas abajo, caja de vidrio arriba con techo a cuatro aguas y la taza más grande
+  const H0=7,H=15;for(const [a,b] of [[.14,.14],[.62,.14],[.14,.66],[.62,.66]]){const [x,y]=P(gx+a,gy+b);px(x-.6,y-H0,1.3,H0,CR2)}
+  {const k=cb(gx+.3,gy+.26,gx+.5,gy+.5,0,H0,CR,CR2);face(k,'L',.1,1,.8,4.6,'#3a2a1e');win(k,'L',.14,1.4,.72,3.8,'#ffcf8a');face(k,'R',.2,0,.5,5.4,TQ)}
+  dsort(gx,gy,[[.24,.6,()=>{tableH(gx+.24,gy+.6,'#f4f4f4','#888');chairH(gx+.3,gy+.54,TQ)}],[.54,.58,()=>{tableH(gx+.54,gy+.58,'#f4f4f4','#888');chairH(gx+.6,gy+.52,TQ)}]]);
+  const g=cb(gx+.1,gy+.1,gx+.66,gy+.7,H0,H-H0,'#bfe3f2','#a9d4ea');box(gx+.08,gy+.08,gx+.68,gy+.72,H0-.8,.8,'#c9c2b4',CR,CR2);
+  for(const sd of ['L','R']){win(g,sd,.04,.8,.92,H-H0-1.8,sd==='L'?'#d4eef9':'#bfe0f0');for(let q=0;q<=6;q++)face(g,sd,.04+q*.153-.006,0,.014,H-H0,'#ffffff');face(g,sd,0,(H-H0)/2,1,.3,'#ffffff');face(g,sd,0,0,1,.8,TQ)}
+  bugam(g,'R',.94,H-H0-.5,7);box(gx+.08,gy+.08,gx+.68,gy+.72,H,.8,'#c9c2b4','#ffffff','#e4e0d8');pyramid(gx+.12,gy+.12,gx+.64,gy+.68,H+.8,6,'#bfe3f2','#9fcfe6');
+  {const [x,y]=P(gx+.38,gy+.4);taza(x,y-H-6.6,1.9)}
+  dsort(gx,gy,[[.82,.36,()=>{const [x,y]=P(gx+.82,gy+.36);px(x,y-9,.5,9,'#7a7a7a');parasol(x+.25,y-9,5.5,[TQ,'#ffffff'],1);tableH(gx+.82,gy+.42,'#f4f4f4','#888')}],[.8,.84,()=>planter(gx+.82,gy+.84,.36)],[.46,.88,()=>{chairH(gx+.52,gy+.84,TQ);tableH(gx+.46,gy+.9,'#f4f4f4','#888')}]])}
 function ribResto(t,gx,gy,L){const s=t.s;
   if(L===1){dsort(gx,gy,[ // coctelería: carrito blanco y azul con hielera, bancos de plástico
     [.44,.44,()=>{const g=cb(gx+.3,gy+.36,gx+.58,gy+.52,1.4,4.4,'#f4f4f4','#ffffff');face(g,'L',0,0,1,1.4,'#2a5ea8');face(g,'L',.1,2,.8,1.6,'#7fb7e6');for(const [a,b] of [[.34,.54],[.56,.54]]){const [x,y]=P(gx+a,gy+b);circ(x,y-1,1.4,'#2b2b2b')}

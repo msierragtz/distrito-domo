@@ -28,14 +28,14 @@ function artPlaza(t,gx,gy,L){
       [.5,.5,()=>{cb(gx+.4,gy+.4,gx+.6,gy+.6,0,2,'#d9d4ca');const [x,y]=P(gx+.5,gy+.5);poly([[x-4,y-2],[x-1,y-2],[x+3,y-16],[x,y-16]],'#f26a21');poly([[x-1,y-2],[x+4,y-2],[x+5,y-12],[x+2,y-14]],'#d1561a');circ(x+5,y-17,2.5,'#f26a21')}],
       [.16,.2,()=>planter(gx+.16,gy+.2,.5)],[.84,.8,()=>planter(gx+.84,gy+.8,.5)],
       [.2,.72,()=>cb(gx+.12,gy+.66,gx+.3,gy+.76,0,1.5,'#2b2b2b')],[.74,.24,()=>cb(gx+.7,gy+.12,gx+.8,gy+.32,0,1.5,'#2b2b2b')]]);return}
-  // paseo comercial
+  // ágora: torre de reloj con remate del color del distrito, grada circular, asta bandera y bancas
+  {const [x,y]=P(gx+.5,gy+.5);ellipse(x,y,13,6.5,'#cbb894');ellipse(x,y-.8,11,5.5,'#e0d2b4');ellipse(x,y-1.6,8.5,4.2,'#efe4cc')}
   dsort(gx,gy,[
-    [.18,.3,()=>{const g=cb(gx+.04,gy+.06,gx+.3,gy+.5,0,8,'#f4f2ee','#c9c5bd');win(g,'L',.1,.5,.8,4,'#ffe2a8');win(g,'R',.1,.5,.8,4,'#f2d090');for(let k=0;k<4;k++)face(g,'L',k/4,5,.25,1.5,k%2?'#fff':'#d62828')}],
-    [.3,.18,()=>{const g=cb(gx+.34,gy+.04,gx+.7,gy+.26,0,8,'#e9c46a','#c9c5bd');win(g,'L',.1,.5,.8,4,'#ffe2a8');win(g,'R',.1,.5,.8,4,'#f2d090');for(let k=0;k<4;k++)face(g,'L',k/4,5,.25,1.5,k%2?'#fff':'#2a9d8f')}],
-    [.6,.6,()=>{for(const [a,b] of [[.42,.42],[.92,.42],[.42,.92],[.92,.92]]){const [x,y]=P(gx+a,gy+b);px(x,y-10,1,10,'#4a3a2c')}
-      for(let k=0;k<6;k++){const b=.44+k*.095,A=P(gx+.4,gy+b),B=P(gx+.94,gy+b);line(A[0],A[1]-10,B[0],B[1]-10,'#7a5a3c')}
-      {const a=P(gx+.42,gy+.42),b=P(gx+.92,gy+.92);bulbsH([a[0],a[1]-10],[b[0],b[1]-10],8,3)}}],
-    [.62,.7,()=>{chairH(gx+.7,gy+.64,'#2b2b2b');tableH(gx+.62,gy+.7,'#f4f4f4')}]]);
+    [.5,.5,()=>{const ac=distCol(),g=cb(gx+.42,gy+.42,gx+.58,gy+.58,1.6,24,'#f4efe2','#e4dccb');for(const sd of ['L','R']){face(g,sd,0,0,1,2,'#c9b38a');face(g,sd,.3,3,.4,7,'#8cb6d2');face(g,sd,0,15,1,.6,ac);
+        const A=sd==='L'?g.L:g.B,B=sd==='L'?g.B:g.R,cx=(A[0]+B[0])/2,cy=(A[1]+B[1])/2-1.6-19.5;circ(cx,cy,2.6,'#2b2b2b');circ(cx,cy,2,NIGHT>.2?'#fff3c0':'#ffffff',NIGHT>.2);px(cx-.3,cy-1.4,.6,1.6,'#2b2b2b',NIGHT>.2);px(cx-.2,cy-.2,1.4,.5,'#2b2b2b',NIGHT>.2)}
+      box(gx+.4,gy+.4,gx+.6,gy+.6,25.6,1,'#c9c2b4','#f4efe2','#e4dccb');pyramid(gx+.41,gy+.41,gx+.59,gy+.59,26.6,6,ac,hexShade(ac,-.2));const [x,y]=P(gx+.5,gy+.5);if(NIGHT>.2)glow(x,y-21,9,.7,'#fff3c0')}],
+    [.16,.2,()=>{const [x,y]=P(gx+.16,gy+.2);px(x,y-19,.7,19,'#9aa0a8');px(x+.7,y-19,5,1.1,'#2f8f5b');px(x+.7,y-17.9,5,1.1,'#f4f4f4');px(x+.7,y-16.8,5,1.1,'#d62828')}],
+    [.84,.8,()=>planter(gx+.84,gy+.8,.5)],[.2,.78,()=>bench(gx+.2,gy+.78,'#9aa0a8')],[.8,.22,()=>bench(gx+.8,gy+.22,'#9aa0a8')],[.86,.5,()=>lamp(gx+.88,gy+.5)],[.5,.88,()=>lamp(gx+.5,gy+.9)]]);
 }
 
 /* ===== DOG PARK (los perros que corren se dibujan en vivo) ===== */

@@ -9,6 +9,7 @@ function artTomates(t,gx,gy,L){
     win(g,'R',.2,2,.6,3.5,'#7fb2d4');face(g,'R',.2,2,.6,.5,'#e2342b');
     box(gx+.16,gy+.16,gx+.74,gy+.74,H,.75,'#a8a296','#948e83','#837d72');
     {const [x,y]=P(gx+.35,gy+.35);px(x-1.5,y-H-5,3,4.5,'#1c1c1c')}
+    {const [x,y]=P(gx+.6,gy+.6);px(x,y-H-6,.8,6,'#6e4a2c');tomatoLogo(x+.4,y-H-8,2.4,NIGHT>.2)}
     dsort(gx,gy,[
       [.78,.4,()=>{const g2=cb(gx+.74,gy+.3,gx+.86,gy+.46,0,7,'#f4f4f4');face(g2,'L',0,5.5,1,1.5,'#d62828');win(g2,'L',.15,1,.7,4,'#9fd0ee')}],
       [.5,.84,()=>{for(let k=0;k<3;k++){const [x,y]=P(gx+.42+k*.08,gy+.84);px(x-1,y-2-(k%2),2.5,2,k===1?'#2f6db5':'#d62828');px(x-1,y-2.5-(k%2),2.5,.5,'#f2c94c')}}],
@@ -24,12 +25,13 @@ function artTomates(t,gx,gy,L){
     dsort(gx,gy,[[.06,.5,()=>{const g2=cb(gx+.02,gy+.42,gx+.1,gy+.56,0,6,'#5a5f6b');face(g2,'R',.2,3,.6,2,'#4fb0e0',true)}]]);
     return}
   if(L===3){ // Jitomates Gourmet
-    const H=11,g=cb(gx+.12,gy+.12,gx+.82,gy+.8,0,H,'#1f4d3a','#d8d3cb');
+    const H=11,g=cb(gx+.12,gy+.12,gx+.82,gy+.8,0,H,'#2f7a5a','#d8d3cb');
     win(g,'L',.06,1,.88,5.5,'#ffe2a8');for(const u of [.33,.66])face(g,'L',u,1,.02,5.5,'#16382a');
     face(g,'R',.08,0,.4,6.5,'#ffe2a8',true);face(g,'R',.55,0,.3,6.5,'#16382a');
-    for(let k=0;k<7;k++)face(g,'L',k/7,6.5,1/7,1.5,k%2?'#f4efe2':'#1f4d3a');
+    for(let k=0;k<7;k++)face(g,'L',k/7,6.5,1/7,1.5,k%2?'#f4efe2':'#2f7a5a');
     face(g,'L',.2,8.5,.6,1.5,'#c9a227',NIGHT>.2);
-    box(gx+.1,gy+.1,gx+.84,gy+.82,H,.75,'#16382a','#12301f','#0f2619');
+    box(gx+.1,gy+.1,gx+.84,gy+.82,H,.75,'#2a6a4e','#24574a','#1c4539');
+    {const [x,y]=P(gx+.46,gy+.46);tomatoLogo(x,y-H-4.4,3.4,NIGHT>.2);glow(x,y-H-4,10,.5)}
     dsort(gx,gy,[...[.24,.42,.6].map((a,k)=>[a,.9,()=>{const g2=cb(gx+a-.07,gy+.84,gx+a+.07,gy+.95,0,2.5,'#a0663a');const [x,y]=P(gx+a,gy+.9);for(let j=0;j<5;j++)px(x-2+j,y-3-(j%2)*.5,1,1,['#e2342b','#f2c94c','#59b04f','#f26a21','#8e44ad'][(j+k)%5])}]),
       [.9,.3,()=>planter(gx+.92,gy+.24,.4)]]);
     return}
