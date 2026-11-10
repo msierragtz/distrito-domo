@@ -58,7 +58,7 @@ Hace falta Node 18 o más (y Python 3 con Playwright para las pruebas).
 ```bash
 npm run build      # arma dist/distrito-domo.html
 npm run lint       # variables sin definir y otros errores (necesita «npm install» una vez)
-npm run itch       # arma dist/distrito-domo-itch.zip para itch.io
+npm run itch       # arma dist/distrito-sierra-itch.zip para itch.io
 npm test           # revisión + pruebas en navegador
 npm run bots       # bots de balance (tardan: horas de juego simulado)
 ```
