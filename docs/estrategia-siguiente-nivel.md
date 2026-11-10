@@ -27,7 +27,7 @@ Tercer distrito, inglés, PWA y tiendas, backend o multijugador, más edificios 
 
 ## Decisiones de Mauricio (9 nov 2026)
 1. Publicar: el juego ya está en itch.io (la fase 3 se acorta a una semana).
-2. Renombre de marcas: aprobado, pero tiene que seguir siendo divertido. También hay que cambiar el nombre del juego, porque «Distrito Domo» es una marca.
+2. Renombre de marcas: aprobado, pero tiene que seguir siendo divertido. También hay que cambiar el nombre del juego, porque «Distrito Domo» es una marca: desde la v78 se llama **Distrito Sierra** (distritos Cañón y Ribera).
 3. Obras grandes: bosque y museo llegan antes de los 3,000 vecinos.
 4. Tiempo: 4 horas por semana. Con eso las duraciones se duplican: fase 1 hasta el 7 dic, fase 2 hasta el 18 ene, fase 3 hasta el 25 ene, lanzamiento y fase 4 hasta el 22 mar 2027.
 5. Propina opcional en itch.io: pendiente (no urgente).
