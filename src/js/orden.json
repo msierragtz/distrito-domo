@@ -44,6 +44,7 @@
  "pantalla.js",
  "musica.js",
  "foto.js",
+ "medir.js",
  "guia.js",
  "arranque.js"
 ]

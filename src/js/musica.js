@@ -29,7 +29,7 @@ const JAZZ=(()=>{
     Ab7:{root:44,third:4,keys:[54,58,60,65]}
   });
   const TUNES=[
-    {id:'tarde',name:'Tarde en el Domo',from:0,feel:'swing',bpm:100,
+    {id:'tarde',name:'Tarde en el Cañón',from:0,feel:'swing',bpm:100,
      bars:[['Cmaj7','A7'],['Dm7','G7'],['Cmaj7','A7'],['Dm7','G7'],['Em7','A7'],['Dm7','G7'],['Cmaj7','C7'],['Fmaj7','Fmaj7'],
            ['Fm7','Bb7'],['Em7','A7'],['Dm7','G7'],['Em7','Eb7'],['Dm7','G7'],['Cmaj7','A7'],['Dm7','G7'],['Cmaj7','G7']],
      head:['E5:2 G5:2 A5:1 G5:1 E5:2','F5:3 E5:1 D5:2 -:2','E5:2 G5:2 C6:3 B5:1','A5:2 F5:2 D5:2 -:2',
@@ -59,7 +59,7 @@ const JAZZ=(()=>{
   ];
   /* ---------- Distrito Ribera: bossa, samba-jazz, latin jazz y bolero (piezas originales) ---------- */
   const RIB=typeof DIST!=='undefined'&&DIST==='ribera';
-  // acordes por nombre: teclas sin fundamental entre 57 y 74, como los del Domo
+  // acordes por nombre: teclas sin fundamental entre 57 y 74, como los del Cañón
   const QUAL={maj7:[4,7,11,14],m7:[3,7,10,14],'7':[4,9,10,14],m7b5:[3,6,10,12],'7b9':[4,7,10,13],'7alt':[4,8,10,15],m6:[3,7,9,14],'69':[4,7,9,14]};
   function chordOf(sym){if(CH[sym])return CH[sym];const m=/^([A-G][#b]?)(.*)$/.exec(sym),pc=NI[m[1]],q=QUAL[m[2]];if(!q)throw new Error('acorde '+sym);let root=36+pc;if(root<40)root+=12;
     return CH[sym]={root,third:/^m(?!aj)/.test(m[2])?3:4,keys:q.map(iv=>{let x=pc+iv;while(x<57)x+=12;while(x>74)x-=12;return x}).sort((a,b)=>a-b)}}

@@ -1,11 +1,11 @@
 /* ---------- Distrito Ribera (v66): segundo distrito con un río que lo atraviesa ----------
-   Se abre a los 3,000 vecinos del Distrito Domo. Cada distrito es su propia partida (su guardado, su nube y su historia);
+   Se abre a los 3,000 vecinos del Distrito Cañón. Cada distrito es su propia partida (su guardado, su nube y su historia);
    se cambia de uno a otro desde la pantalla de inicio o desde ⚙. El río va casi seco todo el año (se puede jugar en el lecho:
    parques, canchas, dog parks y palmas), se llena en la temporada de lluvias y una vez por temporada crece de golpe y daña
    lo que esté abajo. Las calles lo cruzan con puentes, el malecón luce la orilla y la vista al agua sube la plusvalía. */
 const LECHO=['parque','cancha','dogpark','palma'],PUENTE_MIN=400,LMY=OFF+5;
 // centro del río en cada fila: serpentea de norte a sur
-// en la Ribera, lo que queda al sur de la avenida también se vende (en el Domo ahí está la fábrica)
+// en la Ribera, lo que queda al sur de la avenida también se vende (en el Cañón ahí está la fábrica)
 const ribParcel=(x,y)=>y>OFF+12?(y<=OFF+15&&x>=3&&x<N-3?'RS':'RSS'):parcelOf(x,y);
 const cxR=y=>15+Math.round(2.4*Math.sin(y/4.6+.6));
 const isRio=t=>!!t&&(t.k==='rio'||t.pu===1||t.lecho===1);
@@ -129,14 +129,14 @@ function ribFix(){if(DIST!=='ribera'||!S||!S.g)return;for(let i=0;i<S.g.length;i
 const DKEY='distritoDomo.distrito',UKEY='distritoDomo.riberaUnl',VKEY='distritoDomo.viaje';
 const riberaUnl=()=>{try{return localStorage.getItem(UKEY)==='1'}catch(e){return false}};
 const bonoDe=mv=>Math.min(40000,Math.round((mv||0)*6/500)*500);
-const DN={domo:'Distrito Domo',ribera:'Distrito Ribera'};
+const DN={domo:'Distrito Cañón',ribera:'Distrito Ribera'};
 const EMB={domo:'<svg viewBox="0 0 30 18" aria-hidden="true"><path d="M3 17 A12 12 0 0 1 27 17" fill="none" stroke="#f26a21" stroke-width="4"/></svg>',
   ribera:'<svg viewBox="0 0 30 18" aria-hidden="true"><path d="M1 15.5h28" stroke="#2f7fb8" stroke-width="2.6"/><path d="M11 17 L15 1.5 L19 17" fill="none" stroke="#2f7fb8" stroke-width="2.4"/><path d="M15 3.5 L2 14.5 M15 3.5 L28 14.5 M15 7 L6 14.5 M15 7 L24 14.5" stroke="#2f7fb8" stroke-width=".9"/></svg>'};
 let RIBW=0,VIAJE=null;
 function viajeShow(to,fade,txt,sub){const v=$('viaje');if(!v)return;v.querySelector('.em').innerHTML=EMB[to];v.querySelector('b').textContent=txt;v.querySelector('small').textContent=sub||'';
   v.classList.toggle('rib',to==='ribera');v.hidden=false;if(fade){void v.offsetWidth}v.classList.add('on')}
 function viajeHide(){const v=$('viaje');if(!v)return;v.classList.remove('on');setTimeout(()=>{v.hidden=true},700)}
-async function goDist(to){if(to===DIST||goDist.on)return;if(to==='ribera'&&!riberaUnl()){say('El Distrito Ribera se abre cuando el Distrito Domo llega a 3,000 vecinos.',true);return}
+async function goDist(to){if(to===DIST||goDist.on)return;if(to==='ribera'&&!riberaUnl()){say('El Distrito Ribera se abre cuando el Distrito Cañón llega a 3,000 vecinos.',true);return}
   goDist.on=1;for(const b of ['distbox','ribnew','credits','opts','misbox'])if($(b))$(b).hidden=true;sfx('phase');
   viajeShow(to,true,`Viajando al ${DN[to]}`,TITLE?'':`Guardando tu ${DN[DIST]}…`);const t0=performance.now();
   if(!TITLE)try{const str=JSON.stringify(serialize());if(!lsPut(KEY,str,true)&&!CLOUD.ready){goDist.on=0;viajeHide();say(`No pude guardar tu ${DN[DIST]}: la memoria del navegador está llena. Descarga una copia antes de cambiar de distrito.`,true);return}if(CLOUD.ready){CLOUD.pend=str;await Promise.race([CLOUD.flush(),new Promise(r=>setTimeout(r,2500))])}}catch(e){}
@@ -153,10 +153,10 @@ function llegada(nuevo){const el=$('cine'),i=S.g.findIndex(t=>t.k==='domo'||t.k=
   if(i>=0&&!lowMo())setTimeout(()=>camTo(i,2.2),350)}
 // la primera vez en Ribera: qué tiene de distinto, en tres mensajes
 function ribIntro(who){const b=+(S.bono||0);
-  say(`¡Bienvenido al Distrito Ribera${who}! Empiezas de cero con $${fmt(S.$)}${b?`: $600 del Distrito más $${fmt(b)} de bono de tu Distrito Domo`:''}.`,true);
+  say(`¡Bienvenido al Distrito Ribera${who}! Empiezas de cero con $${fmt(S.$)}${b?`: $600 del Distrito más $${fmt(b)} de bono de tu Distrito Cañón`:''}.`,true);
   say('El río va casi seco: en el lecho puedes poner parques, canchas, dog parks y palmas. En la temporada de lluvias se llena, y si crece daña lo que haya abajo.');
   say(`Para cruzar el río usa Calle encima del agua: hace un puente. El puente de en medio, el de los conos, es para ${DEFS.domo.name}.`)}
-// en el Distrito Domo: a los 3,000 se abre Ribera. La tarjeta sale una vez, después de la pantalla de los 3,000
+// en el Distrito Cañón: a los 3,000 se abre Ribera. La tarjeta sale una vez, después de la pantalla de los 3,000
 function distStep(){if(TITLE||DIST!=='domo'||!S||(S.maxV||0)<3000)return;if(!riberaUnl()){try{localStorage.setItem(UKEY,'1')}catch(e){}RIBW=performance.now();distUI()}
   if(S.ribCard||performance.now()-RIBW<7000)return;const cr=$('credits');if((cr&&!cr.hidden)||CINE||PHOTO||TL||goDist.on)return;
   S.ribCard=1;S.ribMsg=1;ribNewShow()}
@@ -169,8 +169,8 @@ function ribNewShow(){const box=$('ribnew');if(!box)return;sfx('phase');
     <circle cx="129" cy="18.5" r="1.8" fill="#ff3b30"/></svg>
     <h2>¡Se abrió el Distrito Ribera!</h2>
     <ul><li>Un barrio nuevo, cruzado por un río que va seco casi todo el año y crece en la temporada de lluvias.</li>
-    <li>Empiezas de cero, con <b>$${fmt(600+bonoDe(S.maxV))}</b> (incluye un bono de tu Distrito Domo).</li>
-    <li>Tu Distrito Domo se queda tal cual: regresas cuando quieras con el botón <b>⇄ Cambiar</b>, junto al nombre del distrito, arriba a la izquierda.</li></ul>
+    <li>Empiezas de cero, con <b>$${fmt(600+bonoDe(S.maxV))}</b> (incluye un bono de tu Distrito Cañón).</li>
+    <li>Tu Distrito Cañón se queda tal cual: regresas cuando quieras con el botón <b>⇄ Cambiar</b>, junto al nombre del distrito, arriba a la izquierda.</li></ul>
     <div class="cbtns"><button id="rnGo" type="button" class="go">Ir al Distrito Ribera</button><button id="rnNo" type="button">Ahora no</button></div>`;
   box.hidden=false;$('rnGo').onclick=()=>goDist('ribera');$('rnNo').onclick=()=>{box.hidden=true;$('distb').classList.add('new');say('Cuando quieras ir al Distrito Ribera, toca «⇄ Cambiar», junto al nombre del distrito, arriba a la izquierda.',true)}}
 // panel «Distritos»: las dos ciudades, cuántos vecinos tiene cada una (lo guardado en este navegador) y un botón para ir
@@ -178,31 +178,31 @@ function distInfo(d){if(d===DIST)return {v:Math.round(S.v||0),seen:1};let p=null
   return p&&p.g?{v:Math.round(p.v||0),seen:!!p.seen}:null}
 function renderDist(){const box=$('distbox');if(!box)return;const unl=riberaUnl()||DIST==='ribera';
   const card=d=>{const here=d===DIST,lk=d==='ribera'&&!unl,inf=distInfo(d);
-    const nv=n=>Math.round(n).toLocaleString('es-MX'),sub=here?`${nv(inf.v)} vecinos · estás aquí`:lk?`Se abre a los 3,000 vecinos del Domo (vas en ${nv(S.maxV||0)})`:inf&&inf.seen?`${nv(inf.v)} vecinos te esperan, en pausa`:d==='ribera'?`Nuevo: un barrio con río. Llegas con $${fmt(600+bonoDe(DIST==='domo'?S.maxV:0))}`:'Tu partida del Domo';
+    const nv=n=>Math.round(n).toLocaleString('es-MX'),sub=here?`${nv(inf.v)} vecinos · estás aquí`:lk?`Se abre a los 3,000 vecinos del Cañón (vas en ${nv(S.maxV||0)})`:inf&&inf.seen?`${nv(inf.v)} vecinos te esperan, en pausa`:d==='ribera'?`Nuevo: un barrio con río. Llegas con $${fmt(600+bonoDe(DIST==='domo'?S.maxV:0))}`:'Tu partida del Cañón';
     return `<div class="dcard${here?' here':''}${lk?' lk':''}"><span class="em">${EMB[d]}</span><div class="dt"><b>${DN[d]}</b><small>${sub}</small></div>${here?'<span class="aq">Aquí</span>':lk?'<span class="aq">🔒</span>':`<button type="button" data-d="${d}">Ir →</button>`}</div>`};
   box.innerHTML=`<h2>Tus distritos<button class="x" type="button" aria-label="Cerrar">✕</button></h2>${card('domo')}${card('ribera')}<p class="dn">Cada distrito guarda su propia partida. El que dejes se queda en pausa, tal como está.</p>`;
   box.querySelector('.x').onclick=()=>{box.hidden=true};for(const b of box.querySelectorAll('button[data-d]'))b.onclick=()=>goDist(b.dataset.d)}
 let DBOUND=0;function distBind(){if(DBOUND)return;DBOUND=1;const on=(id,d)=>{const el=$(id);if(el)el.addEventListener('click',()=>goDist(d))};on('tdDomo','domo');on('tdRib','ribera');
   const b=$('distb');if(b)b.addEventListener('click',e=>{e.stopPropagation();const x=$('distbox');x.hidden=!x.hidden;b.classList.remove('new');for(const o of ['misbox','loanbox','moneybox'])if($(o))$(o).hidden=true;if(!x.hidden)renderDist()})}
 function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id of ['tdist','distb'])if($(id))$(id).hidden=!u;
-  const lab=d=>{const inf=distInfo(d);return inf&&inf.seen?`${DN[d].replace('Distrito ','')} · ${fmt(inf.v)}`:d==='ribera'?'Ribera · nuevo':'Domo'};
+  const lab=d=>{const inf=distInfo(d);return inf&&inf.seen?`${DN[d].replace('Distrito ','')} · ${fmt(inf.v)}`:d==='ribera'?'Ribera · nuevo':'Cañón'};
   for(const [id,d] of [['tdDomo','domo'],['tdRib','ribera']]){const b=$(id);if(b){b.setAttribute('aria-pressed',DIST===d);b.disabled=DIST===d;if(S)b.textContent=lab(d)}}}
 // en Ribera: nombres, título y textos propios
 function distBoot(){if(DIST!=='ribera'){for(const k of ['malecon','alberca','parroquia','hotel']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}return}
   Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El emblema de la Ribera: un pilón blanco en A con tirantes, sobre el puente de en medio del río. Sube mucho la satisfacción. Solo hay uno.'});
-  // los trofeos del Domo no van en la Ribera (el menú de especiales se hacía enorme)
+  // los trofeos del Cañón no van en la Ribera (el menú de especiales se hacía enorme)
   for(const k of ['kiosco','mirador','cultura','teleferico']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}
   DEFS.lotedomo.name='Terreno del Puente';DEFS.cultura.name='Centro Cultural Ribera';DEFS.museo.name='Museo del Río';SPH.domo=110;
   Object.assign(PARCELS.W,{where:'junto a la calle Sauce'});Object.assign(PARCELS.E,{where:'junto a la calle Álamo'});
   Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
   Object.assign(PARCELS.DA,{name:'Ribera sur',where:'cruzando la avenida sur, junto al río'});
-  for(const k in LV)if(Array.isArray(LV[k]))LV[k]=LV[k].map(n=>typeof n==='string'?n.replace(' del Domo',' del Río').replace('Domo','Ribera'):n);
-  // v70: vivienda y negocios con cara propia (arte/ribera-edificios.js): sus nombres por nivel, sin las marcas del Domo
+  for(const k in LV)if(Array.isArray(LV[k]))LV[k]=LV[k].map(n=>typeof n==='string'?n.replace(' del Cañón',' del Río').replace('Cañón','Ribera'):n);
+  // v70: vivienda y negocios con cara propia (arte/ribera-edificios.js): sus nombres por nivel, sin las marcas del Cañón
   for(const k in RIBLV){LV[k]=RIBLV[k].slice();delete VARN[k]}
   Object.assign(DEFS.edificio,{name:'Casas de la Ribera',desc:'Casas pintadas, cada edificio de su color; 6 vecinos por piso: sobre todo estudiantes, luego familias. Tócalo otra vez para subirle un piso.'});
   Object.assign(DEFS.ladrillo,{name:'Bodegas del río',desc:'Bodegas de ladrillo convertidas en departamentos, con tanque de agua de madera: las prefieren las familias. Tócalo otra vez para subirle un piso.'});
   DEFS.torre.name='Torre Malecón';Object.assign(DEFS.tomates,{name:'Mercadito de la Ribera',desc:'Mercadito abierto día y noche: le sirve a todos.'});
-  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Tomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Tomates Market','mercadito');
+  for(const k in COMTXT)COMTXT[k]=COMTXT[k].replace('Jitomates','mercadito');NEEDTXT.com[2]=NEEDTXT.com[2].replace('Jitomates Market','mercadito');
   document.title='Distrito Ribera';for(const el of document.querySelectorAll('header h1'))el.firstChild.textContent='DISTRITO RIBERA';
   const tt=document.querySelector('#title .tt');if(tt)tt.innerHTML='DISTRITO<br>RIBERA';document.body.classList.add('ribera')}
 

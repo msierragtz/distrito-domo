@@ -35,7 +35,7 @@ function artBeis(t,gx,gy){const on=NIGHT>.2;
     [2.3,2.2,()=>{const [x,y]=P(gx+2.3,gy+2.2);person(x,y,{shirt:'#f4f4f4',pants:'#f4f4f4',skin:'#c68642',hair:'#1c1c1c',front:true,scale:.8})}]]);
 }
 
-/* Museo del Domo · 2×2: volúmenes de concreto blanco, atrio de vidrio y el arco naranja sobre la explanada */
+/* Museo del Cañón · 2×2: volúmenes de concreto blanco, atrio de vidrio y el arco naranja sobre la explanada */
 function artMuseo(t,gx,gy){const on=NIGHT>.2;
   quad(gx,gy,.03,.03,1.97,1.97,'#e8e2d6');for(let k=1;k<8;k++){const a=P(gx+k*.25,gy+.04),b=P(gx+k*.25,gy+1.96);line(a[0],a[1],b[0],b[1],'#d8d0c2')}
   quad(gx,gy,1.25,1.25,1.85,1.85,'#7fc4e0');quad(gx,gy,1.32,1.32,1.78,1.78,'#9fd8ee');

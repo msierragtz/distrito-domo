@@ -1,6 +1,6 @@
-# Distrito Domo
+# Distrito Pixel
 
-Simulador de ciudad retro, en pixel art isométrico, ambientado en el Distrito Domo de Santa Catarina, Nuevo León. Idea y dirección: Mauricio. Programación, pixel art y jazz: Claude.
+Simulador de ciudad retro, en pixel art isométrico, ambientado en Santa Catarina, Nuevo León. Idea y dirección: Mauricio. Programación, pixel art y jazz: Claude.
 
 El juego es un solo archivo HTML sin dependencias: corre en cualquier navegador, como artifact de claude.ai o en itch.io.
 
@@ -39,7 +39,7 @@ legacy/             (ya no existe en main; está en el historial: versiones v53�
 | `vehiculos.js`, `cielo.js` | Tráfico de las avenidas (dos carriles por sentido, cambios de carril, paradas, freno ante peatones, orden de dibujo), coches, camión, tráiler; cielo y sierra |
 | `transeuntes.js` | Cómo se ve la gente: cuerpo con caminado de 6 cuadros, poses, accesorios, carritos y balón |
 | `vida.js` | A dónde va la gente y qué hace en la calle; «La voz de la calle» y seguir con la cámara |
-| `temporadas.js` | Día de Muertos, Navidad y Fiestas Patrias: adornos en vivo, ofrendas, pinos, puestos, el Grito frente a El Domo |
+| `temporadas.js` | Día de Muertos, Navidad y Fiestas Patrias: adornos en vivo, ofrendas, pinos, puestos, el Grito frente a La Cúpula |
 | `huella.js` | Edificios de varias casillas (2×1, 2×2, 3×3) |
 | `fuegos.js`, `juice.js` | Fuegos, polvo, destello, confeti, obra piso por piso, momentos de cámara, zoom suave |
 | `render.js` | Imágenes en caché, sombras, suelo, el cuadro completo, la manita |
@@ -68,7 +68,7 @@ Para una versión nueva:
 1. Cambiar lo que haga falta en `src/`.
 2. `npm run build` y abrir `dist/distrito-domo.html` en el navegador.
 3. `npm test`.
-4. Subir `version` en `package.json` (0.74 → 0.75 = v75), hacer commit con lo que cambió.
+4. Subir `version` en `package.json` (0.76 → 0.77 = v77), hacer commit con lo que cambió.
 5. Publicar `dist/distrito-domo.html` en el artifact y, si toca, `npm run itch` para itch.io.
 
 `dist/distrito-domo.html` sí se guarda en git, para que siempre esté a la mano la última versión jugable.
@@ -83,7 +83,7 @@ Todas abren el juego en Chromium con ganchos de prueba (`build/arnes.html`, se a
 | `tests/opciones.py` | Calidad baja, Alto contraste, Menos movimiento y Día de Muertos |
 | `tests/obras.py` | Pone las 6 obras grandes en una ciudad de 2,600 vecinos y captura cada etapa de obra |
 | `tests/escena.py` | Escena con todas las obras, en los 4 giros |
-| `tests/juice.py` | Momento del Domo, confeti, zoom con rueda e inercia |
+| `tests/juice.py` | Momento de La Cúpula, confeti, zoom con rueda e inercia |
 | `tests/temporadas.py` | Capturas de la ciudad grande por temporada y hora (`SOLO=noche,lluvia-noche` para elegir) |
 | `tests/detalle.py` | Acercamientos en la escena de muestra (`tests/datos/escena-muestra.js`) |
 | `tests/foto.py` | Modo foto: hora, clima, temporada, filtro, guardar foto, grabar video, paseo y time-lapse; revisa que la partida no cambie |
@@ -91,10 +91,10 @@ Todas abren el juego en Chromium con ganchos de prueba (`build/arnes.html`, se a
 | `tests/transeuntes.py` | Transeúntes: destinos, banquetas, paradas, reacciones a eventos, carritos, obras, fuegos, la tarjeta de «La voz de la calle», seguir con la cámara, rendimiento y la vida en Ribera; guarda la hoja de poses |
 | `tests/trafico.py` | Tráfico: nadie se encima, orden de dibujo en los 4 giros, cambios de carril, paradas, frenos y paso peatonal |
 | `tests/ribera-edificios.py` | Vivienda y negocios de la Ribera: arte y nombres solo allá, todos los tipos y niveles se dibujan, barrio de muestra junto al río |
-| `tests/musica-ribera.py` | Música de la Ribera: cada pieza se toca fuera de línea sin errores, sin saturar y con volumen parecido al del Domo; `MUESTRAS=1` guarda un mp3 de cada una en `build/musica/` |
+| `tests/musica-ribera.py` | Música de la Ribera: cada pieza se toca fuera de línea sin errores, sin saturar y con volumen parecido al del Cañón; `MUESTRAS=1` guarda un mp3 de cada una en `build/musica/` |
 | `tests/v72.py` | Reglas de los edificios de la v72 (pisos de la casa, local de usos mixtos, banco, cicloestación, gasolinera junto a avenida, alberca, bodas y hotel) y que todos se dibujen |
 | `tests/hoja-v72.py` | Hojas de aprobación del arte de la v72 |
-| `tests/hoja-ribera.py` | Hojas de aprobación del arte (Domo contra Ribera, de día y de noche, y variedad de colores) |
+| `tests/hoja-ribera.py` | Hojas de aprobación del arte (Cañón contra Ribera, de día y de noche, y variedad de colores) |
 | `tests/timelapse.py` | Time-lapse desde una partida sin historia y regreso a la partida real |
 | `tests/bots/correr.py` | Bots novato, intermedio, experto, muy experto y descuidado (`SEEDS=1,2,3`, `NOSTOP=1`) |
 
@@ -102,5 +102,5 @@ Para usar otro Chromium: `CHROME=/ruta/al/chrome`.
 
 ## Pendientes conocidos
 
-Ver `docs/pendientes.md`. Para una versión comercial, antes que nada hay que resolver el uso de marcas e instituciones reales (Banregio, DeAcero, UDEM, Tec y el propio Distrito Domo).
+Ver `docs/pendientes.md`. En la v76 salieron las marcas e instituciones reales y el juego dejó de llamarse como el desarrollo real: ahora es Distrito Pixel, con los distritos Cañón y Ribera (las llaves internas siguen siendo `domo` y `distritoDomo.*` para no perder partidas).
 

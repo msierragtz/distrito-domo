@@ -1,4 +1,4 @@
-/* ===== v72: casa de fraccionamiento, usos mixtos, cicloestación, banco y gasolinera (Domo y Ribera, 4 niveles);
+/* ===== v72: casa de fraccionamiento, usos mixtos, cicloestación, banco y gasolinera (Cañón y Ribera, 4 niveles);
    y en la Ribera, tres especiales de 2×2: parroquia, hotel boutique y alberca pública ===== */
 const CASAF_D=['#efe6d4','#e4d2b4','#d9dcd8','#ecd3bd'],CASAF_R=['#e8a33d','#d8664a','#e57d8e','#5aa9a0','#7f9fd6','#a3c77c'];
 const DCOL=()=>RIBV?'#2bb3a3':'#f26a21',DCOL2=()=>RIBV?'#f2b632':'#2f5d8a';   // color de marca del distrito

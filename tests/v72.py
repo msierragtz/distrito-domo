@@ -1,4 +1,4 @@
-"""v72: casa de fraccionamiento, usos mixtos, cicloestación, banco y gasolinera (Domo y Ribera) y los especiales de la Ribera
+"""v72: casa de fraccionamiento, usos mixtos, cicloestación, banco y gasolinera (Cañón y Ribera) y los especiales de la Ribera
 (alberca, parroquia y hotel). Revisa reglas: pisos de la casa y su doble estacionamiento, el local de usos mixtos (comercio y
 dinero), el banco (+10% a negocios cercanos), la cicloestación (estacionamiento, +50% junto a oficinas), la gasolinera (solo
 pegada a avenida), la alberca en la ola de calor, las bodas de la parroquia y los turistas del hotel; y que todo se dibuje.
@@ -27,9 +27,9 @@ async def main():
       await pg.goto('file://'+BUILD+'/arnes.html');await pg.evaluate(f"localStorage.setItem('distritoDomo.distrito','{dist}')");await pg.reload();await pg.wait_for_timeout(1000)
       await pg.click('#tcont',force=True);await pg.wait_for_timeout(600)
       await pg.evaluate("(()=>{const S=__dd.S;S.$=5e7;S.maxV=3200;S.won3=1;S.ribCard=1;S.vozTip=1;S.ev=null;S.evNext=1e9;for(const k of Object.keys(__dd.DEFS))if(__dd.DEFS[k].unlock<Infinity&&!S.unl.includes(k))S.unl.push(k);__dd.recompute()})()")
-    # ---------- Domo ----------
+    # ---------- Cañón ----------
     await boot('domo')
-    o=await pg.evaluate("__dd.ORDER");ok(all(k in o for k in ['casaf','mixto','ciclo','banco','gas']),'en el Domo se pueden construir los 5 nuevos');ok(not any(k in o for k in ['alberca','parroquia','hotel']),'los especiales de la Ribera no aparecen en el Domo')
+    o=await pg.evaluate("__dd.ORDER");ok(all(k in o for k in ['casaf','mixto','ciclo','banco','gas']),'en el Cañón se pueden construir los 5 nuevos');ok(not any(k in o for k in ['alberca','parroquia','hotel']),'los especiales de la Ribera no aparecen en el Cañón')
     r=await pg.evaluate("(()=>{"+H+"""const out={};
       const c=spot(n=>calle(n)&&!aven(n));out.casa=put('casaf',...c);const t=G(...c);out.f0=t.f;const grow=()=>{D.setTool('casaf');D.act(I(...c));const q=G(...c);if(q.ub>0){q.ub=.001;D.tickQ(.05)}return q.f};out.f1=grow();out.f2=grow();t.lv=3;out.f3=grow();out.f4=grow();t.lv=1;
       t.b=0;t.ub=0;D.recompute();const bb=D.stats.B.find(q=>q.i===I(...c));out.pk=bb&&bb.pk;

@@ -1,5 +1,5 @@
 """Hoja de aprobación v72: casa de fraccionamiento, usos mixtos, cicloestación, banco y gasolinera (niveles 1 a 4, en el
-Domo y en la Ribera) y los especiales de la Ribera (parroquia, hotel y alberca, 2×2), de día y de noche.
+Cañón y en la Ribera) y los especiales de la Ribera (parroquia, hotel y alberca, 2×2), de día y de noche.
 Uso: python3 tests/hoja-v72.py  → build/capturas/hoja-v72-*.png"""
 import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from comun import BUILD,lanzar
 import asyncio,io,base64,json
@@ -29,7 +29,7 @@ def hoja(nombre,titulo,sub,filas,sc=2.2,noche=False):
     for k,((lab,_),i) in enumerate(zip(cells,ims)):
       if sep and k==sep:lx=x-gap//2+12;d.line((lx,y-26,lx,y+h+30),fill=(70,70,96) if noche else (214,206,190),width=2);x+=40
       cell=Image.new('RGB',(cw,i.height),_.getpixel((1,1)));cell.paste(i,((cw-i.width)//2,0));im.paste(cell,(x,y+h-i.height))
-      t1,_,t2=lab.partition('|');d.text((x+2,y+h+8),t1,font=F(13,True),fill=(43,179,163) if 'Ribera' in t2 else (242,106,33) if 'Domo' in t2 else fg);d.text((x+2+len(t1)*9+8,y+h+8),t2,font=F(14),fill=fg)
+      t1,_,t2=lab.partition('|');d.text((x+2,y+h+8),t1,font=F(13,True),fill=(43,179,163) if 'Ribera' in t2 else (242,106,33) if 'Cañón' in t2 else fg);d.text((x+2+len(t1)*9+8,y+h+8),t2,font=F(14),fill=fg)
       x+=cw+gap
     y+=h+58
   im.save(CAP+nombre);print('ok',CAP+nombre,im.size)
@@ -45,25 +45,25 @@ async def main():
     filas=[]
     for k,tt in (('casaf','Casa de fraccionamiento (vivienda)'),('mixto','Usos mixtos (vivienda con local abajo)')):
       d=await get([[k,L,FLOORS[k][L-1],3] for L in (1,2,3,4)],False);r=await get([[k,L,FLOORS[k][L-1],4] for L in (1,2,3,4)],True)
-      filas.append((tt,[(f'N{L}|{NV[k][L-1]} · Domo',i) for L,i in zip((1,2,3,4),d)]+[(f'N{L}|Ribera',i) for L,i in zip((1,2,3,4),r)],4))
-    hoja('hoja-v72-vivienda.png','Vivienda nueva','Izquierda: Distrito Domo · derecha: Distrito Ribera (mismo edificio, colores del barrio).',filas,sc=2.6)
+      filas.append((tt,[(f'N{L}|{NV[k][L-1]} · Cañón',i) for L,i in zip((1,2,3,4),d)]+[(f'N{L}|Ribera',i) for L,i in zip((1,2,3,4),r)],4))
+    hoja('hoja-v72-vivienda.png','Vivienda nueva','Izquierda: Distrito Cañón · derecha: Distrito Ribera (mismo edificio, colores del barrio).',filas,sc=2.6)
     # variedad: casas y locales
     v=await get([['casaf',2,1,s] for s in range(4)],False)+await get([['casaf',2,2,s] for s in range(6)],True)
     m=await get([['mixto',2,4,s*2] for s in range(5)],False)
-    hoja('hoja-v72-variedad.png','Variedad','Casas en el Domo (4 colores) y en la Ribera (6), y los 5 locales de usos mixtos: farmacia, papelería, lavandería, panadería y tortillería.',
-      [('Casas de fraccionamiento',[(f'|Domo',i) for i in v[:4]]+[('|Ribera',i) for i in v[4:]],4),('Usos mixtos: un local distinto por edificio',[(f'|{n}',i) for n,i in zip(['farmacia','papelería','lavandería','panadería','tortillería'],m)],0)],sc=1.8)
+    hoja('hoja-v72-variedad.png','Variedad','Casas en el Cañón (4 colores) y en la Ribera (6), y los 5 locales de usos mixtos: farmacia, papelería, lavandería, panadería y tortillería.',
+      [('Casas de fraccionamiento',[(f'|Cañón',i) for i in v[:4]]+[('|Ribera',i) for i in v[4:]],4),('Usos mixtos: un local distinto por edificio',[(f'|{n}',i) for n,i in zip(['farmacia','papelería','lavandería','panadería','tortillería'],m)],0)],sc=1.8)
     filas=[]
     for k,tt in (('ciclo','Cicloestación (servicio)'),('banco','Banco (negocio)'),('gas','Gasolinera (negocio)')):
       d=await get([[k,L,0,1] for L in (1,2,3,4)],False);r=await get([[k,L,0,1] for L in (1,2,3,4)],True)
       if k=='banco':filas.append((tt,[(f'N{L}|{NV[k][L-1]}',i) for L,i in zip((1,2,3,4),d)],0))
-      else:filas.append((tt,[(f'N{L}|{NV[k][L-1]} · Domo',i) for L,i in zip((1,2,3,4),d)]+[(f'N{L}|Ribera',i) for L,i in zip((1,2,3,4),r)],4))
-    hoja('hoja-v72-negocios.png','Servicios y negocios nuevos','Cicloestación y gasolinera llevan el color de cada distrito (naranja en el Domo, verde agua en la Ribera); el banco es igual en los dos.',filas)
+      else:filas.append((tt,[(f'N{L}|{NV[k][L-1]} · Cañón',i) for L,i in zip((1,2,3,4),d)]+[(f'N{L}|Ribera',i) for L,i in zip((1,2,3,4),r)],4))
+    hoja('hoja-v72-negocios.png','Servicios y negocios nuevos','Cicloestación y gasolinera llevan el color de cada distrito (naranja en el Cañón, verde agua en la Ribera); el banco es igual en los dos.',filas)
     E=[]
     for k,tt in (('hotel','Hotel boutique · opción A: casona-hacienda'),('hotel2','Hotel boutique · opción B: art déco junto al río')):
       dd=await get([[k,1,0,5]],True,0);nn=await get([[k,1,0,5]],True,1);E.append((tt,[('|de día',dd[0]),('|de noche',nn[0])],0))
     hoja('hoja-v72-hotel.png','Hotel boutique: dos opciones','A: casona de dos pisos con patio y teja · B: torre art déco con letrero.',E,sc=2.3)
     # de noche: todo lo de 4 niveles en su nivel más alto
     nd=await get([[k,4,FLOORS.get(k,[0]*4)[3],3] for k in ('casaf','mixto','ciclo','banco','gas')],False,1);nr=await get([[k,4,FLOORS.get(k,[0]*4)[3],4] for k in ('casaf','mixto','ciclo','banco','gas')],True,1)
-    hoja('hoja-v72-noche.png','De noche','Nivel 4 de cada uno, en el Domo y en la Ribera.',[('Domo',[(f'|{n}',i) for n,i in zip(['casa','usos mixtos','cicloestación','banco','gasolinera'],nd)],0),('Ribera',[(f'|{n}',i) for n,i in zip(['casa','usos mixtos','cicloestación','banco','gasolinera'],nr)],0)],noche=True)
+    hoja('hoja-v72-noche.png','De noche','Nivel 4 de cada uno, en el Cañón y en la Ribera.',[('Cañón',[(f'|{n}',i) for n,i in zip(['casa','usos mixtos','cicloestación','banco','gasolinera'],nd)],0),('Ribera',[(f'|{n}',i) for n,i in zip(['casa','usos mixtos','cicloestación','banco','gasolinera'],nr)],0)],noche=True)
     print('errores',errs[:5]);await b.close()
 asyncio.run(main())

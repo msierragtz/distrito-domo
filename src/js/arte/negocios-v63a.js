@@ -127,7 +127,7 @@ function artGym(t,gx,gy,L){
     box(gx+.12,gy+.12,gx+.72,gy+.74,H,.8,'#5a5a5a','#4a4a4a','#3a3a3a');
     dsort(gx,gy,[[.84,.34,()=>planter(gx+.84,gy+.34,.34)],[.86,.72,()=>bench(gx+.86,gy+.72,'#2b2b2b')]]);
     return}
-  if(L===3){ // Domo Box: nave de lámina, cortina arriba y llantas afuera
+  if(L===3){ // Cañón Box: nave de lámina, cortina arriba y llantas afuera
     const H=13,g=cb(gx+.12,gy+.12,gx+.74,gy+.74,0,H,'#8b9096','#7a7f86');
     for(let u=.02;u<1;u+=.05){face(g,'L',u,0,.012,H,'#6f747a');face(g,'R',u,0,.012,H,'#62676d')}
     face(g,'L',.08,0,.56,8,'#1c1c1c');

@@ -42,7 +42,7 @@ function artPaleteria(t,gx,gy,L){
     {const [x,y]=P(gx+.4,gy+.42);coneIco(x,y-H-2,2.2,'#ff9ab4','#fff1b8',NIGHT>.2);glow(x,y-H-8,9,.5)}
     dsort(gx,gy,[[.84,.34,()=>{tableH(gx+.84,gy+.34,'#ffffff');chairH(gx+.9,gy+.28,'#ff9ab4')}],[.82,.74,()=>planter(gx+.82,gy+.74,.36)],[.3,.86,()=>bench(gx+.3,gy+.86,'#ff9ab4')]]);
     return}
-  // Heladería del Domo: dos pisos retro, cono gigante en la azotea y terraza
+  // Heladería del Cañón: dos pisos retro, cono gigante en la azotea y terraza
   const H=17,g=cb(gx+.12,gy+.12,gx+.7,gy+.72,0,H,'#ffd1dc','#e8d6d2');
   face(g,'L',0,0,1,.8,'#d97a94');face(g,'R',0,0,1,.8,'#c86a84');
   face(g,'L',.04,.8,.92,6.4,'#9fe0c9');win(g,'L',.07,1.2,.86,5.6,'#fff6e8');face(g,'L',.5,1.2,.015,5.6,'#9fe0c9');

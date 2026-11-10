@@ -1,4 +1,4 @@
-/* ESCUELA — 1 Guardería · 2 Escuela primaria · 3 Colegio privado · 4 Campus Domo (concreto aparente con un gran pórtico, a la UDEM; ladrillo y prados, a la ASF) */
+/* ESCUELA — 1 Guardería · 2 Escuela primaria · 3 Colegio privado · 4 Campus Cañón (concreto aparente con un gran pórtico, a la Uni del Valle; ladrillo y prados, a la ASF) */
 function flagPole(fx,fy,h=26){const [ax,ay]=P(fx,fy);px(ax,ay-h,.6,h,'#8a9099');px(ax-.5,ay-.6,1.6,.6,'#6b7078');
   px(ax+.6,ay-h+.5,1.6,3.4,'#1f8a4c');px(ax+2.2,ay-h+.5,1.6,3.4,'#ffffff');px(ax+3.8,ay-h+.5,1.6,3.4,'#d62828');px(ax+2.6,ay-h+1.6,.8,1,'#a07a3a')}
 function artEscuela(t,gx,gy,L){
@@ -27,7 +27,7 @@ function artEscuela(t,gx,gy,L){
     {const c1=P(gx+.6,gy+.24),c2=P(gx+.6,gy+.42);for(const c of [c1,c2])px(c[0]+.6,c[1]-8,1.2,8,'#f4f1ea');poly([[c1[0],c1[1]-8],[c2[0]+2,c2[1]-8],[c2[0]+2,c2[1]-9.6],[(c1[0]+c2[0])/2+1,(c1[1]+c2[1])/2-12],[c1[0],c1[1]-9.6]],'#efe7da')}
     dsort(gx,gy,[[.93,.62,()=>{const [x,y]=P(gx+.93,gy+.76);px(x,y-9,.6,9,'#6b7078');px(x-2,y-11,4,2.6,'#f4f4f4');px(x-.8,y-9.6,1.6,.6,'#e5534b')}],[.86,.16,()=>tree(gx+.86,gy+.16,.62)],[.2,.82,()=>tree(gx+.2,gy+.82,.6)],[.4,.86,()=>tree(gx+.4,gy+.88,.5)]]);
     flagPole(gx+.72,gy+.1,30);return}
-  // Campus Domo: bloque ancho de concreto aparente con un gran pórtico que se atraviesa (a la UDEM), franja y arco naranja del Domo; edificio de ladrillo junto al prado (a la ASF)
+  // Campus Cañón: bloque ancho de concreto aparente con un gran pórtico que se atraviesa (a la Uni del Valle), franja y arco naranja del Cañón; edificio de ladrillo junto al prado (a la ASF)
   const conc='#bdb9b2',concL='#d3cfc8',concR='#a8a49d';
   const A=box(gx+.04,gy+.08,gx+.26,gy+.46,0,13,concL,conc,concR);face(A,'R',0,0,1,13,'#77736d');face(A,'R',0,10.5,1,2.5,'#5e5b56');for(const u of [.15,.55])win(A,'L',u,3,.3,6,'#6f8fa8');
   const B=box(gx+.56,gy+.08,gx+.78,gy+.46,0,13,concL,conc,concR);for(const u of [.15,.55]){win(B,'L',u,3,.3,6,'#6f8fa8')}win(B,'R',.1,3,.8,6,'#5f7f98');

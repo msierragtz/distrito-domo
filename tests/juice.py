@@ -9,7 +9,7 @@ async def main():
     pg.on('pageerror',lambda e:errs.append('PE '+str(e)+' | '+(e.stack or '')[:600]))
     await pg.goto('file://'+BUILD+'/arnes.html');await pg.wait_for_timeout(1200);await pg.click('#tcont',force=True);await pg.wait_for_timeout(500)
     await pg.evaluate(SCENE)
-    # momento del Domo: terminar la obra de verdad con tick
+    # momento del Cañón: terminar la obra de verdad con tick
     d=await pg.evaluate("__dd.idx(15,15)")
     await pg.evaluate(f"(()=>{{const t=__dd.S.g[{d}];t.b=.2;t.bt=45}})()")
     await pg.wait_for_timeout(600)

@@ -1,4 +1,4 @@
-"""Vivienda y negocios propios de la Ribera (v70): en la Ribera se usa su arte y sus nombres, en el Domo todo sigue igual;
+"""Vivienda y negocios propios de la Ribera (v70): en la Ribera se usa su arte y sus nombres, en el Cañón todo sigue igual;
 cada tipo y nivel se dibuja sin errores, de día y de noche; y un barrio de muestra junto al río (capturas en build/capturas/rib-barrio*.png).
 Uso: python3 tests/ribera-edificios.py"""
 import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from comun import BUILD,lanzar
@@ -21,17 +21,17 @@ async def main():
   async with async_playwright() as p:
     b=await lanzar(p);ctx=await b.new_context(viewport={'width':1280,'height':800});pg=await ctx.new_page();errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)));pg.on('console',lambda m:m.type=='warning' and 'dibujo' in m.text and errs.append(m.text))
-    # 1) Domo: arte y nombres de siempre
+    # 1) Cañón: arte y nombres de siempre
     await pg.goto('file://'+BUILD+'/arnes.html');await pg.wait_for_timeout(1000)
     d=await pg.evaluate("[__dd.DIST,__dd.RIBV,__dd.DEFS.edificio.name,__dd.DEFS.torre.name,__dd.nameOf({k:'cafe',s:4,lv:2}),__dd.nameOf({k:'tomates',s:0,lv:1})]");print('domo',d)
-    ok(d[0]=='domo' and d[1] is False,'en el Domo no se usa el arte de la Ribera')
-    ok(d[2]=='Edificio' and d[3]=='Torre Caliza' and d[4]=='Starblocks' and d[5]=='Tomates Market','el Domo conserva sus nombres y marcas')
+    ok(d[0]=='domo' and d[1] is False,'en el Cañón no se usa el arte de la Ribera')
+    ok(d[2]=='Edificio' and d[3]=='Torre Caliza' and d[4]=='Starblocks' and d[5]=='Jitomates Market','el Cañón conserva sus nombres y marcas')
     # 2) Ribera: su arte y sus nombres
     await pg.evaluate("localStorage.setItem('distritoDomo.distrito','ribera')");await pg.reload();await pg.wait_for_timeout(1200);await pg.click('#tcont',force=True);await pg.wait_for_timeout(800)
     r=await pg.evaluate("[__dd.DIST,__dd.RIBV,__dd.DEFS.edificio.name,__dd.DEFS.ladrillo.name,__dd.DEFS.torre.name,__dd.DEFS.tomates.name,__dd.nameOf({k:'cafe',s:4,lv:3}),__dd.nameOf({k:'resto',s:9,lv:2}),__dd.nameOf({k:'edificio',s:0,lv:4})]");print('ribera',r)
     ok(r[0]=='ribera' and r[1] is True,'en la Ribera se usa su arte')
     ok(r[2:6]==['Casas de la Ribera','Bodegas del río','Torre Malecón','Mercadito de la Ribera'],'nombres de la Ribera')
-    ok(r[6:]==['Tostador en bodega','Palapa de mariscos','Casas de cantera'],'nombres por nivel, sin las marcas del Domo')
+    ok(r[6:]==['Tostador en bodega','Palapa de mariscos','Casas de cantera'],'nombres por nivel, sin las marcas del Cañón')
     # 3) cada tipo, nivel y color se dibuja (con tinta) de día y de noche
     vac=[]
     for nb in (0,1):

@@ -5,7 +5,7 @@ const GFLAG='distritoDomo.guia';
 // casilla libre, junto a una calle, donde se puede poner k; la más cercana a la casilla «cerca»
 function freeSpotFor(k,cerca){let best=-1,bd=1e9;const nx=cerca%N,ny=Math.floor(cerca/N);
   for(let i=0;i<N*N;i++){const t=S.g[i];if(!canBuild(t,k))continue;const x=i%N,y=Math.floor(i/N);if(!connected(x,y))continue;const d=Math.abs(x-nx)+Math.abs(y-ny);if(d<bd){bd=d;best=i}}return best}
-// el centro de donde vive la gente (o El Domo si todavía no hay vivienda)
+// el centro de donde vive la gente (o La Cúpula si todavía no hay vivienda)
 function centroVecinos(){const B=stats.B||[];if(!B.length){const i=S.g.findIndex(t=>t.k==='domo'||t.k==='lotedomo');return i>=0?i:idx(OFF+8,OFF+8)}
   let x=0,y=0;for(const b of B){x+=b.x;y+=b.y}return idx(Math.round(x/B.length),Math.round(y/B.length))}
 function hintFor(k,cam){if(k!=='torreagua')return;const i=freeSpotFor('torreagua',centroVecinos());if(i<0)return;HINT={i,k:'agua'};if(cam)camTo(i,1,40)}
@@ -52,7 +52,7 @@ function guiaRender(nuevo){const g=$('tuto');if(!g||!GUIA)return;const P_=guiaPa
   if(P_.tool&&tool!==P_.tool&&btns[P_.tool]){btns[P_.tool].classList.add('guia');const tb=tabOf(P_.tool);if(tb&&tb!==TAB){const b=document.querySelector(`#tabs button[data-t="${tb}"]`);if(b)b.classList.add('guia')}}
   if(P_.hint>=0){const was=HINT&&HINT.k==='guia'?HINT.i:-1;HINT={i:P_.hint,k:'guia'};if(nuevo||was!==P_.hint&&was<0)camTo(P_.hint,1,70)}else if(HINT&&HINT.k==='guia')HINT=null}
 function guiaStep(dt){GUIAT+=dt;AGUAT+=dt;if(TITLE)return;
-  if(AGUAT>.5){AGUAT=0;aguaStep();
+  if(AGUAT>.5){AGUAT=0;aguaStep();hitosStep();
     // el consejo del crédito llega cuando hace falta: sin dinero para lo más barato que vale la pena, y ya no a los 9 s de empezar
     if(!S.loanTip&&!S.loan&&!GUIA&&S.maxV>=20&&S.$<Math.min(costOf('edificio'),costOf('parque')+40)){S.loanTip=1;say('Consejo: si te falta dinero para crecer, el botón naranja Crédito, arriba, te presta y lo pagas poco a poco.',false,{p:1})}}
   if(!GUIA||GUIAT<.25)return;GUIAT=0;

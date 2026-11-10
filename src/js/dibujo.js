@@ -29,7 +29,7 @@ function spans(rows,c,lit){const u=1/RES;ctx.fillStyle=pcol(c);for(const r of ro
 function ellRows(cx,cy,rx,ry){const out=[];for(let y=Math.round((cy-ry)*RES);y<Math.round((cy+ry)*RES);y++){const dy=((y+.5)/RES-cy)/ry;if(Math.abs(dy)>=1)continue;const w=rx*Math.sqrt(1-dy*dy),a=rr(cx-w),b=rr(cx+w);if(b>a)out.push([a,y/RES,b-a])}return out}
 function circ(x,y,r,c,lit){spans(ellRows(x,y,r,r),c,lit)}
 function ellipse(x,y,rx,ry,c,lit){spans(ellRows(x,y,rx,ry),c,lit)}
-/* arco superior grueso (para El Domo y los logos) */
+/* arco superior grueso (para La Cúpula y los logos) */
 function arcTop(cx,cy,R,th,c,lit){const out=[],Ri=R-th;for(let yd=Math.round((cy-R)*RES);yd<Math.round(cy*RES);yd++){const y=yd/RES,dy=cy-(yd+.5)/RES;if(dy<0||dy>=R)continue;const ho=Math.sqrt(R*R-dy*dy),hi=dy<Ri?Math.sqrt(Ri*Ri-dy*dy):0;
   const a=rr(cx-ho),b=rr(cx-hi),e=rr(cx+hi),f=rr(cx+ho);if(b>a)out.push([a,y,b-a]);if(f>e&&e>=b)out.push([e,y,f-e]);else if(f>b&&e<b)out[out.length-1]=[a,y,f-a]}spans(out,c,lit)}
 function line(x0,y0,x1,y1,c,lit,w=1){const u=1/RES;w=w===1?1:w*RES;x0=Math.round(x0*RES);y0=Math.round(y0*RES);x1=Math.round(x1*RES);y1=Math.round(y1*RES);const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;const pts=[];

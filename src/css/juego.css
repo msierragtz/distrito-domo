@@ -330,3 +330,7 @@ body.tuto #pausebar{display:none}
 @media (max-width:900px){#tuto{width:auto;min-width:0;left:max(12px,env(safe-area-inset-left,0px));right:calc(max(12px,env(safe-area-inset-right,0px)) + 50px);transform:none;top:52px}}
 @media (max-width:560px){#pausebar{left:max(12px,env(safe-area-inset-left,0px));transform:none;top:52px;max-width:calc(100% - 84px)}#tuto{font-size:16px;padding:7px 10px 8px}}
 @media (max-height:760px) and (max-width:560px){#pausebar,#tuto{top:46px}}
+
+/* v77: compartir avance */
+#opts #oShare{background:var(--domo-soft);margin-right:8px}
+#opts .oav{font-family:var(--f-text);font-size:14px;line-height:1.25;white-space:pre-wrap;user-select:text;-webkit-user-select:text;background:#f3efe4;border:2px solid var(--ink);border-radius:6px;padding:6px 8px;margin:8px 0;max-height:130px;overflow:auto}

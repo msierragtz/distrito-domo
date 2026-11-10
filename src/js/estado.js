@@ -6,7 +6,7 @@ const PARCELS={
   W:{name:'Lote poniente',where:'junto a Celestina',unlock:150},E:{name:'Lote oriente',where:'junto a Ágata',unlock:150},
   NW:{name:'Norte poniente',where:'del otro lado de la carretera',unlock:150},NE:{name:'Norte oriente',where:'del otro lado de la carretera',unlock:150},
   WW:{name:'Poniente lejano',where:'más allá de Celestina',unlock:400},EE:{name:'Oriente lejano',where:'más allá de Ágata',unlock:400},
-  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},DS:{name:'Planta DeAcero',where:'la fábrica, al sur del Distrito',unlock:1500},DL:{name:'Patios DeAcero',where:'al fondo de la fábrica',unlock:2500},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno DeAcero',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
+  NN:{name:'Loma norte',where:'al pie de la Sierra',unlock:800},DS:{name:'Planta de Aceros El Cerro',where:'la fábrica, al sur del Distrito',unlock:1500},DL:{name:'Patios de Aceros El Cerro',where:'al fondo de la fábrica',unlock:2500},RS:{name:'Lote sur',where:'del otro lado de la avenida sur',unlock:400},RSS:{name:'Sur lejano',where:'al pie del cerro, al sur',unlock:1200},DA:{name:'Terreno de Aceros El Cerro',where:'cruzando Ordóñez, donde estaba parte de la fábrica',unlock:1200}};
 const SIGNS={W:[4,13],E:[25,13],NW:[9,4],NE:[20,4],WW:[1,13],EE:[28,13],NN:[15,1],DA:[15,21],DS:[15,24],DL:[6,27],RS:[9,21],RSS:[22,26]};
 const LOANS=[
   {id:'chico',name:'Crédito chico',amt:2000,total:2500,mins:40,req:0},
@@ -14,13 +14,13 @@ const LOANS=[
   {id:'grande',name:'Crédito grande',amt:40000,total:54000,mins:50,req:250}];
 function takeLoan(id){const L=LOANS.find(l=>l.id===id);if(!L||S.loan||S.maxV<L.req)return false;
   sfx('money');S.$+=L.amt;S.loan={id,name:L.name,left:L.total,pay:L.total/(L.mins*60),total:L.total};recompute();save();
-  say(`Banregio te prestó $${fmt(L.amt)}. Pagarás $${(L.total/(L.mins*60)).toFixed(2)} por segundo durante ${L.mins} minutos.`,true);return true}
+  say(`BanReMás te prestó $${fmt(L.amt)}. Pagarás $${(L.total/(L.mins*60)).toFixed(2)} por segundo durante ${L.mins} minutos.`,true);return true}
 function canRestructure(){return !!(S.loan&&!S.loan.re&&(S.redT||0)>180)}
 function restructure(){if(!canRestructure())return false;const left=S.loan.left*1.1,old=S.loan.pay;
   sfx('money');S.loan={id:S.loan.id,name:'Crédito reestructurado',left,pay:left/3600,total:left,re:1};save();
   say(`Listo: tu crédito quedó en $${fmt(left)} a 60 minutos. Ahora pagas $${S.loan.pay.toFixed(2)} por segundo en vez de $${old.toFixed(2)}.`,true);return true}
 function payoffLoan(){if(!S.loan)return false;const c=Math.ceil(S.loan.left);if(S.$<c){say(`Para liquidar te faltan $${fmt(c-S.$)}.`,true);return false}
-  sfx('money');S.$-=c;S.loan=null;save();say('¡Liquidaste tu crédito con Banregio!',true);return true}
+  sfx('money');S.$-=c;S.loan=null;save();say('¡Liquidaste tu crédito con BanReMás!',true);return true}
 const LOT_PRICE=[12000,22000,35000,50000,70000,90000,120000],DA_PRICE=150000,LOT_UNLOCK=150;
 function parcelOf(x,y){
   if(y>OFF+12){const mid=x>=3&&x<N-3;return y<=OFF+15&&mid?'DA':y<=OFF+19&&mid?'DS':'DL'}
@@ -82,7 +82,7 @@ function buyParcel(p){
   S.$-=cost;S.lots=(S.lots||0)+1;if(p==='DA')S.da=1;
   for(let i=0;i<S.g.length;i++){const t=S.g[i];if(isParcel(t)&&t.p===p)S.g[i]={k:p!=='DA'&&Math.random()<.07?'arbol':'lote',s:t.s,b:0}}
   recompute();save();refreshUI(true);
-  say(p==='DA'&&DIST==='domo'?`¡Compraste el Terreno DeAcero! La fábrica se achicó y ya no baja la plusvalía de tus edificios. Mantenimiento +${S.lots*8}%.`:`¡Compraste el ${P_.name}! El Distrito crece, pero también el mantenimiento (+${S.lots*8}%) y lo que exigen los vecinos (+${S.lots*3}%).`,true);return true;
+  say(p==='DA'&&DIST==='domo'?`¡Compraste el Terreno de Aceros El Cerro! La fábrica se achicó y ya no baja la plusvalía de tus edificios. Mantenimiento +${S.lots*8}%.`:`¡Compraste el ${P_.name}! El Distrito crece, pero también el mantenimiento (+${S.lots*8}%) y lo que exigen los vecinos (+${S.lots*3}%).`,true);return true;
 }
 function serialize(){S.t=Date.now();return withReal(()=>JSON.parse(JSON.stringify(S)))}
 let saveN=0;

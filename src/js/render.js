@@ -10,7 +10,7 @@ function outline(c,pass=RES,rec){
 // contorno guardado como tiras horizontales [x,y,largo]: se repinta sin leer los pixeles del lienzo
 function outlineRuns(idx,w){idx.sort((p,q)=>p-q);const r=[];for(let k=0;k<idx.length;){const i=idx[k];let n=1;while(k+n<idx.length&&idx[k+n]===i+n&&(i+n)%w!==0)n++;r.push(i%w,Math.floor(i/w),n);k+=n}return new Int16Array(r)}
 function paintOutline(c,runs){c.save();c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';c.fillStyle=`rgba(${OL[0]},${OL[1]},${OL[2]},${(215/255).toFixed(3)})`;for(let k=0;k<runs.length;k+=3)c.fillRect(runs[k],runs[k+1],runs[k+2],1);c.restore()}
-/* humo de las chimeneas de DeAcero: bocanadas que suben y se van con el viento; de noche, foco rojo y resplandor del horno */
+/* humo de las chimeneas de Aceros El Cerro: bocanadas que suben y se van con el viento; de noche, foco rojo y resplandor del horno */
 // el humo va en el aire: se pinta después de toda la ciudad para que ningún edificio lo tape
 let SMOKEQ=[];
 function chimSmoke(gx,gy){const [x,y0]=P(gx+.5,gy+.5),y=y0-9-CHIM_H,n=lowMo()?3:lowQ()?4:7,c=mx('#f2efe9','#8a8ea8',NIGHT*.8),c2=mx('#b9b5ae','#55597a',NIGHT*.8);
@@ -39,7 +39,7 @@ function liveWater(t,gx,gy){if(lowMo()||lowQ()||t.b>0||t.lu>0)return;const L=lvO
     for(let q=0;q<2;q++){const pr=(T*.45+q*.5)%1,ox=Math.sin(q*7.3+Math.floor(T*.45+q*.5)*2.1)*4,oy=Math.cos(q*3.1+Math.floor(T*.45+q*.5)*1.7)*1.5,rx=.8+pr*4;
       for(let k=0;k<12;k++){const an=k/12*Math.PI*2;px(x+ox+Math.cos(an)*rx-.3,y+oy+Math.sin(an)*rx*.5,.6,.4,`rgba(210,240,255,${(.65*(1-pr)).toFixed(2)})`)}}
     if(NIGHT<.5)for(let k=0;k<4;k++){const ph=(T*.6+k*.37)%1;if(ph<.5){const a=Math.sin(ph*2*Math.PI);px(x-6+k*3.6+Math.sin(T+k)*1.2,y-1+((k*5)%3)-1,1,.5,`rgba(255,255,255,${a.toFixed(2)})`)}}}}
-/* gente afuera de cafés, restaurantes, bares y Tomates: depende de la hora y de cuántos clientes tiene el negocio */
+/* gente afuera de cafés, restaurantes, bares y Jitomates: depende de la hora y de cuántos clientes tiene el negocio */
 const VIS=new Map();
 function visitorsOf(t,i){const ph=S.clock/DAY,k=t.k;let w=0;
   if(k==='cafe')w=ph<.22?1:ph<.45?.45:ph>.88?.4:0;else if(k==='resto')w=(ph>.24&&ph<.37)||(ph>.5&&ph<.68)?1:.15;else if(k==='bar')w=ph>.52&&ph<.92?1:0;else if(k==='tomates')w=ph<.92&&ph>.0?.45:0;
@@ -304,7 +304,7 @@ function priceTag(){TAGW=null;
 let TAGW=null,TAGK='';
 /* la manita: qué es cada cosa, en corto (etiqueta) y en largo (mensaje al tocar) */
 function whatName(t){if(t.k==='calle')return t.pu?(t.hw?'Puente de la avenida':'Puente'):t.hw?'Avenida':'Calle';if(t.k==='rio')return 'Río';if(t.k==='ajeno')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'Terreno vecino';if(t.k==='lote')return 'Terreno libre';if(t.k==='arbol')return 'Árbol';
-  if(t.k==='fabrica')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'DeAcero';return nameOf(t)}
+  if(t.k==='fabrica')return t.p&&PARCELS[t.p]?PARCELS[t.p].name:'Aceros El Cerro';return nameOf(t)}
 function whatShort(i){const t=S.g[i],d=DEFS[t.k],n=whatName(t);
   if(t.b>0||t.ct>0||t.ub>0||t.lu>0)return [n,'en obra'];
   if(t.k==='rio'){const f=rioFase();return [n,f==='crecida'?'¡crecido!':f==='lluvias'?'con agua (temporada de lluvias)':'casi seco: el lecho se puede usar']}
@@ -326,7 +326,7 @@ function whatIs(i){let t=S.g[i];if(t.k==='part'){i=t.a;t=S.g[i]}const [n,l2]=wha
   if(t.k==='rio')return `Río: ${whatShort(i)[1]}. Se cruza con puentes (herramienta Calle, $${fmt(Math.max(PUENTE_MIN,costOf('calle')*80))}). Cuando está seco se pueden poner parques, canchas, dog parks y palmas en el lecho, pero en la temporada de lluvias quedan bajo el agua y una crecida los daña.`;
   if(t.k==='lotedomo')return `${DEFS.lotedomo.name}: aquí va ${DEFS.domo.name}, que se desbloquea con ${DEFS.domo.unlock} vecinos y cuesta $${fmt(costOf('domo'))}.`;
   if(t.k==='calle')return t.hw?'Avenida: no es del Distrito. Hace ruido a 2 cuadras.':'Calle: conecta los edificios y por aquí caminan los vecinos.';
-  if(t.k==='fabrica')return S.da?'DeAcero: desde que compraste su terreno ya no baja la plusvalía.':'DeAcero: la planta de acero. Baja la plusvalía a 3 cuadras; si compras el Terreno DeAcero deja de hacerlo.';
+  if(t.k==='fabrica')return S.da?'Aceros El Cerro: desde que compraste su terreno ya no baja la plusvalía.':'Aceros El Cerro: la planta de acero. Baja la plusvalía a 3 cuadras; si compras el Terreno de Aceros El Cerro deja de hacerlo.';
   let txt=tileInfo(i);if(l2&&!/^nivel/.test(l2))txt=txt.replace(nameOf(t),`${nameOf(t)} (${l2})`);if(d&&d.trophy)txt+=' Es un trofeo.';return txt}
 // el dibujo de la manita: sirve para el ícono y para el cursor
 const HAND=['     ##','    #WW#','    #WW#','    #WW#','    #WW###','    #WW#WW###','    #WW#WW#WW##',' ## #WW#WW#WW#W#','#WW##WWWWWWWW#W#','#WWW#WWWWWWWWWW#',' #WWWWWWWWWWWWW#','  #WWWWWWWWWWWW#','  #WWWWWWWWWWS#','   #WWWWWWWWWS#','    #WWWWWWWS#','    #SSSSSSSS#','    ##########'];

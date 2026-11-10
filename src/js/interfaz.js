@@ -186,13 +186,13 @@ function act(i){
     const cost=costOf(tool);if(S.$<cost){sfx('nope');say(`Te faltan $${fmt(cost-S.$)} para: ${d.name}.`,true);return}
     sfx('build');S.$-=cost;const sd=Math.floor(Math.random()*1000);for(const j of f)S.g[j]={k:'part',a:i,s:sd,b:0};S.g[i]={k:tool,s:sd,b:d.bt,bt:d.bt};if(tf.o)S.g[i].o=1;
     recompute();say(`Arrancó la obra: ${d.name}. Tarda unos ${d.bt} segundos.`,true);save();refreshUI(true);return}
-  if(tool==='domo'&&t.k!=='lotedomo'){say(DIST==='ribera'?'El Puente Atirantado va sobre el puente de en medio del río, el que tiene conos y el letrero azul.':'El Domo va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
+  if(tool==='domo'&&t.k!=='lotedomo'){say(DIST==='ribera'?'El Puente Atirantado va sobre el puente de en medio del río, el que tiene conos y el letrero azul.':'La Cúpula va en su terreno reservado, el de la cerca naranja junto a la calle Ágata.',true);return}
   if(tool==='malecon'&&!rioSides(i%N,Math.floor(i/N)).length){say('El malecón va en la orilla: pégalo al río.',true);return}
   if(tool==='gas'&&!NB.some(([dx,dy])=>{const u=i%N+dx,v=Math.floor(i/N)+dy;return inb(u,v)&&S.g[idx(u,v)].hw})){say('La gasolinera va pegada a una avenida, para que entren los coches.',true);return}
   if(t.k==='rio'&&LECHO.includes(tool)&&!canBuild(t)){say(S.rio&&S.rio.cr>0?'¡El río está crecido! Espera a que baje.':'El río trae agua: espera a que baje para construir en el lecho.',true);return}
   if(t.k==='rio'&&!canBuild(t)){say('En el río solo van puentes (con Calle) y, cuando está seco, parques, canchas, dog parks y palmas en el lecho.',true);return}
   if(t.k==='reserva'&&tool!==t.p){say(`Este terreno está reservado para el ${DEFS[t.p].name}.`,true);return}
-  if(t.k==='lotedomo'&&tool!=='domo'){say(`Este terreno está reservado para ${DIST==='ribera'?'El Puente Atirantado':'El Domo'}.`,true);return}
+  if(t.k==='lotedomo'&&tool!=='domo'){say(`Este terreno está reservado para ${DIST==='ribera'?'El Puente Atirantado':'La Cúpula'}.`,true);return}
   if(!canBuild(t)){say('Ese terreno ya está ocupado. Usa Demoler primero.',true);return}
   if(d.max&&(stats.counts[tool]||0)>=d.max){say(d.max===1?`${d.name} es único y ya está construido.`:`Ya tienes ${d.max}: ${d.name} llegó a su límite.`,true);return}
   const brg=t.k==='rio'&&tool==='calle',cost=brg?Math.max(PUENTE_MIN,costOf('calle')*80):costOf(tool);

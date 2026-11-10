@@ -25,7 +25,7 @@ function trMirador(t,gx,gy){
   box(gx+.26,gy+.26,gx+.74,gy+.74,53,1.2,'#f4f3ef','#e6e3dc','#cfccc5');
   const [x,y]=P(gx+.5,gy+.5);domoArc(x,y-60,6,2);px(x-.25,y-68,.5,6,'#555');px(x,y-68,4,2.5,'#f26a21');glow(x,y-50,16,.6);
 }
-/* 2000 B · Centro Cultural Domo */
+/* 2000 B · Centro Cultural Cañón */
 function trCultura(t,gx,gy){
   const H=12,g=cb(gx+.12,gy+.14,gx+.88,gy+.78,0,H,'#f4f2ee','#e6e3dc');
   win(g,'L',.06,0,.88,8,'#ffe2a8');for(const u of [.25,.5,.75])face(g,'L',u,0,.012,8,'#3a3a3a');face(g,'L',.04,8,.92,1,'#3a3a3a');

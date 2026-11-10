@@ -10,7 +10,7 @@ const LANEY={1:[.845,.615],'-1':[.155,.385]},VLEN={car:.44,suv:.48,pick:.54,mini
 const BUSSTOP={1:[4.5,14.5,24.5],'-1':[25.5,15.5,5.5]};
 const CARS=[];{const r=rng(5),cc=['#d64545','#f4f4f4','#3a6ea5','#2b2b2b','#9aa0a8','#e0b03b','#f26a21','#2f6f5e','#7a2a3a'],mods=['car','car','car','suv','suv','pick','mini'];
   for(const row of [OFF,OFF+12])for(let k=0;k<9;k++){const dir=k%2?1:-1,m=mods[Math.floor(r()*mods.length)];CARS.push({row,dir,ln:r()<.6?1:0,sp:1.15+r()*1.15,off:r()*N,c:cc[Math.floor(r()*cc.length)],m,L:VLEN[m]})}
-  // camiones urbanos (verde y naranja) en las dos avenidas y tráileres rumbo a DeAcero; van por el carril de afuera
+  // camiones urbanos (verde y naranja) en las dos avenidas y tráileres rumbo a Aceros El Cerro; van por el carril de afuera
   for(const row of [OFF,OFF+12])for(const dir of [1,-1]){const o=r()*N,tr=row===OFF+12||dir<0;
     CARS.push({row,dir,ln:0,sp:.9+r()*.12,off:o,type:'bus',L:VLEN.bus});if(tr)CARS.push({row,dir,ln:0,sp:.85+r()*.1,off:o+N/2,type:'trailer',L:VLEN.trailer})}}
 let TRFT=0;const ahd=(c,o)=>((((o.x-c.x)*c.dir)%N)+N)%N;

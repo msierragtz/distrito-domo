@@ -1,5 +1,5 @@
 """Música de la Ribera (v71): cada pieza (bossa, bolero, samba-jazz y latin jazz) se toca completa en un contexto de audio
-fuera de línea, sin errores ni compases mal sumados, sin saturar y con un volumen parecido al del Domo; en el Domo la
+fuera de línea, sin errores ni compases mal sumados, sin saturar y con un volumen parecido al del Cañón; en el Cañón la
 música sigue siendo la misma. MUESTRAS=1 guarda un mp3 de cada pieza en build/musica/ (MUESTRAS_SEG, 75 por omisión).
 Uso: python3 tests/musica-ribera.py"""
 import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from comun import BUILD,lanzar
@@ -21,14 +21,14 @@ async def main():
       await pg.goto('file://'+BUILD+'/arnes.html');await pg.evaluate(f"localStorage.setItem('distritoDomo.distrito','{dist}')");await pg.reload();await pg.wait_for_timeout(800)
     async def R(tune,sec,st,wav=None):
       return await pg.evaluate(f"__dd.musicRender({sec},{json.dumps({'st':{**ST,**st},'tune':tune})},{json.dumps(wav)})")
-    # 1) Domo: la de siempre
-    await go('domo');d=await R('tarde',20,{});print('Domo',d['name'],'%.1f dB'%db(d['rms']))
-    ok(d['name']=='Tarde en el Domo' and not d['errs'],'en el Domo suena su jazz de siempre')
+    # 1) Cañón: la de siempre
+    await go('domo');d=await R('tarde',20,{});print('Cañón',d['name'],'%.1f dB'%db(d['rms']))
+    ok(d['name']=='Tarde en el Cañón' and not d['errs'],'en el Cañón suena su jazz de siempre')
     # 2) Ribera: cada pieza
     await go('ribera');ref=db(d['rms'])
     for tu,feel,st in RIB:
       r=await R(tu,20,st);lv=db(r['rms']);print(feel,r['name'],'%.1f dB, pico %.2f'%(lv,r['peak']),r['errs'][:1])
-      ok(not r['errs'],f'{r["name"]}: se toca sin errores');ok(r['peak']<.98,f'{r["name"]}: no satura ({r["peak"]:.2f})');ok(abs(lv-ref)<4.5,f'{r["name"]}: volumen parecido al del Domo ({lv-ref:+.1f} dB)')
+      ok(not r['errs'],f'{r["name"]}: se toca sin errores');ok(r['peak']<.98,f'{r["name"]}: no satura ({r["peak"]:.2f})');ok(abs(lv-ref)<4.5,f'{r["name"]}: volumen parecido al del Cañón ({lv-ref:+.1f} dB)')
     ok(not warn,f'sin avisos ({warn[:2]})')
     # 3) muestras para escuchar
     if os.environ.get('MUESTRAS'):

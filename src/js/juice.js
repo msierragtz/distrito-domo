@@ -38,16 +38,16 @@ function buildAnim(t,gx,gy,i,dm){const d=DEFS[t.k];if(!d)return;const [dw,dh]=dm
   else if(fl<nF&&fl+fr>0){const {L,R,F}=footCorners(gx,gy,dw,dh,.04),top=h+3;scaffBand(L,F,0,top,Math.max(3,top/2));scaffBand(F,R,0,top,Math.max(3,top/2))}
   if(d.bt>=20||dw>1)crane(gx+dw-1,gy,H+10)}
 
-/* momentos: al terminar El Domo o una obra grande la cámara viaja hacia ella, sale una cortinilla de cine y (en El Domo) el tiempo va en cámara lenta */
+/* momentos: al terminar La Cúpula o una obra grande la cámara viaja hacia ella, sale una cortinilla de cine y (en La Cúpula) el tiempo va en cámara lenta */
 let CINE=null,TS=1,CAMG=null,INER=null,ZA=null;
-const MOMSUB={beis:'Ya hay estadio: cada 8 minutos hay juego.',museo:'El Museo del Domo abre sus puertas.',rasca:'El edificio más alto del Distrito ya se ve desde la sierra.',bosque:'Sombra y aire fresco para todo el Distrito.',plazacom:'Abrió la Plaza comercial: todo el Distrito va de compras.',metro:'Llegó el Metro: menos coches y más vecinos.'};
+const MOMSUB={beis:'Ya hay estadio: cada 8 minutos hay juego.',museo:'El Museo del Cañón abre sus puertas.',rasca:'El edificio más alto del Distrito ya se ve desde la sierra.',bosque:'Sombra y aire fresco para todo el Distrito.',plazacom:'Abrió la Plaza comercial: todo el Distrito va de compras.',metro:'Llegó el Metro: menos coches y más vecinos.'};
 function camGlide(x1,y1,dur){if(lowMo())return;CAMG={x0:panX,y0:panY,x1,y1,t:0,dur}}
 function camTo(i,dur,dy){const t=S.g[i],[dw,dh]=DIMT(t),[a,b]=rot(i%N+dw/2,Math.floor(i/N)+dh/2),so=shadowOf(t),hh=so?so[1]:30;
   const x1=-(a-b)*TW/2*zoom,y1=(N*TH/2-30-(a+b)*TH/2+hh*.45)*zoom+(dy||0);camGlide(x1,y1,dur)}
 function momento(i){const t=S.g[i];if(TITLE||!t||!DEFS[t.k])return;const dom=t.k==='domo',el=$('cine');
   camTo(i,1.4);flashAt(i,1.6);confetti(i,dom?90:60);celebrate(dom?6:4);sfx('phase');
   CINE={t:0,dur:dom?5.4:4.2,slow:dom&&!lowMo()};
-  if(el){el.querySelector('b').textContent=dom?(DIST==='ribera'?'¡EL PUENTE ATIRANTADO ESTÁ LISTO!':'¡EL DOMO ESTÁ LISTO!'):`¡${DEFS[t.k].name.toUpperCase()}!`;el.querySelector('small').textContent=dom?(DIST==='ribera'?'El pilón blanco ya cruza el río: la Ribera tiene su emblema.':'El arco naranja ya es parte del cielo de Santa Catarina.'):MOMSUB[t.k]||'';
+  if(el){el.querySelector('b').textContent=dom?(DIST==='ribera'?'¡EL PUENTE ATIRANTADO ESTÁ LISTO!':'¡LA CÚPULA ESTÁ LISTA!'):`¡${DEFS[t.k].name.toUpperCase()}!`;el.querySelector('small').textContent=dom?(DIST==='ribera'?'El pilón blanco ya cruza el río: la Ribera tiene su emblema.':'El arco naranja ya es parte del cielo de Santa Catarina.'):MOMSUB[t.k]||'';
     el.hidden=false;void el.offsetWidth;el.classList.add('on')}}
 // cámara: viaje suave, inercia al soltar el arrastre, cámara lenta y zoom animado; corre con el tiempo real (no se frena en pausa)
 function camStep(rdt){
@@ -76,7 +76,7 @@ function drawFireworks(){
   // año nuevo: cohetes de todos colores
   if(ANYO()&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*.45){const cx=bw*(.1+Math.random()*.8),cy=bh*(.06+Math.random()*.3),col=CONF_C[Math.floor(Math.random()*CONF_C.length)],np=lowQ()?14:30;
     for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=18+Math.random()*24;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.2+Math.random()*.5,c:col})}}
-  // el Grito: los cohetes salen sobre El Domo
+  // el Grito: los cohetes salen sobre La Cúpula
   if(GRITO_XY&&!TITLE&&!lowMo()&&Math.random()<dt*2.2){const cx=GRITO_XY[0]+(Math.random()-.5)*90,cy=GRITO_XY[1]-20-Math.random()*60,col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=lowQ()?16:36;
     for(let k=0;k<np;k++){const an=k/np*Math.PI*2,sp=22+Math.random()*28;FW.push({x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,l:1.4+Math.random()*.6,c:col})}}
   if(SEASON_C==='patrias'&&NIGHT>.7&&!TITLE&&!lowMo()&&Math.random()<dt*(GRITO()?.5:.08)){const cx=bw*(.15+Math.random()*.7),cy=bh*(.08+Math.random()*.25),col=['#1f8a4c','#ffffff','#d62828'][Math.floor(Math.random()*3)],np=lowQ()?14:28;

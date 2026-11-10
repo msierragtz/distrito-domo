@@ -1,8 +1,10 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 9 nov 2026 (artifact v75; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 9 nov 2026 (artifact v77; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Medir sin servidor (v77)**: cada partida anota el segundo de juego en que cruza 100, 500, 1,000, 2,000 y 3,000 vecinos (`S.hitos`; −1 si ya los había pasado antes de medir) y los días distintos en que se abrió (`S.dias`). En ⚙ Opciones, «Compartir mi avance» copia un texto con versión, distrito, vecinos, tiempo, hitos, días, estado de la guía, tipo de aparato y errores, para pegarlo en un comentario. Archivo `medir.js`, constante `VER`. Prueba: `tests/v77.py`.
+- **Renombre (v76)**: el juego se llama **Distrito Pixel**; el primer distrito es **Cañón** y su emblema **La Cúpula**. Salieron las marcas reales: BanReMás (crédito), Aceros El Cerro (fábrica), la Uni del Valle y el Instituto, Rayones contra Tigrillos, Jitomates Market y 20 negocios de `VARN`. Las llaves internas no cambian (`domo`, `distritoDomo.*`, `dist/distrito-domo.html`): nadie pierde su partida. El cambio se hizo con `tools/renombre-v76.py` y la prueba falla si vuelve a aparecer un nombre viejo.
 - **Guía de inicio, agua visible y arreglos de la auditoría (v75)** (H1-1, H1-2, H1-3, H1-4, H1-6 y H1-7 del plan de la auditoría v74):
   - Guía de 3 pasos en la primera partida del Domo (`guia.js`): construir vivienda con una flecha amarilla en un terreno sugerido, atender el globito del edificio de la flecha y llegar a 40 vecinos con más de 50% de satisfacción. Resalta la herramienta y la pestaña del paso, se puede saltar, sigue donde iba si se recarga y no vuelve a salir (`distritoDomo.guia`); quien ya tenía una partida de 300 vecinos o más no la ve.
   - Agua: la Torre de agua se abre a los 600 vecinos (antes 750) y sigue costando $50,000. Al abrirse explica para qué sirve; a 250 vecinos del límite aparece una flecha azul con una gota sobre un terreno libre donde cabe, y los avisos del agua se pueden tocar para elegir la torre. Con un bot casual que sigue la flecha la mitad de las veces: 0 min sin agua (antes 174–184) y 2 de 3 llegan a 2,000 vecinos.

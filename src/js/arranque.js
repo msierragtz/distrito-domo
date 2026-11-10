@@ -53,8 +53,8 @@ function start(data){
   let impD=null,impT=0;
   $('timp').onclick=()=>{if(impD&&Date.now()-impT<8000){adopt(impD);impD=null;$('timp').textContent='Cargar copia';status(`Listo: cargué la copia (${vec(S)}).`,'ok');CLOUD.push(JSON.stringify(S),true);return}$('tfile').value='';$('tfile').click()};
   $('tfile').onchange=async()=>{const f=$('tfile').files&&$('tfile').files[0];if(!f)return;let d=null;try{d=parseSave(await f.text())}catch(e){}
-    if(!d){status('Ese archivo no es una copia de Distrito Domo.','warn');return}
-    if((d.dist||'domo')!==DIST){status(`Esa copia es del ${(d.dist||'domo')==='ribera'?'Distrito Ribera':'Distrito Domo'}: cámbiate a ese distrito y cárgala ahí.`,'warn');return}
+    if(!d){status('Ese archivo no es una copia de Distrito Pixel.','warn');return}
+    if((d.dist||'domo')!==DIST){status(`Esa copia es del ${(d.dist||'domo')==='ribera'?'Distrito Ribera':'Distrito Cañón'}: cámbiate a ese distrito y cárgala ahí.`,'warn');return}
     const dmsg=d.demo?' Es una partida de demostración: al terminar, toca «Recuperar anterior» para volver a la tuya.':'';
     if(!hasSave){adopt(d);status(`Listo: cargué la copia (${vec(S)}).${dmsg}`,'ok');CLOUD.push(JSON.stringify(S),true);return}
     if(d.demo){adopt(d);status(`Listo: cargué la demo (${vec(S)}).${dmsg}`,'ok');CLOUD.push(JSON.stringify(S),true);try{prevD=parseSave(localStorage.getItem(KEY+'.anterior'))}catch(e){}showPrev();return}
@@ -71,10 +71,11 @@ function start(data){
     S.name=nm;try{localStorage.setItem('distritoDomo.nombre',nm)}catch(e){}
     TITLE=false;$('title').hidden=true;panX=0;panY=0;showMus();
     const who=nm?`, ${nm}`:'';
+    diaHoy();hitosStep();
     const guia=guiaToca(fresh||!S.seen,veterano);
     if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?(guia?`¡Bienvenido${who}! Te enseño lo básico en 3 pasos: sigue la guía de arriba.`:`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`):`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
     if(guia||(S.tuto>0&&S.tuto<9))guiaStart(guia?1:S.tuto);
-    {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a El Domo.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
+    {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a La Cúpula.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
     if(S.fromBak){delete S.fromBak;cur+=' Ojo: tu guardada venía dañada y recuperé el respaldo de hace un minuto.'}
     S.seen=1;save();refreshUI(true);
   };
@@ -88,13 +89,13 @@ function start(data){
   $('oLow').onchange=e=>optSet('low',e.target.checked);$('oRm').onchange=e=>optSet('rm',e.target.checked);$('oHc').onchange=e=>optSet('hc',e.target.checked);$('oSe').onchange=e=>{optSet('season',e.target.value);const se=SEASON();say(se==='patrias'?'¡Viva México! El Distrito se viste de verde, blanco y rojo.':se==='muertos'?'Día de Muertos: papel picado y cempasúchil por todo el Distrito.':'Sin decoración de temporada.',true)};
   const optShow=v=>{$('opts').hidden=!v;$('optb').setAttribute('aria-expanded',v);if(v){let L=[];try{L=JSON.parse(localStorage.getItem(KEY+'.errores')||'[]')}catch(e){}
     $('oErr').textContent=CLOUD.txt()+' '+(L.length?`Errores registrados en este navegador: ${L.length}. Último: ${L[L.length-1][1]} (línea ${L[L.length-1][2]}, ${new Date(L[L.length-1][0]).toLocaleString('es-MX')}).`:'Sin errores registrados en este navegador.')}};
-  $('optb').onclick=e=>{e.stopPropagation();optShow($('opts').hidden)};$('oOk').onclick=()=>optShow(false);
+  $('optb').onclick=e=>{e.stopPropagation();optShow($('opts').hidden)};$('oShare').onclick=()=>{avanceCopy()};$('oOk').onclick=()=>optShow(false);
   const renderGuide=()=>{const g=$('guide');const row=k=>{const d=DEFS[k];if(!d||d.hidden)return '';const lk=!S.unl.includes(k);
       return `<div class="it${lk?' lk':''}"><b>${d.name}</b><span class="pr">${lk?(d.unlock===Infinity?'con un encargo':'a los '+d.unlock.toLocaleString('es-MX')+' vecinos'):k==='mejorar'||k==='demoler'||k==='ver'?'':d.cost?'$'+fmt(costOf(k)):'gratis'}</span><p>${infoOf(k)}</p></div>`};
     g.innerHTML=`<h2>Guía del Distrito<button class="x" type="button" aria-label="Cerrar">✕</button></h2>
       <p class="intro">Los vecinos pagan renta (profesionistas $0.10/s, familias $0.065, estudiantes $0.045), más si están contentos y si su zona tiene plusvalía. Llegan más si tienen cerca verde, comercio que les guste, estacionamiento y dog park.</p>`
       +[['Herramientas',FIXED],...TABS.map(t=>[t[1],t[2]])].map(([n,ks])=>`<h3>${n}</h3>`+ks.map(row).join('')).join('')
-      +`<h3>Encargos</h3><p class="intro">Desde los 150 vecinos, el botón Encargos (arriba) tiene 3 encargos a la vez: uno de Barrio, uno de Vecinos y un Reto con tiempo. Al cumplirlos ganas bonos o abres edificios nuevos (barbería, salón de uñas, boliche, campo de golf, cine, paletería y gimnasio). Desde los 3,000 vecinos salen 6 encargos más difíciles que abren las obras grandes (pestaña Especiales): Bosque urbano, Museo del Domo, Rascacielos, Estadio de Béisbol, Plaza comercial y Estación del Metro. Ninguno castiga: si un reto se acaba, vuelve más tarde. Puedes cambiar un encargo cada 5 minutos.</p><h3>Teclado</h3><p class="intro">Esc: la manita (¿Qué es?) · F: modo foto (fotos, video, paseo y time-lapse de cómo creció tu Distrito) · Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer, Shift+H adelanta la hora, Shift+F mide el rendimiento.</p>`;
+      +`<h3>Encargos</h3><p class="intro">Desde los 150 vecinos, el botón Encargos (arriba) tiene 3 encargos a la vez: uno de Barrio, uno de Vecinos y un Reto con tiempo. Al cumplirlos ganas bonos o abres edificios nuevos (barbería, salón de uñas, boliche, campo de golf, cine, paletería y gimnasio). Desde los 3,000 vecinos salen 6 encargos más difíciles que abren las obras grandes (pestaña Especiales): Bosque urbano, Museo del Cañón, Rascacielos, Estadio de Béisbol, Plaza comercial y Estación del Metro. Ninguno castiga: si un reto se acaba, vuelve más tarde. Puedes cambiar un encargo cada 5 minutos.</p><h3>Teclado</h3><p class="intro">Esc: la manita (¿Qué es?) · F: modo foto (fotos, video, paseo y time-lapse de cómo creció tu Distrito) · Espacio: pausa · 1–4: pestañas · Q/E: girar · C o doble clic en el cielo: centrar · M: música · N: efectos · V: plusvalía. Para presentar el juego: Shift+D (oculta Reiniciar), Shift+L tormenta, Shift+N atardecer, Shift+H adelanta la hora, Shift+F mide el rendimiento.</p>`;
     g.querySelector('.x').onclick=()=>{g.hidden=true;$('guideb').setAttribute('aria-expanded',false)}};
   $('guideb').onclick=e=>{e.stopPropagation();const g=$('guide');g.hidden=!g.hidden;$('guideb').setAttribute('aria-expanded',!g.hidden);if(!g.hidden)renderGuide()};
   $('pauseb').onclick=e=>{e.stopPropagation();setPause(!PAUSED)};

@@ -1,4 +1,4 @@
-"""Acercamientos para revisar detalles: plaza, El Domo, una torre y una calle, por temporada y hora.
+"""Acercamientos para revisar detalles: plaza, La Cúpula, una torre y una calle, por temporada y hora.
 Uso: python3 tests/detalle.py prefijo temporada[,temporada] [hora 0-1] [lluvia 0/1]"""
 import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from comun import ROOT,BUILD,lanzar
 import asyncio,json,io

@@ -1,4 +1,4 @@
-"""Hoja de aprobación (v70): vivienda y negocios del Domo contra su versión de la Ribera, niveles 1 a 4, de día y de noche.
+"""Hoja de aprobación (v70): vivienda y negocios del Cañón contra su versión de la Ribera, niveles 1 a 4, de día y de noche.
 Uso: python3 tests/hoja-ribera.py  → build/capturas/hoja-vivienda.png, hoja-negocios.png, hoja-noche.png"""
 import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from comun import ROOT,BUILD,lanzar
 import asyncio,io,base64,json
@@ -8,9 +8,9 @@ CAP=BUILD+'/capturas/'
 F=lambda sz,b=False:ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans'+('-Bold' if b else '')+'.ttf',sz)
 DOMO={'edificio':['Departamentos','Remodelados','Lofts','Residencial de lujo'],'ladrillo':['Ladrillo','Remodelado','Lofts','Boutique de ladrillo'],'torre':['Torre Caliza','Plus','Premium','Sky'],
   'cafe':['Café de olla','Cafetería','Especialidad','Brunch'],'resto':['Barbacoa','Lonchería','Hamburguesas','De autor'],'bar':['Micheladas','Cantina','Mezcalería','Azotea'],
-  'paleteria':['Carrito','De barrio','Artesanal','Heladería'],'tomates':['Tomates','Market','Market','Market'],'oficinas':['Oficinas','Coworking','Corporativo','Verde']}
+  'paleteria':['Carrito','De barrio','Artesanal','Heladería'],'tomates':['Jitomates','Market','Market','Market'],'oficinas':['Oficinas','Coworking','Corporativo','Verde']}
 TIT={'edificio':'Edificio  →  Casas de la Ribera','ladrillo':'Edificio de ladrillo  →  Bodegas del río','torre':'Torre  →  Torre Malecón','cafe':'Café','resto':'Restaurante  →  mariscos y asadero',
-  'bar':'Bar  →  depósito, cervecería y salón cumbiero','paleteria':'Paletería  →  aguas frescas y nevería','tomates':'Tomates  →  Mercadito de la Ribera','oficinas':'Oficinas  →  coworking en bodega'}
+  'bar':'Bar  →  depósito, cervecería y salón cumbiero','paleteria':'Paletería  →  aguas frescas y nevería','tomates':'Jitomates  →  Mercadito de la Ribera','oficinas':'Oficinas  →  coworking en bodega'}
 FL={'edificio':5,'ladrillo':5,'torre':18}
 SD_,SR_=1.25,2.5
 def img(u):return Image.open(io.BytesIO(base64.b64decode(u.split(',')[1]))).convert('RGB')
@@ -23,7 +23,7 @@ def caja(lst):
     if d:bx=d if bx is None else (min(bx[0],d[0]),min(bx[1],d[1]),max(bx[2],d[2]),max(bx[3],d[3]))
   return (max(0,bx[0]-8),max(0,bx[1]-8),bx[2]+8,bx[3]+4)
 def hoja(nombre,filas,dom,rib,riblv,titulo,sub,noche=False):
-  # filas: [(k,[domo L1..4],[ribera L1..4])]; el Domo chico de referencia, la Ribera grande
+  # filas: [(k,[domo L1..4],[ribera L1..4])]; el Cañón chico de referencia, la Ribera grande
   gap=16;pad=32;mid=40;bg=(24,26,46) if noche else (246,242,232);fg=(236,236,246) if noche else (40,36,30);mute=(150,150,170) if noche else (125,115,102)
   rows=[]
   for k,dd,rr in filas:
@@ -32,7 +32,7 @@ def hoja(nombre,filas,dom,rib,riblv,titulo,sub,noche=False):
   W=pad*2+cwD*4+gap*3+mid+cwR*4+gap*3;H=150+sum(int(r[2]*SR_)+92 for r in rows)
   im=Image.new('RGB',(W,H),bg);d=ImageDraw.Draw(im)
   d.text((pad,24),titulo,font=F(34,True),fill=fg);d.text((pad,70),sub,font=F(18),fill=mute)
-  xR=pad+cwD*4+gap*3+mid;d.text((pad,112),'DISTRITO DOMO (como está hoy)',font=F(15,True),fill=mute);d.text((xR,112),'DISTRITO RIBERA (propuesta)',font=F(15,True),fill=(43,179,163))
+  xR=pad+cwD*4+gap*3+mid;d.text((pad,112),'DISTRITO CAÑÓN (como está hoy)',font=F(15,True),fill=mute);d.text((xR,112),'DISTRITO RIBERA (propuesta)',font=F(15,True),fill=(43,179,163))
   y=146
   for (k,dd,rr),(bx,cw,ch) in zip(filas,rows):
     h=int(ch*SR_)

@@ -78,7 +78,7 @@ function artResto(t,gx,gy,L){const ln=t.s==null?0:(t.s>>2)%4;t.__gx=gx;t.__gy=gy
 const RESTO=[
  // A · hamburguesas
  [t=>restoOld(t,t.__gx,t.__gy,1),t=>restoOld(t,t.__gx,t.__gy,2),t=>restoOld(t,t.__gx,t.__gy,3),
-  (t,gx,gy)=>{ // Chochomos: hamburguesería de dos pisos con hamburguesa gigante
+  (t,gx,gy)=>{ // Chorizos Chema: hamburguesería de dos pisos con hamburguesa gigante
    const H=18,g=shopBox(gx,gy,.1,.1,.6,.7,H,'#2b2b2b','#232323','#3a3a3a');
    face(g,'L',.05,0,.9,8,NIGHT>.2?'#ffd27a':'#f0c27a',NIGHT>.2);for(const u of [.35,.65])face(g,'L',u,0,.02,8,'#1c1c1c');face(g,'L',0,8,1,1.4,'#e0a050');
    face(g,'R',.1,0,.35,6.5,'#3d3d3d');face(g,'R',.55,2,.35,5,NIGHT>.2?'#ffd27a':'#f0c27a',NIGHT>.2);face(g,'R',0,8,1,1.4,'#c98a3a');
@@ -108,7 +108,7 @@ const RESTO=[
    dsort(gx,gy,[[.8,.3,()=>{cb(gx+.74,gy+.22,gx+.86,gy+.4,0,2.2,'#7a4e2c');cb(gx+.72,gy+.2,gx+.88,gy+.42,2.2,.4,'#8a5a3a')}],[.8,.66,()=>{cb(gx+.74,gy+.58,gx+.86,gy+.76,0,2.2,'#7a4e2c');cb(gx+.72,gy+.56,gx+.88,gy+.78,2.2,.4,'#8a5a3a')}],
      [.92,.9,()=>{const g2=cb(gx+.88,gy+.86,gx+.96,gy+.94,0,3,'#9aa0a8');face(g2,'L',0,1,1,.4,'#6e737a')}]]);
    {const a=P(gx+.6,gy+.15),b=P(gx+.95,gy+.15);bulbsH([a[0],a[1]-10],[b[0],b[1]-8],6,2)}},
-  (t,gx,gy)=>{ // Panacea: blanco, ventanales y terraza con plantas
+  (t,gx,gy)=>{ // Panaderia: blanco, ventanales y terraza con plantas
    const H=16,g=shopBox(gx,gy,.1,.1,.58,.72,H,'#f4f3ef','#dcd9d2','#c9c5bd');
    face(g,'L',.05,0,.9,7.5,NIGHT>.2?'#ffe2a8':'#bcd9e8',NIGHT>.2);for(const u of [.3,.55,.8])face(g,'L',u,0,.02,7.5,'#9a958c');
    face(g,'L',.05,9.5,.9,4,NIGHT>.2?'#ffe2a8':'#bcd9e8',NIGHT>.2);face(g,'L',0,8,1,1,'#c9a227');face(g,'R',.1,9.5,.8,4,'#bcd9e8');face(g,'R',0,8,1,1,'#b08f20');
@@ -128,7 +128,7 @@ const RESTO=[
    for(const [a,b] of [[.16,.16],[.9,.16],[.16,.88],[.9,.88]]){const [x,y]=P(gx+a,gy+b);px(x,y-12,1,12,'#8d9096')}
    {const g=box(gx+.12,gy+.12,gx+.94,gy+.92,11,.6,'#2f6db5','#25589a','#1d4a80');face(g,'L',0,-.4,1,.4,'#ffffff');face(g,'R',0,-.4,1,.4,'#ececec')}
    poleSign(gx+.06,gy+.5,4,'#ffffff',tacoIco)},
-  (t,gx,gy)=>{ // Asador La Pampa: casa de ladrillo con chimenea y parrilla
+  (t,gx,gy)=>{ // Asador El Carbón Feliz: casa de ladrillo con chimenea y parrilla
    const H=12,g=shopBox(gx,gy,.1,.12,.6,.72,H,'#a8522f','#8a4227','#6e4a2c');
    for(let v=1;v<H;v+=1.2){face(g,'L',0,v,1,.25,'#963f22');face(g,'R',0,v,1,.25,'#7a351c')}
    face(g,'L',.1,1,.35,5,NIGHT>.2?'#ffcf87':'#7fb2d4',NIGHT>.2);face(g,'L',.55,0,.3,6.5,'#5a3a24');face(g,'R',.2,2,.6,4,NIGHT>.2?'#ffcf87':'#7fb2d4',NIGHT>.2);
@@ -155,13 +155,13 @@ const RESTO=[
    {const [x,y]=P(gx+.14,gy+.5);px(x-.25,y-10,.5,2,'#555');circ(x,y-6.5,2.2,'#d62828',NIGHT>.2);px(x-2,y-6.7,4,.4,'#8a1a1a',NIGHT>.2);if(NIGHT>.2)glow(x,y-6.5,8,.8)}
    {const [x,y]=P(gx+.37,gy+.43);shrimpIco(x,y-H-3,1.2,NIGHT>.2);if(NIGHT>.2)glow(x,y-H-4,10,.6)}
    dsort(gx,gy,[[.82,.32,()=>{cb(gx+.76,gy+.24,gx+.9,gy+.4,0,1.5,'#7a4e2c');chairH(gx+.9,gy+.3,'#2b2b2b')}],[.82,.7,()=>{cb(gx+.76,gy+.62,gx+.9,gy+.78,0,1.5,'#7a4e2c');chairH(gx+.9,gy+.68,'#2b2b2b')}],[.4,.9,()=>planter(gx+.4,gy+.88,.3)]])},
-  (t,gx,gy)=>{ // Mariscos el Mikas: azul y blanco con camarón gigante
+  (t,gx,gy)=>{ // Mariscos El Compadre: azul y blanco con camarón gigante
    const H=11,g=shopBox(gx,gy,.1,.14,.56,.72,H,'#ffffff','#e4e8ec','#2f6db5');
    face(g,'L',0,0,1,2,'#2f6db5');face(g,'R',0,0,1,2,'#25589a');face(g,'L',.08,2.5,.84,4.5,'#9fc4dc');for(const u of [.36,.64])face(g,'L',u,2.5,.02,4.5,'#2f6db5');
    for(let k=0;k<8;k++)face(g,'L',k/8,7.5,1/8,1.5,k%2?'#2f6db5':'#ffffff');face(g,'R',.2,3,.6,3.5,'#9fc4dc');
    {const [x,y]=P(gx+.33,gy+.43);shrimpIco(x,y-H-5,2,NIGHT>.2);if(NIGHT>.2)glow(x,y-H-6,14,.8)}
    dsort(gx,gy,tablesSet(gx,gy,'#2f6db5','#ffffff',[[.8,.3],[.8,.66]]).concat([[.92,.9,()=>{const c=cb(gx+.86,gy+.84,gx+.97,gy+.95,0,3,'#2f6db5');face(c,'L',0,1,1,.6,'#ffffff')}]]))},
-  (t,gx,gy)=>{ // Señora Katana: negro con acentos rojos, faroles y bambú
+  (t,gx,gy)=>{ // Señora Sartén: negro con acentos rojos, faroles y bambú
    const H=17,g=shopBox(gx,gy,.1,.1,.6,.72,H,'#1f1f22','#18181a','#7a1f1f');
    face(g,'L',.05,0,.9,7,NIGHT>.2?'#ffd9a0':'#5a3a2a',NIGHT>.2);for(let k=1;k<6;k++)face(g,'L',k/6,0,.015,7,'#1c1c1c');face(g,'L',0,7,1,1,'#b52a2a');face(g,'R',0,7,1,1,'#8f2020');
    for(let k=0;k<6;k++)face(g,'L',.06+k*.15,9.5,.08,5,'#2a2a2e');face(g,'R',.15,9.5,.7,5,'#2a2a2e');
