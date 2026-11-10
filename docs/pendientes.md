@@ -1,8 +1,14 @@
 # Distrito Domo — estado y pendientes
 
-Actualizado el 9 nov 2026 (artifact v81; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
+Actualizado el 10 nov 2026 (artifact v82; también hay un .zip para itch.io con el mismo juego). La presentación salió bien y tuvo muy buenas críticas.
 
 ## Implementado
+- **Caché de sprites (v82)** (H1-5 de la auditoría v74):
+  - Causa real de los tirones del anochecer: la imagen de respaldo de cada edificio (`LASTSPR`) se guardaba con la fase de «ventanas que se apagan» en la llave, así que cada vez que cambiaba esa fase el edificio se quedaba sin respaldo: o no se dibujaba unos cuadros o se rehacía a la fuerza (hasta 35 ms por cuadro). En la ciudad de 2,600 con CPU 4x más lenta: 5,372 veces sin respaldo y 4,584 edificios sin dibujar en un atardecer; ahora 1 y 0.
+  - El respaldo va por edificio (sin la fase de ventanas). Los topes salen del tamaño de la ciudad (`OBJN`, lo cuenta `recompute`; `sprCap()` = el mayor de 900 y 1.3 × `OBJN`) y se desaloja lo que lleva más cuadros sin usarse (`sprTrim`, sello `u` por sprite), no lo más viejo de crear. Ya no hay vaciados completos: ni el de 1,600 por nivel de noche ni el de contornos (`OUTC`, que ahora guarda hasta 4 giros).
+  - En aparatos lentos la noche sí termina de llegar: al menos 2 edificios se renuevan por cuadro aunque el cuadro venga tarde (`SPRMIN`); antes, con el ahorro automático, casi ninguno se renovaba.
+  - Medido (CPU 4x, atardecer): escritorio de 14 a 16 cuadros por segundo y el peor cuadro de 250 a 167 ms; celular de 10 a 12 y p95 de 167 a 117 ms. Sin cambio al girar: ahí cada edificio se dibuja de nuevo y la ciudad sigue apareciendo por partes en un aparato lento (pendiente: H2-5, capa fija y precalentado).
+  - Sonda `tests/perf-cache.py` (contadores `SPRSTAT`) y prueba `tests/v82.py`.
 - **Segunda tanda de silueta y detalle (v81)**:
   - Torre: marquesina en el vestíbulo desde el nivel 2 (del color del distrito en el 4), aletas de piedra también en el cuerpo alto de cristal para que se lea como un solo edificio, y banda del color del distrito bajo el remate del nivel 4, encendida de noche.
   - Usos mixtos: cornisa corrida que separa el local de los departamentos (del color del distrito en el nivel 4), letrero de bandera más grande y pegado a la esquina, y ático iluminado en la azotea del nivel 4.

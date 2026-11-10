@@ -1,9 +1,9 @@
 function recompute(){
   GV++;EARN.clear();
-  let cap=0,inc=0,upk=0,bonus=0,noisy=0,wcap=1000,tour=0,metroB=false;const OB={};const counts={},pts={verde:0,com:0,park:0,dog:0,seg:0};streets=[];
+  let cap=0,inc=0,upk=0,bonus=0,noisy=0,wcap=1000,tour=0,metroB=false;const OB={};const counts={},pts={verde:0,com:0,park:0,dog:0,seg:0};streets=[];OBJN=0;
   const B=[],A=[];
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){
-    const t=S.g[idx(x,y)],d=DEFS[t.k];
+    const t=S.g[idx(x,y)],d=DEFS[t.k];if(hasObj(t,x,y))OBJN++;
     if(t.k==='calle'&&!t.hw)streets.push([x,y]);
     if(!d)continue;
     counts[t.k]=(counts[t.k]||0)+1;if(t.k==='torreagua'&&!(t.b>0))wcap+=1000;if(t.k==='rasca'&&!(t.b>0))wcap-=300;if(t.k==='metro'&&t.b>0)metroB=true;
