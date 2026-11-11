@@ -340,6 +340,47 @@ body.tuto #pausebar{display:none}
 /* v77: compartir avance */
 #opts #oShare{background:var(--domo-soft);margin-right:8px}
 #opts .oav{font-family:var(--f-text);font-size:14px;line-height:1.25;white-space:pre-wrap;user-select:text;-webkit-user-select:text;background:#f3efe4;border:2px solid var(--ink);border-radius:6px;padding:6px 8px;margin:8px 0;max-height:130px;overflow:auto}
+/* v85: el nombramiento del Municipio, al empezar una partida nueva */
+#oficio{position:fixed;inset:0;z-index:22;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px));background:rgba(15,22,51,.72)}
+#oficio[hidden]{display:none}
+.ofp{position:relative;margin:auto;width:min(520px,100%);background:#fbf8ef;color:var(--ink);border:3px solid var(--ink);border-radius:4px;box-shadow:6px 6px 0 rgba(0,0,0,.35);padding:18px 22px 16px;font-family:var(--f-text);font-size:19px;line-height:1.15;
+  background-image:repeating-linear-gradient(180deg,transparent 0 27px,rgba(31,37,64,.05) 27px 28px);animation:ofin .45s ease-out}
+@keyframes ofin{from{transform:translateY(24px) rotate(-1.5deg);opacity:0}}
+.ofh{display:flex;gap:10px;align-items:center;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.ofs{width:44px;height:44px;flex:none}
+.ofh b{display:block;font-family:var(--f-pixel);font-size:10px;line-height:1.5}
+.ofh span{display:block;color:var(--muted);font-size:17px}
+.ofn{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:6px 0 0;font-size:16px;color:var(--muted)}
+#ofT{font-family:var(--f-pixel);font-size:18px;letter-spacing:.12em;text-align:center;margin:12px 0 8px;text-transform:uppercase}
+.ofa{margin:0 0 4px}
+#ofIntro{margin:0 0 8px}
+.ofl{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:7px}
+.ofl li{display:flex;gap:9px;align-items:flex-start}
+.oi{flex:none;width:18px;height:18px;margin-top:1px;border:2px solid var(--ink);border-radius:3px}
+.oi.v{background:#5fbf5a}.oi.m{background:#ffd84d}.oi.c{background:var(--domo)}
+.ofk{margin:4px 0 10px;text-align:center;font-size:21px}
+.ofsig{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
+.ofm{flex:1 1 150px;font-size:16px;color:var(--muted)}
+.ofm svg{display:block;width:120px;height:34px}
+.ofy{flex:1 1 190px;display:flex;flex-direction:column;gap:3px}
+.ofy label{font-size:16px;color:var(--muted)}
+#ofName{font-family:var(--f-pixel);font-size:12px;padding:8px 10px;border:none;border-bottom:3px solid var(--ink);background:transparent;color:#2c3a8c}
+#ofName:focus-visible{outline:3px solid var(--domo);outline-offset:2px}
+.ofl2{display:none;font-family:var(--f-pixel);font-size:14px;color:#2c3a8c;transform:rotate(-3deg);padding:6px 2px 4px;border-bottom:3px solid var(--ink);min-height:1.2em}
+.ofc{font-size:16px;color:var(--muted)}
+#ofOk{width:100%}
+.ofst{position:absolute;left:18px;bottom:64px;transform:rotate(-14deg) scale(2.4);opacity:0;pointer-events:none;border:4px double #d64545;color:#d64545;border-radius:6px;padding:4px 10px;text-align:center;background:rgba(251,248,239,.6)}
+.ofst span{display:block;font-family:var(--f-pixel);font-size:16px;letter-spacing:.08em}
+.ofst small{display:block;font-size:15px}
+#oficio.firmado .ofst{animation:ofsello .32s cubic-bezier(.2,1.6,.4,1) forwards}
+#oficio.firmado #ofName{display:none}
+#oficio.firmado .ofl2{display:block}
+#oficio.firmado #ofOk{visibility:hidden}
+#oficio.sale .ofp{transition:transform .5s ease-in,opacity .5s ease-in;transform:translateY(-30px) rotate(2deg);opacity:0}
+#oficio.sale{transition:background .5s;background:rgba(15,22,51,0)}
+@keyframes ofsello{to{opacity:.92;transform:rotate(-14deg) scale(1)}}
+@media (prefers-reduced-motion:reduce){.ofp{animation:none}#oficio.firmado .ofst{animation:none;opacity:.92;transform:rotate(-14deg)}#oficio.sale .ofp{transition:none}}
+@media (max-width:420px){.ofp{padding:12px 14px 12px;font-size:17px}#ofT{font-size:15px;margin:8px 0 6px}.ofk{font-size:19px}.ofsig{gap:8px}.ofm svg{width:96px;height:28px}.ofst{left:10px;bottom:60px}}
 </style>
 
 <div id="app">
@@ -425,6 +466,31 @@ body.tuto #pausebar{display:none}
   </div>
 </div>
 
+<div id="oficio" role="dialog" aria-modal="true" aria-labelledby="ofT" hidden>
+  <div class="ofp">
+    <div class="ofh">
+      <svg class="ofs" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#1f2540" stroke-width="2"/><circle cx="20" cy="20" r="14" fill="none" stroke="#1f2540" stroke-width="1" stroke-dasharray="2 2"/><path d="M9 27 A11 11 0 0 1 31 27" fill="none" stroke="#f26a21" stroke-width="4"/><path d="M11 30h18" stroke="#1f2540" stroke-width="2"/></svg>
+      <div><b>Municipio de Santa Catarina, N.L.</b><span>Dirección de Desarrollo Urbano</span></div>
+    </div>
+    <p class="ofn"><span id="ofNum">Oficio DU/0147/2026</span><span id="ofFecha"></span></p>
+    <h2 id="ofT">Nombramiento</h2>
+    <p class="ofa">A quien firma al calce:</p>
+    <p id="ofIntro"></p>
+    <ol class="ofl">
+      <li><i class="oi v" aria-hidden="true"></i><span><b>Vecinos contentos.</b> Verde, comercio y estacionamiento a unas cuadras de cada casa; si les falta, se van.</span></li>
+      <li><i class="oi m" aria-hidden="true"></i><span><b>Cuentas sanas.</b> Arranca con <b>$600</b>; lo demás sale de las rentas.</span></li>
+      <li><i class="oi c" aria-hidden="true"></i><span><b>Crecer.</b> Llegar a 3,000 vecinos y hacer del Distrito el corazón de Santa Catarina.</span></li>
+    </ol>
+    <p class="ofk">La felicidad de sus habitantes queda en sus manos.</p>
+    <div class="ofsig">
+      <div class="ofm"><svg viewBox="0 0 120 34" aria-hidden="true"><path d="M4 24c10-18 16-18 14-4s8-14 14-10-4 16 4 12 10-14 18-12-6 14 4 12 16-8 22-6 10 4 18 2" fill="none" stroke="#2c3a8c" stroke-width="2" stroke-linecap="round"/></svg><span>Atentamente<br>La Presidencia Municipal</span></div>
+      <div class="ofy"><label for="ofName">Nombre de quien acepta el cargo</label><input id="ofName" type="text" maxlength="20" autocomplete="off" placeholder="Escribe tu nombre"><span class="ofl2" id="ofFirma" aria-hidden="true"></span><span class="ofc">Desarrollo del <b id="ofDist">Distrito Cañón</b></span></div>
+    </div>
+    <button id="ofOk" type="button" class="tb main">Firmar y aceptar el cargo</button>
+    <div class="ofst" id="ofSello" aria-hidden="true"><span>NOMBRADO</span><small id="ofSelloF"></small></div>
+  </div>
+</div>
+
 <script>
 /* registro mínimo de errores: los últimos 20 se guardan en este navegador y se ven en ⚙ Opciones */
 // v75: cada distrito guarda los suyos (antes la Ribera escribía en la llave del Cañón y su panel salía vacío)
@@ -438,7 +504,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=84; // versión que ve el jugador (igual al 0.84 de package.json)
+const VER=85; // versión que ve el jugador (igual al 0.85 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -543,6 +609,7 @@ const LV={
   gas:['Bomba de gasolina','Gasolinera','Gasolinera con tiendita','Estación de carga']};
 // el estacionamiento no tenía plusvalía propia: alimenta la capa de estacionamiento con este valor
 const PARKVAL=[.12,3];
+let RIOVAL=[.05,3]; // v85: plusvalía por vista al río en la Ribera (por casilla de río, alcance 3)
 const LVTH=[0,0,.55,.68,.84],LVT=[0,0,20,40,60];
 {const n=LVTH.slice(2).map(v=>Math.round(v*100)),last=n.pop();DEFS.mejorar.desc=DEFS.mejorar.desc.replace('46, 58 o 70',n.join(', ')+(String(last)[0]==='8'?' u ':' o ')+last)}
 const lvOf=t=>t.lv||1;
@@ -736,8 +803,8 @@ function riberaGame(bono){const r=rng(4242),g=[];
   const near=(x,y,o)=>{for(let d=0;d<4;d++)for(const [dx,dy] of [[0,0],[d,0],[-d,0],[0,d],[0,-d]])if(free(x+dx,y+dy)){set(x+dx,y+dy,o);return}};
   // el landmark va sobre el puente de en medio: su casilla central queda reservada (con conos) hasta construirlo
   {const y=LMY,x=cxR(y);g[idx(x,y)]={k:'lotedomo',pu:1,rc:1,s:1,b:0}}
-  near(OFF+2,OFF+11,{k:'ladrillo',f:4,bt:20});near(OFF+14,OFF+11,{k:'tomates',bt:8});near(OFF+15,OFF+2,{k:'tanque'});
-  near(OFF+4,OFF+2,{k:'parque'});near(OFF+4,OFF+8,{k:'parque'});near(OFF+12,OFF+9,{k:'palma'});
+  near(OFF+2,OFF+11,{k:'ladrillo',f:4,bt:20});near(OFF+4,OFF+11,{k:'tomates',bt:8});near(OFF+15,OFF+2,{k:'tanque'});
+  near(OFF+4,OFF+2,{k:'parque'});near(OFF+2,OFF+9,{k:'parque'});near(OFF+12,OFF+9,{k:'palma'});
   return {pv2:1,pop:{fam:9,pro:3,est:4},g,v:16,$:600+(bono||0),maxV:16,unl:['ver','calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0,dist:'ribera',rio:{t:DAY*2.2,w:.1},bono:bono||0}}
 
 /* ===== el agua: temporada seca, temporada de lluvias y crecida ===== */
@@ -865,7 +932,7 @@ function llegada(nuevo){const el=$('cine'),i=S.g.findIndex(t=>t.k==='domo'||t.k=
   if(i>=0&&!lowMo())setTimeout(()=>camTo(i,2.2),350)}
 // la primera vez en Ribera: qué tiene de distinto, en tres mensajes
 function ribIntro(who){const b=+(S.bono||0);
-  say(`¡Bienvenido al Distrito Ribera${who}! Empiezas de cero con $${fmt(S.$)}${b?`: $600 del Distrito más $${fmt(b)} de bono de tu Distrito Cañón`:''}.`,true);
+  say(`El Municipio amplía tu nombramiento${who}: ahora también está a tu cargo el Distrito Ribera. Empiezas de cero con $${fmt(S.$)}${b?`: $600 del Distrito más $${fmt(b)} de bono de tu Distrito Cañón`:''}.`,true);
   say('El río va casi seco: en el lecho puedes poner parques, canchas, dog parks y palmas. En la temporada de lluvias se llena, y si crece daña lo que haya abajo.');
   say(`Para cruzar el río usa Calle encima del agua: hace un puente. El puente de en medio, el de los conos, es para ${DEFS.domo.name}.`)}
 // en el Distrito Cañón: a los 3,000 se abre Ribera. La tarjeta sale una vez, después de la pantalla de los 3,000
@@ -903,7 +970,8 @@ function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id o
 function distBoot(){if(DIST!=='ribera'){for(const k of ['malecon','alberca','parroquia','hotel']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}return}
   Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El emblema de la Ribera: un pilón blanco en A con tirantes, sobre el puente de en medio del río. Sube mucho la satisfacción. Solo hay uno.'});
   // los trofeos del Cañón no van en la Ribera (el menú de especiales se hacía enorme)
-  for(const k of ['kiosco','mirador','cultura','teleferico']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}
+  // v85: el Centro Cultural sí va en la Ribera (sin él no se abría el Cine ni, por lo tanto, el Museo)
+  for(const k of ['kiosco','mirador','teleferico']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}
   DEFS.lotedomo.name='Terreno del Puente';DEFS.cultura.name='Centro Cultural Ribera';DEFS.museo.name='Museo del Río';SPH.domo=110;
   Object.assign(PARCELS.W,{where:'junto a la calle Sauce'});Object.assign(PARCELS.E,{where:'junto a la calle Álamo'});
   Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
@@ -984,6 +1052,9 @@ function recompute(){
       for(let yy=Math.max(0,y-r);yy<=Math.min(N-1,y+r);yy++)for(let xx=Math.max(0,x-r);xx<=Math.min(N-1,x+r);xx++){const dd=Math.abs(xx-x)+Math.abs(yy-y);if(dd<=r){const j=idx(xx,yy);neg[j]=Math.max(neg[j],amt*(1-dd/(r+1)))}}}}
   // la sombra del rascacielos baja un poco la plusvalía alrededor
   if(OB.rasca){const o=OB.rasca,R3=3;for(let y=Math.max(0,Math.floor(o.y-R3));y<=Math.min(N-1,Math.ceil(o.y+R3));y++)for(let x=Math.max(0,Math.floor(o.x-R3));x<=Math.min(N-1,Math.ceil(o.x+R3));x++){const dd=Math.abs(x-o.x)+Math.abs(y-o.y);if(dd<=R3&&dd>=1){const j=idx(x,y);neg[j]=Math.max(neg[j],.06*(1-dd/(R3+1)))}}}
+  // v85: vivir junto al río vale (la Ribera no tiene los trofeos gratis del Cañón y el río le quita tres columnas): cada casilla de río alimenta la capa verde
+  if(DIST==='ribera'){const [ra,R]=RIOVAL;for(let i=0;i<N*N;i++){if(S.g[i].k!=='rio')continue;const x0=i%N,y0=Math.floor(i/N);
+    for(let y=Math.max(0,y0-R);y<=Math.min(N-1,y0+R);y++)for(let x=Math.max(0,x0-R);x<=Math.min(N-1,x0+R);x++){const dd=Math.abs(x-x0)+Math.abs(y-y0);if(dd&&dd<=R)posVerde[idx(x,y)]+=ra*(1-dd/(R+1))}}}
   const pvx=new Float32Array(N*N);if(S.mis&&S.mis.pv)for(const j of S.mis.pv)pvx[j]=.04;
   for(let i=0;i<N*N;i++){const v=pvx[i]+.15+.28*(1-Math.exp(-posVerde[i]*4))+.32*(1-Math.exp(-posCom[i]*16))+.15*(1-Math.exp(-posPark[i]*60))+.10*(1-Math.exp(-posDog[i]*40));VAL[i]=Math.max(0,Math.min(1,v-neg[i]))}
   for(const b of B){b.val=Math.min(1,VAL[b.i]+(b.k==='torre'?.08:b.f>=7?.05:0)+.05*(b.lv-1))}
@@ -1190,7 +1261,7 @@ const MIS=[
   {id:'clasico',tipo:'reto',min:1200,name:'Clásico sin claxon',txt:'Viene un Clásico regio: que el estacionamiento no baje de 80% mientras dure.',ev:'clasico',cond:()=>stats.sc.park>=.8,rew:{x:'clas'}},
   {id:'swing',tipo:'vecinos',min:1500,name:'Swing de domingo',txt:'Que vivan 120 profesionistas y estén al 65% de satisfacción.',goal:120,prog:()=>Math.floor(S.pop.pro+1e-6),cond:()=>stats.gs.pro>=.65,rew:{u:'golf'}},
   {id:'parejo',tipo:'vecinos',min:1700,name:'Barrio parejo',txt:'Los tres grupos arriba de 65% al mismo tiempo durante 30 segundos.',hold:30,cond:()=>G3.every(g=>stats.gs[g]>=.65),rew:{b:[5,15000]}},
-  {id:'estreno',tipo:'barrio',min:2000,name:'Función de estreno',txt:'Ten el Centro Cultural Cañón y 3 negocios en nivel 3 o más.',goal:4,prog:()=>(mBuilt('cultura')?1:0)+Math.min(3,mCnt(t=>isBiz(t.k)&&lvOf(t)>=3)),rew:{u:'cine'}},
+  {id:'estreno',tipo:'barrio',min:2000,name:'Función de estreno',txt:`Ten el ${DIST==='ribera'?'Centro Cultural Ribera':'Centro Cultural Cañón'} y 3 negocios en nivel 3 o más.`,goal:4,prog:()=>(mBuilt('cultura')?1:0)+Math.min(3,mCnt(t=>isBiz(t.k)&&lvOf(t)>=3)),rew:{u:'cine'}},
   {id:'calor',tipo:'reto',min:2200,name:'Ola de calor',txt:'Viene una ola de calor: pásala sin que la satisfacción baje de 60%.',ev:'calor',floor:.6,rew:{u:'paleteria'}},
   {id:'oficina',tipo:'barrio',min:2400,name:'Oficina en casa',txt:'Ten 4 Oficinas funcionando.',goal:4,prog:()=>mBuilt('oficinas'),rew:{u:'gym'}},
   {id:'cuentas',tipo:'reto',min:2700,name:'Cuentas claras',txt:'Aguanta 15 minutos seguidos sin números rojos. Tienes 25 minutos.',hold:900,lim:1500,cond:()=>S.$>=0,rew:{b:[5,30000]}},
@@ -1273,7 +1344,7 @@ function misStep(dt,quiet){if(!S.mis)misInit();const M=S.mis;M.clk=(M.clk||0)+dt
     if(m.prog()>=m.goal&&(!m.cond||m.cond())){misDone(m,quiet);continue}
     if(m.failIf&&m.failIf())misFail(m,'Ya pasaron de 950 vecinos sin Torre de agua.',quiet)}}
 function renderMis(){const box=$('misbox');if(!box||box.hidden)return;const M=S.mis;
-  let h='<h2>ENCARGOS DEL DISTRITO<button class="x" id="mx" aria-label="Cerrar">✕</button></h2>';
+  let h='<h2>ENCARGOS DEL MUNICIPIO<button class="x" id="mx" aria-label="Cerrar">✕</button></h2>';
   if(S.maxV<MIS_ON){h+=`<div class="mi-in">Los encargos empiezan a los ${MIS_ON} vecinos.</div>`}
   else{h+='<div class="mi-in">Cúmplelos para ganar bonos o abrir edificios nuevos. Ninguno castiga si no se cumple.</div>';
     for(const tp of ['barrio','vecinos','reto']){const id=M.on[tp],m=id&&MISI[id];
@@ -4372,7 +4443,7 @@ function drawFireworks(){
 }
 function showCredits(){
   const box=document.getElementById('credits'),m=Math.max(1,Math.round((S.winT||S.playT||0)/60)),h=Math.floor(m/60),tm=h?`${h} h ${m%60} min`:`${m} min`;
-  box.innerHTML=`<h2>¡${DNAME.toUpperCase()} COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina.</p>
+  box.innerHTML=`<h2>¡${DNAME.toUpperCase()} COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina. El Municipio da por cumplido tu encargo.</p>
     <p class="ctime">Lo lograste en <b>${tm}</b> de juego</p>
     <p><b>${Math.round(S.maxV).toLocaleString('es-MX')}</b> vecinos · <b>${S.lots||0}</b> terrenos comprados</p>
     <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><div class="cbtns"><button id="crtl" type="button">▶ Ver cómo creció</button>${DIST==='domo'?'<button id="crrib" type="button">Ir al Distrito Ribera</button>':''}<button id="crok" type="button">Seguir jugando</button></div>`;
@@ -5416,6 +5487,7 @@ const JAZZ=(()=>{
     nope(t){felt((curCh||CH.Cmaj7).root+12,t,.25)},
     recover(t){const c=curCh||CH.Cmaj7;epiano(c.root+24,t,.18,.42,fxDry,false);epiano(c.root+24+c.third,t+.15,.4,.45,fxDry,false)},
     trueno(t){noise(2.6,.42,{hp:140,type:'lowpass',q:.5,at:t,bus:fxDry});noise(.3,.22,{hp:900,type:'lowpass',q:.7,at:t,bus:fxDry});thump(t,.45,52);thump(t+.35,.3,44)},
+    sello(t){thump(t,.5,58);wood(t+.01,.8);noise(.06,.1,{hp:1800,at:t,bus:fxDry})},
     foto(t){noise(.035,.28,{hp:2600,at:t,bus:fxDry});wood(t+.07,.55)},
     event(t){const k=[...(curCh||CH.Cmaj7).keys].sort((a,b)=>a-b);vibes(k[3]+12,t,.35,.9,fxDry);vibes(k[1]+12,t+.32,.6,.9,fxDry)}
   };
@@ -5679,6 +5751,26 @@ function guiaStep(dt){GUIAT+=dt;AGUAT+=dt;if(TITLE)return;
   if(GUIA.p===1)listo=nCasas()>b.casas;else if(GUIA.p===2)listo=nServ()>b.serv;else listo=S.v>=GMETA;
   if(listo){if(GUIA.p>=3){guiaEnd(false);return}GUIA.p++;S.tuto=GUIA.p;GUIA.base={casas:nCasas(),serv:nServ()};sfx('unlock');guiaRender(true);return}
   guiaRender(false)}
+/* ---------- v85: el nombramiento del Municipio ----------
+   Al empezar una partida nueva en el Distrito Cañón, el Municipio de Santa Catarina te entrega un oficio: te encomienda el
+   desarrollo del Distrito y la felicidad de sus vecinos. Lo firmas con tu nombre, cae el sello y empieza el juego. */
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function oficioToca(fresh){return (fresh||!S.seen)&&!S.demo&&DIST==='domo'}
+function oficio(nm,done){const o=$('oficio');if(!o){done(nm);return}
+  const f=new Date(),fecha=`${f.getDate()} de ${MESES[f.getMonth()]} de ${f.getFullYear()}`;
+  $('ofFecha').textContent=`Santa Catarina, N.L., a ${fecha}`;
+  $('ofNum').textContent=`Oficio DU/${String(100+Math.floor(Math.random()*800)).padStart(4,'0')}/${f.getFullYear()}`;
+  $('ofIntro').textContent='Por acuerdo del Cabildo, se le encomienda el desarrollo del Distrito Cañón, al pie de La Huasteca. Ya hay un edificio y 16 vecinos. Desde hoy, usted decide qué se construye y dónde. Su encargo:';
+  const inp=$('ofName'),ok=$('ofOk');inp.value=nm||'';o.classList.remove('firmado','sale');o.hidden=false;
+  const btn=()=>{ok.textContent=inp.value.trim()?'Firmar y aceptar el cargo':'Aceptar el cargo'};btn();inp.oninput=btn;
+  // en celular no se abre el teclado solo: tapaba el oficio
+  setTimeout(()=>{try{(matchMedia('(pointer:coarse)').matches?ok:inp).focus({preventScroll:true})}catch(e){}},60);
+  let listo=false;
+  const firmar=()=>{if(listo)return;listo=true;const n=inp.value.trim().slice(0,20);
+    $('ofFirma').textContent=n||'Desarrollo del Distrito';$('ofSelloF').textContent=`${f.getDate()} ${MESES[f.getMonth()].slice(0,3)} ${f.getFullYear()}`;
+    o.classList.add('firmado');try{sfx('sello')}catch(e){}
+    const rm=lowMo();setTimeout(()=>{o.classList.add('sale');setTimeout(()=>{o.hidden=true;o.classList.remove('firmado','sale');done(n)},rm?0:500)},rm?700:1300)};
+  ok.onclick=firmar;inp.onkeydown=e=>{if(e.key==='Enter')firmar()}}
 
 /* ---------- arranque ---------- */
 function prep(d){
@@ -5698,7 +5790,8 @@ function start(data){
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
   let hasSave=!!S.seen;let pname='';try{pname=localStorage.getItem('distritoDomo.nombre')||''}catch(e){}
   $('pname').value=S.name||pname;$('tmusic').checked=JAZZ.pref.on;
-  const showTitle=()=>{$('tcont').textContent=hasSave?'Continuar partida':'Jugar';$('tnew').hidden=!hasSave};showTitle();
+  // v85: quien empieza de cero escribe su nombre en el nombramiento, no aquí
+  const showTitle=()=>{$('tcont').textContent=hasSave?'Continuar partida':'Jugar';$('tnew').hidden=!hasSave;const nn=!hasSave&&DIST==='domo';$('pname').hidden=nn;const lb=document.querySelector('label[for="pname"]');if(lb)lb.hidden=nn};showTitle();
   const vec=d=>`${Math.round(d.maxV||d.v||0).toLocaleString('es-MX')} vecinos`;
   const status=(txt,cls)=>{const el=$('tsave');el.textContent=txt;el.className='tsave'+(cls?' '+cls:'')};
   // cambia la partida en pantalla por otra (de la nube o de una copia); la de antes se aparta, no se pierde
@@ -5744,7 +5837,9 @@ function start(data){
   let newArm=0;
   // llegada de un viaje entre distritos: se entra directo (la pantalla de viaje tapa la de inicio) y se presenta el distrito
   const arrive=()=>{if(!viajando||!TITLE)return;const nuevo=!hasSave;play(nuevo);llegada(nuevo)};
-  const play=fresh=>{
+  // v85: la partida nueva del Cañón empieza con el nombramiento del Municipio (oficio.js)
+  const play=fresh=>{if(oficioToca(fresh)&&!viajando&&TITLE){$('title').hidden=true;oficio($('pname').value.trim(),n=>{$('pname').value=n;play0(fresh,true)});return}play0(fresh,false)};
+  const play0=(fresh,cargo)=>{
     const nm=$('pname').value.trim().slice(0,20);
     if($('tmusic').checked){JAZZ.pref.on=false;JAZZ.toggle()}else{JAZZ.pref.on=false;JAZZ.setVol(JAZZ.pref.vol)}
     const veterano=!!((S&&(S.maxV||0)>=300)||riberaUnl());
@@ -5754,7 +5849,8 @@ function start(data){
     const who=nm?`, ${nm}`:'';
     diaHoy();hitosStep();
     const guia=guiaToca(fresh||!S.seen,veterano);
-    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?(guia?`¡Bienvenido${who}! Te enseño lo básico en 3 pasos: sigue la guía de arriba.`:`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`):`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
+    if(cargo)S.cargo=Date.now();const of=cargo?`Ya es oficial${who}: el Distrito Cañón está a tu cargo. `:`¡Bienvenido${who}! `;
+    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?(guia?`${of}Te enseño lo básico en 3 pasos: sigue la guía de arriba.`:`${of}Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`):`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
     if(guia||(S.tuto>0&&S.tuto<9))guiaStart(guia?1:S.tuto);
     {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a La Cúpula.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
     if(S.fromBak){delete S.fromBak;cur+=' Ojo: tu guardada venía dañada y recuperé el respaldo de hace un minuto.'}

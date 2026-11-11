@@ -45,6 +45,9 @@ function recompute(){
       for(let yy=Math.max(0,y-r);yy<=Math.min(N-1,y+r);yy++)for(let xx=Math.max(0,x-r);xx<=Math.min(N-1,x+r);xx++){const dd=Math.abs(xx-x)+Math.abs(yy-y);if(dd<=r){const j=idx(xx,yy);neg[j]=Math.max(neg[j],amt*(1-dd/(r+1)))}}}}
   // la sombra del rascacielos baja un poco la plusvalía alrededor
   if(OB.rasca){const o=OB.rasca,R3=3;for(let y=Math.max(0,Math.floor(o.y-R3));y<=Math.min(N-1,Math.ceil(o.y+R3));y++)for(let x=Math.max(0,Math.floor(o.x-R3));x<=Math.min(N-1,Math.ceil(o.x+R3));x++){const dd=Math.abs(x-o.x)+Math.abs(y-o.y);if(dd<=R3&&dd>=1){const j=idx(x,y);neg[j]=Math.max(neg[j],.06*(1-dd/(R3+1)))}}}
+  // v85: vivir junto al río vale (la Ribera no tiene los trofeos gratis del Cañón y el río le quita tres columnas): cada casilla de río alimenta la capa verde
+  if(DIST==='ribera'){const [ra,R]=RIOVAL;for(let i=0;i<N*N;i++){if(S.g[i].k!=='rio')continue;const x0=i%N,y0=Math.floor(i/N);
+    for(let y=Math.max(0,y0-R);y<=Math.min(N-1,y0+R);y++)for(let x=Math.max(0,x0-R);x<=Math.min(N-1,x0+R);x++){const dd=Math.abs(x-x0)+Math.abs(y-y0);if(dd&&dd<=R)posVerde[idx(x,y)]+=ra*(1-dd/(R+1))}}}
   const pvx=new Float32Array(N*N);if(S.mis&&S.mis.pv)for(const j of S.mis.pv)pvx[j]=.04;
   for(let i=0;i<N*N;i++){const v=pvx[i]+.15+.28*(1-Math.exp(-posVerde[i]*4))+.32*(1-Math.exp(-posCom[i]*16))+.15*(1-Math.exp(-posPark[i]*60))+.10*(1-Math.exp(-posDog[i]*40));VAL[i]=Math.max(0,Math.min(1,v-neg[i]))}
   for(const b of B){b.val=Math.min(1,VAL[b.i]+(b.k==='torre'?.08:b.f>=7?.05:0)+.05*(b.lv-1))}

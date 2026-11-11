@@ -17,7 +17,8 @@ function start(data){
   // pantalla de inicio: el botón es el gesto que todos los navegadores aceptan para arrancar el audio
   let hasSave=!!S.seen;let pname='';try{pname=localStorage.getItem('distritoDomo.nombre')||''}catch(e){}
   $('pname').value=S.name||pname;$('tmusic').checked=JAZZ.pref.on;
-  const showTitle=()=>{$('tcont').textContent=hasSave?'Continuar partida':'Jugar';$('tnew').hidden=!hasSave};showTitle();
+  // v85: quien empieza de cero escribe su nombre en el nombramiento, no aquí
+  const showTitle=()=>{$('tcont').textContent=hasSave?'Continuar partida':'Jugar';$('tnew').hidden=!hasSave;const nn=!hasSave&&DIST==='domo';$('pname').hidden=nn;const lb=document.querySelector('label[for="pname"]');if(lb)lb.hidden=nn};showTitle();
   const vec=d=>`${Math.round(d.maxV||d.v||0).toLocaleString('es-MX')} vecinos`;
   const status=(txt,cls)=>{const el=$('tsave');el.textContent=txt;el.className='tsave'+(cls?' '+cls:'')};
   // cambia la partida en pantalla por otra (de la nube o de una copia); la de antes se aparta, no se pierde
@@ -63,7 +64,9 @@ function start(data){
   let newArm=0;
   // llegada de un viaje entre distritos: se entra directo (la pantalla de viaje tapa la de inicio) y se presenta el distrito
   const arrive=()=>{if(!viajando||!TITLE)return;const nuevo=!hasSave;play(nuevo);llegada(nuevo)};
-  const play=fresh=>{
+  // v85: la partida nueva del Cañón empieza con el nombramiento del Municipio (oficio.js)
+  const play=fresh=>{if(oficioToca(fresh)&&!viajando&&TITLE){$('title').hidden=true;oficio($('pname').value.trim(),n=>{$('pname').value=n;play0(fresh,true)});return}play0(fresh,false)};
+  const play0=(fresh,cargo)=>{
     const nm=$('pname').value.trim().slice(0,20);
     if($('tmusic').checked){JAZZ.pref.on=false;JAZZ.toggle()}else{JAZZ.pref.on=false;JAZZ.setVol(JAZZ.pref.vol)}
     const veterano=!!((S&&(S.maxV||0)>=300)||riberaUnl());
@@ -73,7 +76,8 @@ function start(data){
     const who=nm?`, ${nm}`:'';
     diaHoy();hitosStep();
     const guia=guiaToca(fresh||!S.seen,veterano);
-    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?(guia?`¡Bienvenido${who}! Te enseño lo básico en 3 pasos: sigue la guía de arriba.`:`¡Bienvenido${who}! Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`):`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
+    if(cargo)S.cargo=Date.now();const of=cargo?`Ya es oficial${who}: el Distrito Cañón está a tu cargo. `:`¡Bienvenido${who}! `;
+    if(DIST==='ribera'&&(!S.seen||fresh))ribIntro(who);else say(!S.seen||fresh?(guia?`${of}Te enseño lo básico en 3 pasos: sigue la guía de arriba.`:`${of}Traza calles y levanta edificios: los vecinos llegan solos si tienen todo cerca.`):`¡Qué bueno verte de vuelta${who}! El Distrito te esperó en pausa, tal como lo dejaste.`,true);
     if(guia||(S.tuto>0&&S.tuto<9))guiaStart(guia?1:S.tuto);
     {const se=SEASON();if(se)setTimeout(()=>say(se==='patrias'?'¡Viva México! Es mes patrio y el Distrito se viste de verde, blanco y rojo. La noche del 15 hay Grito frente a La Cúpula.':se==='navidad'?'¡Feliz Navidad! Pinos en las plazas, piñatas en los parques y foquitos en todo el Distrito.':'Día de Muertos: papel picado, cempasúchil, ofrendas en las plazas y veladoras de noche.'),5000)}
     if(S.fromBak){delete S.fromBak;cur+=' Ojo: tu guardada venía dañada y recuperé el respaldo de hace un minuto.'}

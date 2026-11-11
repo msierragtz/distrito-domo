@@ -368,6 +368,7 @@ const JAZZ=(()=>{
     nope(t){felt((curCh||CH.Cmaj7).root+12,t,.25)},
     recover(t){const c=curCh||CH.Cmaj7;epiano(c.root+24,t,.18,.42,fxDry,false);epiano(c.root+24+c.third,t+.15,.4,.45,fxDry,false)},
     trueno(t){noise(2.6,.42,{hp:140,type:'lowpass',q:.5,at:t,bus:fxDry});noise(.3,.22,{hp:900,type:'lowpass',q:.7,at:t,bus:fxDry});thump(t,.45,52);thump(t+.35,.3,44)},
+    sello(t){thump(t,.5,58);wood(t+.01,.8);noise(.06,.1,{hp:1800,at:t,bus:fxDry})},
     foto(t){noise(.035,.28,{hp:2600,at:t,bus:fxDry});wood(t+.07,.55)},
     event(t){const k=[...(curCh||CH.Cmaj7).keys].sort((a,b)=>a-b);vibes(k[3]+12,t,.35,.9,fxDry);vibes(k[1]+12,t+.32,.6,.9,fxDry)}
   };

@@ -25,7 +25,7 @@ const MIS=[
   {id:'clasico',tipo:'reto',min:1200,name:'Clásico sin claxon',txt:'Viene un Clásico regio: que el estacionamiento no baje de 80% mientras dure.',ev:'clasico',cond:()=>stats.sc.park>=.8,rew:{x:'clas'}},
   {id:'swing',tipo:'vecinos',min:1500,name:'Swing de domingo',txt:'Que vivan 120 profesionistas y estén al 65% de satisfacción.',goal:120,prog:()=>Math.floor(S.pop.pro+1e-6),cond:()=>stats.gs.pro>=.65,rew:{u:'golf'}},
   {id:'parejo',tipo:'vecinos',min:1700,name:'Barrio parejo',txt:'Los tres grupos arriba de 65% al mismo tiempo durante 30 segundos.',hold:30,cond:()=>G3.every(g=>stats.gs[g]>=.65),rew:{b:[5,15000]}},
-  {id:'estreno',tipo:'barrio',min:2000,name:'Función de estreno',txt:'Ten el Centro Cultural Cañón y 3 negocios en nivel 3 o más.',goal:4,prog:()=>(mBuilt('cultura')?1:0)+Math.min(3,mCnt(t=>isBiz(t.k)&&lvOf(t)>=3)),rew:{u:'cine'}},
+  {id:'estreno',tipo:'barrio',min:2000,name:'Función de estreno',txt:`Ten el ${DIST==='ribera'?'Centro Cultural Ribera':'Centro Cultural Cañón'} y 3 negocios en nivel 3 o más.`,goal:4,prog:()=>(mBuilt('cultura')?1:0)+Math.min(3,mCnt(t=>isBiz(t.k)&&lvOf(t)>=3)),rew:{u:'cine'}},
   {id:'calor',tipo:'reto',min:2200,name:'Ola de calor',txt:'Viene una ola de calor: pásala sin que la satisfacción baje de 60%.',ev:'calor',floor:.6,rew:{u:'paleteria'}},
   {id:'oficina',tipo:'barrio',min:2400,name:'Oficina en casa',txt:'Ten 4 Oficinas funcionando.',goal:4,prog:()=>mBuilt('oficinas'),rew:{u:'gym'}},
   {id:'cuentas',tipo:'reto',min:2700,name:'Cuentas claras',txt:'Aguanta 15 minutos seguidos sin números rojos. Tienes 25 minutos.',hold:900,lim:1500,cond:()=>S.$>=0,rew:{b:[5,30000]}},
@@ -108,7 +108,7 @@ function misStep(dt,quiet){if(!S.mis)misInit();const M=S.mis;M.clk=(M.clk||0)+dt
     if(m.prog()>=m.goal&&(!m.cond||m.cond())){misDone(m,quiet);continue}
     if(m.failIf&&m.failIf())misFail(m,'Ya pasaron de 950 vecinos sin Torre de agua.',quiet)}}
 function renderMis(){const box=$('misbox');if(!box||box.hidden)return;const M=S.mis;
-  let h='<h2>ENCARGOS DEL DISTRITO<button class="x" id="mx" aria-label="Cerrar">✕</button></h2>';
+  let h='<h2>ENCARGOS DEL MUNICIPIO<button class="x" id="mx" aria-label="Cerrar">✕</button></h2>';
   if(S.maxV<MIS_ON){h+=`<div class="mi-in">Los encargos empiezan a los ${MIS_ON} vecinos.</div>`}
   else{h+='<div class="mi-in">Cúmplelos para ganar bonos o abrir edificios nuevos. Ninguno castiga si no se cumple.</div>';
     for(const tp of ['barrio','vecinos','reto']){const id=M.on[tp],m=id&&MISI[id];

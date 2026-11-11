@@ -89,7 +89,7 @@ function drawFireworks(){
 }
 function showCredits(){
   const box=document.getElementById('credits'),m=Math.max(1,Math.round((S.winT||S.playT||0)/60)),h=Math.floor(m/60),tm=h?`${h} h ${m%60} min`:`${m} min`;
-  box.innerHTML=`<h2>¡${DNAME.toUpperCase()} COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina.</p>
+  box.innerHTML=`<h2>¡${DNAME.toUpperCase()} COMPLETO!</h2><p>${S.name?'¡Felicidades, '+S.name+'! ':''}3,000 vecinos viven en el Distrito, y ya es el corazón de Santa Catarina. El Municipio da por cumplido tu encargo.</p>
     <p class="ctime">Lo lograste en <b>${tm}</b> de juego</p>
     <p><b>${Math.round(S.maxV).toLocaleString('es-MX')}</b> vecinos · <b>${S.lots||0}</b> terrenos comprados</p>
     <p class="cr">${S.name?'Jugó: '+S.name+' · ':''}Idea y dirección: Mauricio · Programación, pixel art y jazz: Claude</p><div class="cbtns"><button id="crtl" type="button">▶ Ver cómo creció</button>${DIST==='domo'?'<button id="crrib" type="button">Ir al Distrito Ribera</button>':''}<button id="crok" type="button">Seguir jugando</button></div>`;

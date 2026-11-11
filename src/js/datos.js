@@ -5,7 +5,7 @@ const ECO={infl:250,cRef:60,cExp:.5,cMin:.6,cMax:2.75,bizCap:.6,upk:.72,incMul:.
 const bootMul=()=>{const m=S?S.maxV||0:0,b=ECO.boot;return m<b[0]?b[1]:m<b[2]?b[3]:1};
 // distrito activo: Cañón (el original) o Ribera (se abre a los 3,000); cada uno guarda su propia partida
 const DIST=(()=>{try{return localStorage.getItem('distritoDomo.distrito')==='ribera'?'ribera':'domo'}catch(e){return 'domo'}})();
-const VER=84; // versión que ve el jugador (igual al 0.84 de package.json)
+const VER=85; // versión que ve el jugador (igual al 0.85 de package.json)
 const DNAME=DIST==='ribera'?'Distrito Ribera':'Distrito Cañón',LM=DIST==='ribera'?'El Puente':'La Cúpula';
 const N=30, OFF=7, TW=32, TH=16, KEY=DIST==='ribera'?'distritoDomo.ribera.v1':'distritoDomo.v4', DAY=360;
 /* opciones visuales: calidad baja (celulares lentos), menos movimiento y alto contraste */
@@ -110,6 +110,7 @@ const LV={
   gas:['Bomba de gasolina','Gasolinera','Gasolinera con tiendita','Estación de carga']};
 // el estacionamiento no tenía plusvalía propia: alimenta la capa de estacionamiento con este valor
 const PARKVAL=[.12,3];
+let RIOVAL=[.05,3]; // v85: plusvalía por vista al río en la Ribera (por casilla de río, alcance 3)
 const LVTH=[0,0,.55,.68,.84],LVT=[0,0,20,40,60];
 {const n=LVTH.slice(2).map(v=>Math.round(v*100)),last=n.pop();DEFS.mejorar.desc=DEFS.mejorar.desc.replace('46, 58 o 70',n.join(', ')+(String(last)[0]==='8'?' u ':' o ')+last)}
 const lvOf=t=>t.lv||1;

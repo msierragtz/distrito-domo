@@ -25,8 +25,8 @@ function riberaGame(bono){const r=rng(4242),g=[];
   const near=(x,y,o)=>{for(let d=0;d<4;d++)for(const [dx,dy] of [[0,0],[d,0],[-d,0],[0,d],[0,-d]])if(free(x+dx,y+dy)){set(x+dx,y+dy,o);return}};
   // el landmark va sobre el puente de en medio: su casilla central queda reservada (con conos) hasta construirlo
   {const y=LMY,x=cxR(y);g[idx(x,y)]={k:'lotedomo',pu:1,rc:1,s:1,b:0}}
-  near(OFF+2,OFF+11,{k:'ladrillo',f:4,bt:20});near(OFF+14,OFF+11,{k:'tomates',bt:8});near(OFF+15,OFF+2,{k:'tanque'});
-  near(OFF+4,OFF+2,{k:'parque'});near(OFF+4,OFF+8,{k:'parque'});near(OFF+12,OFF+9,{k:'palma'});
+  near(OFF+2,OFF+11,{k:'ladrillo',f:4,bt:20});near(OFF+4,OFF+11,{k:'tomates',bt:8});near(OFF+15,OFF+2,{k:'tanque'});
+  near(OFF+4,OFF+2,{k:'parque'});near(OFF+2,OFF+9,{k:'parque'});near(OFF+12,OFF+9,{k:'palma'});
   return {pv2:1,pop:{fam:9,pro:3,est:4},g,v:16,$:600+(bono||0),maxV:16,unl:['ver','calle','edificio','ladrillo','parque','palma','demoler'],fam:16,clock:DAY*.05,t:Date.now(),lots:0,dist:'ribera',rio:{t:DAY*2.2,w:.1},bono:bono||0}}
 
 /* ===== el agua: temporada seca, temporada de lluvias y crecida ===== */
@@ -154,7 +154,7 @@ function llegada(nuevo){const el=$('cine'),i=S.g.findIndex(t=>t.k==='domo'||t.k=
   if(i>=0&&!lowMo())setTimeout(()=>camTo(i,2.2),350)}
 // la primera vez en Ribera: qué tiene de distinto, en tres mensajes
 function ribIntro(who){const b=+(S.bono||0);
-  say(`¡Bienvenido al Distrito Ribera${who}! Empiezas de cero con $${fmt(S.$)}${b?`: $600 del Distrito más $${fmt(b)} de bono de tu Distrito Cañón`:''}.`,true);
+  say(`El Municipio amplía tu nombramiento${who}: ahora también está a tu cargo el Distrito Ribera. Empiezas de cero con $${fmt(S.$)}${b?`: $600 del Distrito más $${fmt(b)} de bono de tu Distrito Cañón`:''}.`,true);
   say('El río va casi seco: en el lecho puedes poner parques, canchas, dog parks y palmas. En la temporada de lluvias se llena, y si crece daña lo que haya abajo.');
   say(`Para cruzar el río usa Calle encima del agua: hace un puente. El puente de en medio, el de los conos, es para ${DEFS.domo.name}.`)}
 // en el Distrito Cañón: a los 3,000 se abre Ribera. La tarjeta sale una vez, después de la pantalla de los 3,000
@@ -192,7 +192,8 @@ function distUI(){distBind();const u=riberaUnl()||DIST==='ribera';for(const id o
 function distBoot(){if(DIST!=='ribera'){for(const k of ['malecon','alberca','parroquia','hotel']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}return}
   Object.assign(DEFS.domo,{name:'El Puente Atirantado',desc:'El emblema de la Ribera: un pilón blanco en A con tirantes, sobre el puente de en medio del río. Sube mucho la satisfacción. Solo hay uno.'});
   // los trofeos del Cañón no van en la Ribera (el menú de especiales se hacía enorme)
-  for(const k of ['kiosco','mirador','cultura','teleferico']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}
+  // v85: el Centro Cultural sí va en la Ribera (sin él no se abría el Cine ni, por lo tanto, el Museo)
+  for(const k of ['kiosco','mirador','teleferico']){DEFS[k].hidden=true;DEFS[k].unlock=Infinity;const i=ORDER.indexOf(k);if(i>=0)ORDER.splice(i,1)}
   DEFS.lotedomo.name='Terreno del Puente';DEFS.cultura.name='Centro Cultural Ribera';DEFS.museo.name='Museo del Río';SPH.domo=110;
   Object.assign(PARCELS.W,{where:'junto a la calle Sauce'});Object.assign(PARCELS.E,{where:'junto a la calle Álamo'});
   Object.assign(PARCELS.WW,{where:'más allá del Sauce'});Object.assign(PARCELS.EE,{where:'más allá del Álamo'});
